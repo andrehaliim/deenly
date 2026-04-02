@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class PrayerProxy {
   static const String _baseUrl = 'https://api.aladhan.com/v1';
 
-  Future<PrayerModel> getTimings(double lat, double lon) async {
+  Future<PrayerModel> getDailyPrayer(double lat, double lon) async {
     final now = DateTime.now();
     final formattedDate = '${now.day}-${now.month}-${now.year}';
     //final tune = '&tune=0%2C2%2C0%2C3%2C1%2C6%2C0%2C2%2C0';
@@ -19,7 +19,7 @@ class PrayerProxy {
       final decodedResponse = json.decode(response.body);
       return PrayerModel.fromJson(decodedResponse['data']);
     } else {
-      throw Exception('Failed to load prayer timings');
+      throw Exception('Failed to load daily prayer time');
     }
   }
 
