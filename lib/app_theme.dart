@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// ========================================
 /// 🎨 CUSTOM COLOR EXTENSION (IMPORTANT)
@@ -79,6 +80,7 @@ class AppTheme {
   static final ThemeData light = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
+    textTheme: GoogleFonts.manropeTextTheme(),
 
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
@@ -145,19 +147,6 @@ class AppTheme {
         ),
       ),
     ),
-
-    /// Typography
-    textTheme: const TextTheme(
-      headlineLarge: TextStyle(
-        fontFamily: 'NotoSerif',
-        fontSize: 40,
-        fontWeight: FontWeight.w600,
-      ),
-      bodyMedium: TextStyle(
-        fontFamily: 'Manrope',
-        fontSize: 14,
-      ),
-    ),
   );
 
   /// ========================================
@@ -166,7 +155,7 @@ class AppTheme {
   static final ThemeData dark = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-
+    textTheme: GoogleFonts.manropeTextTheme(),
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,
       primary: _darkPrimary,
@@ -226,18 +215,6 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-      ),
-    ),
-
-    textTheme: const TextTheme(
-      headlineLarge: TextStyle(
-        fontFamily: 'NotoSerif',
-        fontSize: 40,
-        fontWeight: FontWeight.w600,
-      ),
-      bodyMedium: TextStyle(
-        fontFamily: 'Manrope',
-        fontSize: 14,
       ),
     ),
   );
