@@ -1,6 +1,6 @@
-import 'package:deenly/app_theme.dart';
-import 'package:deenly/main_page.dart';
-import 'package:deenly/theme_provider.dart';
+import 'package:deenly/components/app_theme.dart';
+import 'package:deenly/pages/main_page.dart';
+import 'package:deenly/components/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

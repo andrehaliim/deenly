@@ -1,10 +1,11 @@
-import 'package:deenly/home_page.dart';
-import 'package:deenly/mosque_page.dart';
-import 'package:deenly/custom_navigation_bar.dart';
-import 'package:deenly/qibla_page.dart';
-import 'package:deenly/tasbih_page.dart';
-import 'package:deenly/theme_provider.dart';
+import 'package:deenly/pages/home_page.dart';
+import 'package:deenly/pages/mosque_page.dart';
+import 'package:deenly/components/custom_navigation_bar.dart';
+import 'package:deenly/pages/qibla_page.dart';
+import 'package:deenly/pages/tasbih_page.dart';
+import 'package:deenly/components/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
@@ -33,7 +34,15 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Deenly'),
+        title: Text(
+          'Deenly',
+          style: GoogleFonts.notoSerif(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
