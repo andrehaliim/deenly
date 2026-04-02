@@ -72,6 +72,10 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 10),
 
               prayerProgress(),
+
+              const SizedBox(height: 10),
+
+              dailyHadith(),
             ],
           ),
         );
@@ -318,56 +322,112 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         SizedBox(height: 10),
-        SizedBox(
-          height: 100,
-          child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(prayers.length, (index) {
-                final prayer = prayers[index];
-                bool isLast = index == prayers.length - 1;
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(prayers.length, (index) {
+              final prayer = prayers[index];
+              bool isLast = index == prayers.length - 1;
 
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: !isLast
-                                ? Theme.of(context).colorScheme.primary
-                                : Colors.grey.shade400,
-                          ),
-                          shape: BoxShape.circle,
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(
                           color: !isLast
                               ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.surface,
-                        ),
-                        child: Icon(
-                          !isLast ? Icons.check : Icons.circle,
-                          color: !isLast
-                              ? Theme.of(context).colorScheme.onPrimary
                               : Colors.grey.shade400,
-                          size: 20,
                         ),
+                        shape: BoxShape.circle,
+                        color: !isLast
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.surface,
                       ),
-                      Text(
-                        prayer,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                      child: Icon(
+                        !isLast ? Icons.check : Icons.circle,
+                        color: !isLast
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Colors.grey.shade400,
+                        size: 20,
                       ),
-                    ],
-                  ),
-                );
-              }),
-            ),
+                    ),
+                    Text(
+                      prayer,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
           ),
         ),
       ],
+    );
+  }
+
+  Widget dailyHadith() {
+    String hadith =
+        "I heard Allah's Messenger (ﷺ) saying, \"The reward of deeds depends upon the intentions and every person will get the reward according to what he has intended. So whoever emigrated for worldly benefits or for a woman to marry, his emigration was for what he emigrated for.\"";
+    String narrator = "Umar bin Al-Khattab (May Allah be pleased with him)";
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12.0),
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.secondary,
+            Theme.of(context).colorScheme.secondaryContainer,
+          ],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              'Daily Hadith',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            hadith,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            narrator,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
