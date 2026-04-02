@@ -1,5 +1,6 @@
 import 'package:deenly/home_page.dart';
 import 'package:deenly/mosque_page.dart';
+import 'package:deenly/custom_navigation_bar.dart';
 import 'package:deenly/qibla_page.dart';
 import 'package:deenly/tasbih_page.dart';
 import 'package:deenly/theme_provider.dart';
@@ -31,36 +32,6 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.mosque_outlined),
-            selectedIcon: Icon(Icons.mosque),
-            label: 'Mosque',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.explore_outlined),
-            selectedIcon: Icon(Icons.explore),
-            label: 'Qibla',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.fingerprint_outlined),
-            selectedIcon: Icon(Icons.fingerprint),
-            label: 'Tasbih',
-          ),
-        ],
-      ),
       appBar: AppBar(
         title: Text('Deenly'),
         centerTitle: true,
@@ -74,6 +45,14 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
       body: IndexedStack(index: _selectedIndex, children: _pages),
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
       endDrawer: Drawer(
         width: width * 0.75,
         child: Column(

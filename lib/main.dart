@@ -1,3 +1,4 @@
+import 'package:deenly/app_theme.dart';
 import 'package:deenly/main_page.dart';
 import 'package:deenly/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -27,17 +28,8 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           themeMode: themeProvider.themeMode,
-
-          theme: ThemeData(
-            brightness: Brightness.light,
-            primarySwatch: Colors.blue,
-          ),
-
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            primarySwatch: Colors.blue,
-          ),
-
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
           home: const MainPage(),
         );
       },
