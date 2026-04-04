@@ -43,6 +43,7 @@ dependencies:
   geocoding: ^4.0.0
   shimmer: ^3.0.0
   vibration: ^2.0.1
+  flutter_compass: ^0.8.0
 
 dev_dependencies:
   flutter_test:
