@@ -85,7 +85,7 @@ class AppTheme {
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
       primary: _lightPrimary,
-      onPrimary: Colors.white,
+      onPrimary: Color(0xFFE8E8E8),
       primaryContainer: Color(0xFFE0F2F1),
       onPrimaryContainer: _lightPrimary,
       secondary: _lightSecondary,
@@ -130,10 +130,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: _lightPrimary,
-          width: 2,
-        ),
+        borderSide: const BorderSide(color: _lightPrimary, width: 2),
       ),
     ),
 
@@ -142,9 +139,7 @@ class AppTheme {
       style: FilledButton.styleFrom(
         backgroundColor: _lightPrimary,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     ),
   );
@@ -201,10 +196,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: _darkPrimary,
-          width: 2,
-        ),
+        borderSide: const BorderSide(color: _darkPrimary, width: 2),
       ),
     ),
 
@@ -212,9 +204,7 @@ class AppTheme {
       style: FilledButton.styleFrom(
         backgroundColor: _darkPrimary,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     ),
   );
