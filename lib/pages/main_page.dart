@@ -1,4 +1,4 @@
-import 'package:deenly/pages/home_page.dart';
+import 'package:deenly/pages/home/home_page.dart';
 import 'package:deenly/pages/mosque_page.dart';
 import 'package:deenly/components/custom_navigation_bar.dart';
 import 'package:deenly/pages/qibla_page.dart';
@@ -46,7 +46,10 @@ class _MainPageState extends State<MainPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: Icon(
+              Icons.settings,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () {
               _scaffoldKey.currentState?.openEndDrawer();
             },
@@ -64,17 +67,52 @@ class _MainPageState extends State<MainPage> {
       ),
       endDrawer: Drawer(
         width: width * 0.75,
-        child: Column(
-          children: [
-            Center(
-              child: Switch(
-                value: provider.isDarkMode,
-                onChanged: (value) {
-                  provider.toggleTheme(value);
-                },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              Text(
+                'Settings',
+                style: GoogleFonts.notoSerif(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    'Dark Mode',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  Switch(
+                    value: provider.isDarkMode,
+                    onChanged: (value) {
+                      provider.toggleTheme(value);
+                    },
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Text(
+                'Deenly © 2026 @andrehaliim',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
