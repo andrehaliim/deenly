@@ -15,6 +15,16 @@ class _TasbihPageState extends State<TasbihPage>
   late Animation<double> _scaleAnimation;
   int selectedTarget = 33;
   int currentCount = 0;
+  int _selectedTasbihIndex = 0;
+  late FixedExtentScrollController _scrollController;
+
+  final List<String> _tasbihItems = [
+    'Subhanallah',
+    'Alhamdulillah',
+    'Allahu Akbar',
+    'Laa ilaha illallah',
+    'Astaghfirullah',
+  ];
 
   @override
   void initState() {
@@ -31,11 +41,15 @@ class _TasbihPageState extends State<TasbihPage>
             _controller.reverse();
           }
         });
+    _scrollController = FixedExtentScrollController(
+      initialItem: _tasbihItems.length * 100,
+    );
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -74,14 +88,57 @@ class _TasbihPageState extends State<TasbihPage>
               context,
             ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 20),
-          Text(
-            'Subhan Allah',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          const SizedBox(height: 5),
+          SizedBox(
+            height: 50,
+            child: RotatedBox(
+              quarterTurns: 3,
+              child: ListWheelScrollView.useDelegate(
+                controller: _scrollController,
+                itemExtent: 150,
+                perspective: 0.003,
+                diameterRatio: 2.0,
+                physics: const FixedExtentScrollPhysics(),
+                onSelectedItemChanged: (index) {
+                  setState(() {
+                    _selectedTasbihIndex =
+                        (index % _tasbihItems.length + _tasbihItems.length) %
+                        _tasbihItems.length;
+                  });
+                  _vibrate();
+                },
+                childDelegate: ListWheelChildLoopingListDelegate(
+                  children: _tasbihItems.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final value = entry.value;
+                    final isSelected = index == _selectedTasbihIndex;
+                    return RotatedBox(
+                      quarterTurns: 1,
+                      child: Center(
+                        child: AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 200),
+                          style: Theme.of(context).textTheme.titleLarge!
+                              .copyWith(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(
+                                        context,
+                                      ).hintColor.withValues(alpha: 0.3),
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                fontSize: isSelected ? 22 : 16,
+                              ),
+                          child: Text(value, textAlign: TextAlign.center),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 30),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
