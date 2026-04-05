@@ -123,7 +123,7 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
                               ? null
                               : Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant.withAlpha(150),
+                                ).colorScheme.surfaceContainer.withAlpha(150),
                           border: Border.all(
                             color: isCompleted
                                 ? Colors.transparent

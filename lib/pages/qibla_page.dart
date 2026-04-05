@@ -304,7 +304,7 @@ class _QiblaPageState extends State<QiblaPage>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFD4AF37).withOpacity(0.5),
+                            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
@@ -340,7 +340,7 @@ class _QiblaPageState extends State<QiblaPage>
         border: Border.all(color: Colors.white24, width: 1),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFD4AF37).withOpacity(0.3),
+            color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
             blurRadius: 16,
             spreadRadius: 4,
           ),
