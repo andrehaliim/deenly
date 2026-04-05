@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QiblaPage extends StatefulWidget {
   const QiblaPage({super.key});
@@ -16,11 +17,21 @@ class _QiblaPageState extends State<QiblaPage>
   bool _isLoading = true;
   double? _qiblaDirection;
   Position? _currentPosition;
+  String _location = '';
 
   @override
   void initState() {
     super.initState();
+    _loadLocation();
     _initializeQibla();
+  }
+
+  Future<void> _loadLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String prefLocation = prefs.getString('location') ?? '';
+    setState(() {
+      _location = prefLocation;
+    });
   }
 
   Future<void> _initializeQibla() async {
@@ -181,22 +192,54 @@ class _QiblaPageState extends State<QiblaPage>
         if (diff.abs() < 2) {
           turnText = "You are facing the Qibla!";
           instructionColor = Theme.of(context).primaryColor;
-          textColor = Theme.of(context).colorScheme.onPrimary;
+          textColor = Colors.green;
         } else if (diff > 0) {
           turnText =
               "Rotate the phone ${diff.toStringAsFixed(0)}° to the right";
           instructionColor = Theme.of(context).colorScheme.onPrimary;
-          textColor = Theme.of(context).primaryColor;
+          textColor = Theme.of(context).colorScheme.onTertiary;
         } else {
           turnText =
               "Rotate the phone ${math.min(diff.abs(), 359).toStringAsFixed(0)}° to the left";
           instructionColor = Theme.of(context).colorScheme.onPrimary;
-          textColor = Theme.of(context).primaryColor;
+          textColor = Theme.of(context).colorScheme.onTertiary;
         }
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: 12),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 12.0),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    size: Theme.of(context).textTheme.bodyLarge?.fontSize,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      _location,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Spacer(),
             Center(
               child: SizedBox(
                 width: 320,
@@ -276,21 +319,15 @@ class _QiblaPageState extends State<QiblaPage>
                 ),
               ),
             ),
-            const SizedBox(height: 48),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: instructionColor,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Text(
-                turnText,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: textColor,
-                  fontWeight: FontWeight.bold,
-                ),
+            Spacer(),
+            Text(
+              turnText,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: textColor,
+                fontWeight: FontWeight.bold,
               ),
             ),
+            Spacer(),
           ],
         );
       },
