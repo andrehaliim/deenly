@@ -186,22 +186,18 @@ class _QiblaPageState extends State<QiblaPage>
         diff = (diff + 180) % 360 - 180;
 
         String turnText;
-        Color instructionColor;
         Color textColor;
 
         if (diff.abs() < 2) {
           turnText = "You are facing the Qibla!";
-          instructionColor = Theme.of(context).primaryColor;
           textColor = Colors.green;
         } else if (diff > 0) {
           turnText =
               "Rotate the phone ${diff.toStringAsFixed(0)}° to the right";
-          instructionColor = Theme.of(context).colorScheme.onPrimary;
           textColor = Theme.of(context).colorScheme.onTertiary;
         } else {
           turnText =
               "Rotate the phone ${math.min(diff.abs(), 359).toStringAsFixed(0)}° to the left";
-          instructionColor = Theme.of(context).colorScheme.onPrimary;
           textColor = Theme.of(context).colorScheme.onTertiary;
         }
 

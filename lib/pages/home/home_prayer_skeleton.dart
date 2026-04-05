@@ -138,15 +138,4 @@ class HomePrayerSkeleton extends StatelessWidget {
       ),
     );
   }
-
-  Widget _line({required double width, required double height}) {
-    return Container(
-      height: height,
-      width: width,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-    );
-  }
 }
