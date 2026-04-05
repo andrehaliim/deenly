@@ -43,6 +43,8 @@ class _MainPageState extends State<MainPage> {
             fontStyle: FontStyle.italic,
           ),
         ),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
         actions: [
           IconButton(

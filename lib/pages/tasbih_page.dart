@@ -139,56 +139,61 @@ class _TasbihPageState extends State<TasbihPage>
             ),
           ),
           const SizedBox(height: 30),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              _vibrate();
-              _controller.forward(from: 0.0);
-              if (selectedTarget != -1 && currentCount == selectedTarget) {
-                _vibrateLong();
-                setState(() {
-                  currentCount = 0;
-                });
-              } else {
-                setState(() {
-                  currentCount++;
-                });
-              }
-            },
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: Container(
-                width: width * 0.6,
-                height: width * 0.6,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        currentCount.toString(),
-                        style: Theme.of(context).textTheme.displayLarge
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                      ),
-                      Text(
-                        'TAPS',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                _vibrate();
+                _controller.forward(from: 0.0);
+                if (selectedTarget != -1 && currentCount == selectedTarget) {
+                  _vibrateLong();
+                  setState(() {
+                    currentCount = 0;
+                  });
+                } else {
+                  setState(() {
+                    currentCount++;
+                  });
+                }
+              },
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          currentCount.toString(),
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 80,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
                         ),
-                      ),
-                    ],
+                        Text(
+                          'TAPS',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                letterSpacing: 2,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 30),
           Text(
             'SELECT TARGET',
             style: Theme.of(
