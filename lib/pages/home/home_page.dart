@@ -1,5 +1,6 @@
 import 'package:deenly/models/prayer_model.dart';
-import 'package:deenly/pages/home/home_daily_hadith.dart';
+import 'package:deenly/pages/home/home_hadith_skeleton.dart';
+import 'package:deenly/pages/home/home_hadith_widget.dart';
 import 'package:deenly/pages/home/home_prayer_info.dart';
 import 'package:deenly/pages/home/home_prayer_progress.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
@@ -85,7 +86,7 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 10),
 
-          HomeDailyHadith(),
+          _isGettingPrayerData ? HomeHadithSkeleton() : HomeHadithWidget(),
         ],
       ),
     );

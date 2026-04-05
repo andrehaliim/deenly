@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class HomeDailyHadith extends StatefulWidget {
-  const HomeDailyHadith({super.key});
+class HomeHadithWidget extends StatefulWidget {
+  const HomeHadithWidget({super.key});
 
   @override
-  State<HomeDailyHadith> createState() => _HomeDailyHadithState();
+  State<HomeHadithWidget> createState() => _HomeHadithWidgetState();
 }
 
-class _HomeDailyHadithState extends State<HomeDailyHadith> {
+class _HomeHadithWidgetState extends State<HomeHadithWidget> {
   String hadith =
       "I heard Allah's Messenger (ﷺ) saying, \"The reward of deeds depends upon the intentions and every person will get the reward according to what he has intended. So whoever emigrated for worldly benefits or for a woman to marry, his emigration was for what he emigrated for.\"";
   String narrator = "Umar bin Al-Khattab (May Allah be pleased with him)";
