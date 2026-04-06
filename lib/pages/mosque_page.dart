@@ -116,13 +116,20 @@ class _MosquePageState extends State<MosquePage> {
       itemCount: mosques.length,
       itemBuilder: (context, index) {
         final mosque = mosques[index];
-        return Card(
-          elevation: 4,
+        return Container(
+          width: double.infinity,
           margin: const EdgeInsets.only(bottom: 12.0),
-          shape: RoundedRectangleBorder(
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
-          color: Theme.of(context).colorScheme.primary,
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: () {

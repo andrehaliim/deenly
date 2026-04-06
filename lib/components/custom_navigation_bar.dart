@@ -13,8 +13,9 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      {'icon': Icons.home, 'label': 'HOME'},
+      {'icon': Icons.book, 'label': 'QURAN'},
       {'icon': Icons.mosque, 'label': 'MOSQUE'},
+      {'icon': Icons.home, 'label': 'HOME'},
       {'icon': Icons.explore, 'label': 'QIBLA'},
       {'icon': Icons.fingerprint, 'label': 'TASBIH'},
     ];

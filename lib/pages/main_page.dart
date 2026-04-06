@@ -2,6 +2,7 @@ import 'package:deenly/pages/home/home_page.dart';
 import 'package:deenly/pages/mosque_page.dart';
 import 'package:deenly/components/custom_navigation_bar.dart';
 import 'package:deenly/pages/qibla_page.dart';
+import 'package:deenly/pages/quran_page.dart';
 import 'package:deenly/pages/tasbih_page.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +18,11 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
   final List<Widget> _pages = [
-    const HomePage(),
+    const QuranPage(),
     const MosquePage(),
+    const HomePage(),
     const QiblaPage(),
     const TasbihPage(),
   ];
