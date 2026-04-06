@@ -1,17 +1,16 @@
+import 'package:deenly/models/hadith_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeHadithWidget extends StatefulWidget {
-  const HomeHadithWidget({super.key});
+  final HadithModel hadithModel;
+  const HomeHadithWidget({super.key, required this.hadithModel});
 
   @override
   State<HomeHadithWidget> createState() => _HomeHadithWidgetState();
 }
 
 class _HomeHadithWidgetState extends State<HomeHadithWidget> {
-  String hadith =
-      "I heard Allah's Messenger (ﷺ) saying, \"The reward of deeds depends upon the intentions and every person will get the reward according to what he has intended. So whoever emigrated for worldly benefits or for a woman to marry, his emigration was for what he emigrated for.\"";
-  String narrator = "Umar bin Al-Khattab (May Allah be pleased with him)";
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +54,7 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
           ),
           const SizedBox(height: 10),
           Text(
-            hadith,
+            widget.hadithModel.hadithEnglish,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
               fontStyle: FontStyle.italic,
@@ -63,7 +62,7 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
           ),
           const SizedBox(height: 10),
           Text(
-            narrator,
+            widget.hadithModel.englishNarrator,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.bold,

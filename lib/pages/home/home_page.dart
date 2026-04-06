@@ -1,9 +1,11 @@
+import 'package:deenly/models/hadith_model.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/home/home_hadith_skeleton.dart';
 import 'package:deenly/pages/home/home_hadith_widget.dart';
 import 'package:deenly/pages/home/home_prayer_info.dart';
 import 'package:deenly/pages/home/home_prayer_progress.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
+import 'package:deenly/proxys/hadith_proxy.dart';
 import 'package:deenly/proxys/location_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   bool _isGettingPrayerData = false;
   String _location = '';
   PrayerModel? _prayerModel;
+  HadithModel? _hadithModel;
 
   @override
   void initState() {
@@ -52,10 +55,14 @@ class _HomePageState extends State<HomePage> {
     if (location != prefLocation) {
       prefs.setString('location', location);
     }
+
+    final HadithModel hadithModel = await HadithProxy().getDailyHadith();
+
     setState(() {
       _isGettingPrayerData = false;
       _prayerModel = prayerModel;
       _location = location;
+      _hadithModel = hadithModel;
     });
   }
 
@@ -91,7 +98,9 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 10),
 
-          _isGettingPrayerData ? HomeHadithSkeleton() : HomeHadithWidget(),
+          _isGettingPrayerData
+              ? HomeHadithSkeleton()
+              : HomeHadithWidget(hadithModel: _hadithModel!),
         ],
       ),
     );
