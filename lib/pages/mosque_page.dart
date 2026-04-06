@@ -76,16 +76,19 @@ class _MosquePageState extends State<MosquePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.error_outline,
-                color: Colors.redAccent,
+                color: Theme.of(context).colorScheme.primary,
                 size: 48,
               ),
               const SizedBox(height: 16),
               Text(
                 errorMessage!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white70, fontSize: 16),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -103,11 +106,26 @@ class _MosquePageState extends State<MosquePage> {
     }
 
     if (mosques.isEmpty) {
-      return const Center(
-        child: Text(
-          'No mosques found within 2km.',
-          style: TextStyle(color: Colors.white70, fontSize: 16),
-        ),
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'No mosques found within 2km.',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _fetchMosques,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.teal.shade700,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Try Again'),
+          ),
+        ],
       );
     }
 

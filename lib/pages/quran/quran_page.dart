@@ -1,4 +1,5 @@
-import 'package:deenly/models/quran_model.dart';
+import 'package:deenly/models/surah_list_model.dart';
+import 'package:deenly/pages/quran/quran_detail_page.dart';
 import 'package:deenly/proxys/quran_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,7 +13,7 @@ class QuranPage extends StatefulWidget {
 
 class _QuranPageState extends State<QuranPage> {
   final quranProxy = QuranProxy();
-  List<QuranModel> surahList = [];
+  List<SurahListModel> surahList = [];
   bool isLoading = false;
 
   @override
@@ -45,10 +46,10 @@ class _QuranPageState extends State<QuranPage> {
               borderRadius: BorderRadius.circular(16),
               gradient: LinearGradient(
                 colors: [
-                  Theme.of(context).colorScheme.secondary,
                   Theme.of(
                     context,
-                  ).colorScheme.secondary.withValues(alpha: 0.75),
+                  ).colorScheme.secondary.withValues(alpha: 0.5),
+                  Theme.of(context).colorScheme.secondary,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -59,6 +60,17 @@ class _QuranPageState extends State<QuranPage> {
               onTap: () {},
               child: Stack(
                 children: [
+                  Positioned(
+                    right: -20,
+                    bottom: -20,
+                    child: Image.asset(
+                      'assets/images/quran.png',
+                      height: 120,
+                      fit: BoxFit.contain,
+                      color: Colors.white.withValues(alpha: 0.2),
+                      colorBlendMode: BlendMode.modulate,
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -67,7 +79,7 @@ class _QuranPageState extends State<QuranPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Last Read',
+                              'Continue Reading',
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     color: Theme.of(
@@ -99,11 +111,6 @@ class _QuranPageState extends State<QuranPage> {
                             ),
                           ],
                         ),
-                        Spacer(),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Theme.of(context).colorScheme.onTertiary,
-                        ),
                       ],
                     ),
                   ),
@@ -129,86 +136,99 @@ class _QuranPageState extends State<QuranPage> {
     );
   }
 
-  Widget listSurah(List<QuranModel> surahList) {
+  Widget listSurah(List<SurahListModel> surahList) {
     return ListView.builder(
       itemCount: surahList.length,
       itemBuilder: (context, index) {
         final data = surahList[index];
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12.0),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  data.chapter.toString(),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => QuranDetailPage(surah: data),
               ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    data.name,
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12.0),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    data.chapter.toString(),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onTertiary,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
-                  Row(
-                    children: [
-                      Icon(
-                        data.revelation == 'Madina' ? Icons.mosque : Icons.home,
-                        size: Theme.of(context).textTheme.bodySmall?.fontSize,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onTertiary.withValues(alpha: 0.5),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        width: 4,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onTertiary.withValues(alpha: 0.5),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Text(
-                        '${data.verses} Ayahs',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onTertiary.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Spacer(),
-              Text(
-                data.arabicname,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onTertiary.withValues(alpha: 0.5),
                 ),
-              ),
-            ],
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data.name,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onTertiary,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          data.revelation == 'Madina'
+                              ? Icons.mosque
+                              : Icons.home,
+                          size: Theme.of(context).textTheme.bodySmall?.fontSize,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onTertiary.withValues(alpha: 0.5),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          width: 4,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onTertiary.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Text(
+                          '${data.verses} Ayahs',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onTertiary.withValues(alpha: 0.5),
+                              ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Text(
+                  data.arabicname,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onTertiary.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
