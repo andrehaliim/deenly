@@ -49,15 +49,18 @@ class MosqueProxy {
             ? "$houseNumber $street".trim()
             : "";
 
-        fetchedMosques.add(
-          MosqueModel(
-            name: tags['name'] ?? 'Unknown Mosque',
-            lat: mLat,
-            lon: mLon,
-            distance: distance,
-            address: osmAddress.isEmpty ? 'Address pending...' : osmAddress,
-          ),
-        );
+        String? name = tags['name'];
+        if (name != null && name.isNotEmpty) {
+          fetchedMosques.add(
+            MosqueModel(
+              name: name,
+              lat: mLat,
+              lon: mLon,
+              distance: distance,
+              address: osmAddress.isEmpty ? 'Address pending...' : osmAddress,
+            ),
+          );
+        }
       }
 
       fetchedMosques.sort((a, b) => a.distance.compareTo(b.distance));
