@@ -27,17 +27,22 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadData(true);
   }
 
-  Future<void> _loadData() async {
+  Future<void> _loadData(bool isInit) async {
     setState(() {
       _isGettingPrayerData = true;
     });
     final prefs = await SharedPreferences.getInstance();
     final String prefLocation = prefs.getString('location') ?? '';
 
-    final Position position = await _locationProxy.requestLocation();
+    Position position;
+    if (isInit && prefLocation.isEmpty) {
+      position = _locationProxy.getDefaultPosition();
+    } else {
+      position = await _locationProxy.requestLocation();
+    }
     final String location = await _locationProxy.getAddressFromLatLng(position);
 
     final PrayerModel prayerModel = await _prayerProxy.getDailyPrayer(
@@ -77,7 +82,7 @@ class _HomePageState extends State<HomePage> {
               : HomePrayerInfo(
                   location: _location,
                   prayerModel: _prayerModel!,
-                  onRefreshLocation: _loadData,
+                  onRefreshLocation: () => _loadData(false),
                 ),
 
           const SizedBox(height: 10),

@@ -3,28 +3,45 @@ import 'package:geolocator/geolocator.dart';
 
 class LocationProxy {
   Future<Position> requestLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return getDefaultPosition();
       }
-    }
 
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.',
-      );
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return getDefaultPosition();
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return getDefaultPosition();
+      }
+      return await Geolocator.getCurrentPosition();
+    } catch (e) {
+      return getDefaultPosition();
     }
-    return await Geolocator.getCurrentPosition();
+  }
+
+  Position getDefaultPosition() {
+    return Position(
+      latitude: -6.2088,
+      longitude: 106.8456,
+      timestamp: DateTime.now(),
+      accuracy: 0,
+      altitude: 0,
+      heading: 0,
+      speed: 0,
+      speedAccuracy: 0,
+      altitudeAccuracy: 0,
+      headingAccuracy: 0,
+    );
   }
 
   Future<String> getAddressFromLatLng(Position position) async {
@@ -36,12 +53,14 @@ class LocationProxy {
 
       Placemark place = placemarks[0];
 
-      String city = place.subAdministrativeArea?? '';
+      String city = place.subAdministrativeArea ?? '';
       String country = place.country ?? '';
+
+      if (city.isEmpty && country.isEmpty) return 'Jakarta, Indonesia';
 
       return '$city, $country';
     } catch (e) {
-      return '';
+      return 'Jakarta, Indonesia';
     }
   }
 }
