@@ -19,6 +19,7 @@ class _QuranPageState extends State<QuranPage> {
   List<SurahListModel> surahList = [];
   bool isLoading = false;
   SurahListModel? currentSurah;
+  int? lastSurahAyah;
 
   @override
   void initState() {
@@ -31,11 +32,13 @@ class _QuranPageState extends State<QuranPage> {
     final prefs = await SharedPreferences.getInstance();
 
     final surahString = prefs.getString('currentSurah');
+    final lastAyahIndex = prefs.getInt('lastAyahIndex');
 
     if (surahString != null) {
       final surahMap = jsonDecode(surahString);
       setState(() {
         currentSurah = SurahListModel.fromJson(surahMap, surahMap['verses']);
+        lastSurahAyah = lastAyahIndex;
       });
     }
   }
@@ -76,14 +79,17 @@ class _QuranPageState extends State<QuranPage> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      bool refresh = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
                               QuranDetailPage(surah: currentSurah!),
                         ),
                       );
+                      if (refresh) {
+                        loadCurrentSurah();
+                      }
                     },
                     child: Stack(
                       children: [
@@ -132,7 +138,7 @@ class _QuranPageState extends State<QuranPage> {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    'Ayah No: ${currentSurah!.verses}',
+                                    'Ayah No: $lastSurahAyah',
                                     style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
                                           color: Theme.of(
@@ -178,6 +184,7 @@ class _QuranPageState extends State<QuranPage> {
           onTap: () async {
             final prefs = await SharedPreferences.getInstance();
             prefs.setString('currentSurah', jsonEncode(data.toJson()));
+            prefs.setInt('lastAyahIndex', 0);
             bool refresh = await Navigator.push(
               context,
               MaterialPageRoute(
