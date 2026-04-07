@@ -37,13 +37,15 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
             color: Theme.of(context).colorScheme.primary,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, true);
           },
         ),
         title: Text(
@@ -59,10 +61,26 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : listSurahDetail(surahDetailList),
+        ),
+      ),
+    );
+  }
+
+  Widget listSurahDetail(List<SurahDetailModel> surahDetailList) {
+    return ListView.builder(
+      itemCount: surahDetailList.length,
+      itemBuilder: (context, index) {
+        final data = surahDetailList[index];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Visibility(
+              visible: index == 0,
+              child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
@@ -135,27 +153,8 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : listSurahDetail(surahDetailList),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget listSurahDetail(List<SurahDetailModel> surahDetailList) {
-    return ListView.builder(
-      itemCount: surahDetailList.length,
-      itemBuilder: (context, index) {
-        final data = surahDetailList[index];
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+            ),
+            Visibility(visible: index == 0, child: const SizedBox(height: 20)),
             Row(
               children: [
                 Container(
@@ -208,10 +207,13 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
               ),
             ),
             const SizedBox(height: 20),
-            Divider(
-              color: Theme.of(
-                context,
-              ).colorScheme.onTertiary.withValues(alpha: 0.25),
+            Visibility(
+              visible: index != surahDetailList.length - 1,
+              child: Divider(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onTertiary.withValues(alpha: 0.25),
+              ),
             ),
           ],
         );

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_list_model.dart';

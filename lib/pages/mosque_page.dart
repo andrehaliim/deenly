@@ -106,26 +106,29 @@ class _MosquePageState extends State<MosquePage> {
     }
 
     if (mosques.isEmpty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'No mosques found within 2km.',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 16,
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'No mosques found within 2km.',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 16,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _fetchMosques,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal.shade700,
-              foregroundColor: Colors.white,
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _fetchMosques,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal.shade700,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Try Again'),
             ),
-            child: const Text('Try Again'),
-          ),
-        ],
+          ],
+        ),
       );
     }
 
