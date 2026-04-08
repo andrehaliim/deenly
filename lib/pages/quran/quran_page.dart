@@ -67,15 +67,9 @@ class _QuranPageState extends State<QuranPage> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    gradient: LinearGradient(
-                      colors: [
-                        Theme.of(
-                          context,
-                        ).colorScheme.secondary.withValues(alpha: 0.5),
-                        Theme.of(context).colorScheme.secondary,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/quran_background.jpg'),
+                      fit: BoxFit.cover,
                     ),
                   ),
                   clipBehavior: Clip.antiAlias,
@@ -92,67 +86,51 @@ class _QuranPageState extends State<QuranPage> {
                         loadCurrentSurah();
                       }
                     },
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          right: -20,
-                          bottom: -20,
-                          child: Image.asset(
-                            'assets/images/quran.png',
-                            height: 120,
-                            fit: BoxFit.contain,
-                            color: Colors.white.withValues(alpha: 0.2),
-                            colorBlendMode: BlendMode.modulate,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Continue Reading',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onTertiary,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    currentSurah!.name,
-                                    style: GoogleFonts.notoSerif(
-                                      fontSize: Theme.of(
-                                        context,
-                                      ).textTheme.titleLarge?.fontSize,
-                                      fontWeight: FontWeight.bold,
+                              Text(
+                                'Continue Reading',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onTertiary,
-                                      fontStyle: FontStyle.italic,
+                                      ).colorScheme.onPrimary,
                                     ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    'Ayah No: $lastSurahAyah',
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onTertiary,
-                                        ),
-                                  ),
-                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                currentSurah!.name,
+                                style: GoogleFonts.notoSerif(
+                                  fontSize: Theme.of(
+                                    context,
+                                  ).textTheme.titleLarge?.fontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                'Ayah No: $lastSurahAyah',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 )
