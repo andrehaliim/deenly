@@ -154,7 +154,7 @@ class AppTheme {
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,
       primary: _darkPrimary,
-      onPrimary: Colors.black,
+      onPrimary: Color(0xFFE8E8E8),
       primaryContainer: Color(0xFF005046),
       onPrimaryContainer: Colors.white,
       secondary: _darkSecondary,

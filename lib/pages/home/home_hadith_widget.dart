@@ -24,8 +24,8 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.secondary,
-            Theme.of(context).colorScheme.secondaryContainer,
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
+            Theme.of(context).colorScheme.primary,
           ],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -46,7 +46,7 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
             child: Text(
               'Daily Hadith',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -55,15 +55,16 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
           Text(
             widget.hadithModel.hadithEnglish,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme.of(context).colorScheme.onPrimary,
               fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 10),
           Text(
             widget.hadithModel.englishNarrator,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme.of(context).colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -8,8 +8,7 @@ class HomePrayerSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = Theme.of(context).colorScheme.primary;
-    final highlightColor = const Color(0xFF00695C);
+    final baseColor = Theme.of(context).colorScheme.onPrimary;
     String formattedDate = DateFormat('dd MMM yyyy').format(DateTime.now());
 
     return Padding(
@@ -18,13 +17,13 @@ class HomePrayerSkeleton extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              const Color(0xFF00695C),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+          image: DecorationImage(
+            colorFilter: ColorFilter.mode(
+              Colors.black.withValues(alpha: 0.5),
+              BlendMode.darken,
+            ),
+            image: AssetImage('assets/images/background.jpg'),
+            fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
@@ -36,8 +35,8 @@ class HomePrayerSkeleton extends StatelessWidget {
           ],
         ),
         child: Shimmer.fromColors(
-          baseColor: baseColor.withValues(alpha: 0.6),
-          highlightColor: highlightColor,
+          baseColor: baseColor.withValues(alpha: 0.5),
+          highlightColor: baseColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

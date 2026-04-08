@@ -39,13 +39,13 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              const Color(0xFF00695C),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+          image: DecorationImage(
+            colorFilter: ColorFilter.mode(
+              Colors.black.withValues(alpha: 0.5),
+              BlendMode.darken,
+            ),
+            image: AssetImage('assets/images/background.jpg'),
+            fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
@@ -59,6 +59,40 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: widget.onRefreshLocation,
+                    child: Icon(
+                      Icons.location_on,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      widget.location,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Text(
@@ -77,6 +111,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                 ),
               ],
             ),
+            const SizedBox(height: 10),
             Text(
               _next['nextPrayer'] ?? '',
               style: GoogleFonts.notoSerif(
@@ -92,38 +127,6 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: widget.onRefreshLocation,
-                    child: Icon(
-                      Icons.location_on,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      widget.location,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
               ),
             ),
             const SizedBox(height: 10),

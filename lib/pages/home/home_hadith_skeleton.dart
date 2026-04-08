@@ -11,8 +11,7 @@ class HomeHadithSkeleton extends StatefulWidget {
 class _HomeHadithSkeletonState extends State<HomeHadithSkeleton> {
   @override
   Widget build(BuildContext context) {
-    final baseColor = const Color(0xFFE6D5B8);
-    final highlightColor = const Color(0xFFF3E7D3);
+    final baseColor = Theme.of(context).colorScheme.onPrimary;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12.0),
       width: double.infinity,
@@ -20,8 +19,8 @@ class _HomeHadithSkeletonState extends State<HomeHadithSkeleton> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.secondary,
-            Theme.of(context).colorScheme.secondaryContainer,
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
+            Theme.of(context).colorScheme.primary,
           ],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -36,8 +35,8 @@ class _HomeHadithSkeletonState extends State<HomeHadithSkeleton> {
         ],
       ),
       child: Shimmer.fromColors(
-        baseColor: baseColor.withValues(alpha: 0.6),
-        highlightColor: highlightColor,
+        baseColor: baseColor.withValues(alpha: 0.5),
+        highlightColor: baseColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
