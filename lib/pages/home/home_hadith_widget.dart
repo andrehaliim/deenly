@@ -11,7 +11,6 @@ class HomeHadithWidget extends StatefulWidget {
 }
 
 class _HomeHadithWidgetState extends State<HomeHadithWidget> {
-
   @override
   Widget build(BuildContext context) {
     return dailyHadith();
@@ -34,8 +33,8 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 10,
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 20,
             offset: const Offset(0, 4),
           ),
         ],

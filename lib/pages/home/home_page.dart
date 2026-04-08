@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
     if (location != prefLocation) {
       prefs.setString('location', location);
     }
-      prefs.setString('prayer_data', json.encode(prayerModel.toJson()));
+    prefs.setString('prayer_data', json.encode(prayerModel.toJson()));
 
     final HadithModel hadithModel = await HadithProxy().getDailyHadith();
 
@@ -104,6 +104,8 @@ class _HomePageState extends State<HomePage> {
           _isGettingPrayerData
               ? HomeHadithSkeleton()
               : HomeHadithWidget(hadithModel: _hadithModel!),
+
+          const SizedBox(height: 12),
         ],
       ),
     );
