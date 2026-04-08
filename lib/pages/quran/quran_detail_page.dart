@@ -117,7 +117,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
               BoxShadow(
                 color: Theme.of(
                   context,
-                ).colorScheme.secondary.withOpacity(0.25),
+                ).colorScheme.secondary.withValues(alpha: 0.25),
                 blurRadius: 2,
                 offset: const Offset(0, 2),
               ),
@@ -151,7 +151,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     decoration: BoxDecoration(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onTertiary.withOpacity(0.5),
+                      ).colorScheme.onTertiary.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -204,7 +204,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     borderRadius: BorderRadius.circular(16),
                     color: Theme.of(
                       context,
-                    ).colorScheme.tertiary.withOpacity(0.25),
+                    ).colorScheme.tertiary.withValues(alpha: 0.25),
                   ),
                   child: Text(
                     '${data.chapter}:${data.verse}',
@@ -242,7 +242,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                 fontWeight: FontWeight.bold,
                 color: Theme.of(
                   context,
-                ).colorScheme.onTertiary.withOpacity(0.5),
+                ).colorScheme.onTertiary.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 20),
@@ -251,7 +251,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
               child: Divider(
                 color: Theme.of(
                   context,
-                ).colorScheme.onTertiary.withOpacity(0.25),
+                ).colorScheme.onTertiary.withValues(alpha: 0.25),
               ),
             ),
           ],
