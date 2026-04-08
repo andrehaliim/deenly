@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/models/prayer_model.dart';
@@ -17,17 +18,6 @@ class DrawerPage extends StatefulWidget {
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-  bool _isFajrEnabled = false;
-  bool _isDhuhrEnabled = false;
-  bool _isAsrEnabled = false;
-  bool _isMaghribEnabled = false;
-  bool _isIshaEnabled = false;
-
-  int _fajradjustment = 0;
-  int _dhuhradjustment = 0;
-  int _asradjustment = 0;
-  int _maghribadjustment = 0;
-  int _ishadjustment = 0;
 
   Future<void> _schedulePrayerNotification({
     required String prayerName,
@@ -97,6 +87,8 @@ class _DrawerPageState extends State<DrawerPage> {
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final provider = Provider.of<ThemeProvider>(context);
+    final drawerProvider = Provider.of<DrawerProvider>(context);
+
 
     return Drawer(
       width: width * 0.75,
@@ -167,11 +159,9 @@ class _DrawerPageState extends State<DrawerPage> {
               _buildPrayerNotificationSetting(
                 prayerName: 'Fajr',
                 notifId: 1,
-                isEnabled: _isFajrEnabled,
+                isEnabled: drawerProvider.isFajrEnabled,
                 onChanged: (value) {
-                  setState(() {
-                    _isFajrEnabled = value;
-                  });
+                  drawerProvider.toggleFajr(value);
                   _schedulePrayerNotification(
                     prayerName: 'Fajr',
                     notifId: 1,
@@ -183,11 +173,9 @@ class _DrawerPageState extends State<DrawerPage> {
               _buildPrayerNotificationSetting(
                 prayerName: 'Dhuhr',
                 notifId: 2,
-                isEnabled: _isDhuhrEnabled,
+                isEnabled: drawerProvider.isDhuhrEnabled,
                 onChanged: (value) {
-                  setState(() {
-                    _isDhuhrEnabled = value;
-                  });
+                  drawerProvider.toggleDhuhr(value);
                   _schedulePrayerNotification(
                     prayerName: 'Dhuhr',
                     notifId: 2,
@@ -199,11 +187,9 @@ class _DrawerPageState extends State<DrawerPage> {
               _buildPrayerNotificationSetting(
                 prayerName: 'Asr',
                 notifId: 3,
-                isEnabled: _isAsrEnabled,
+                isEnabled: drawerProvider.isAsrEnabled,
                 onChanged: (value) {
-                  setState(() {
-                    _isAsrEnabled = value;
-                  });
+                  drawerProvider.toggleAsr(value);
                   _schedulePrayerNotification(
                     prayerName: 'Asr',
                     notifId: 3,
@@ -215,11 +201,9 @@ class _DrawerPageState extends State<DrawerPage> {
               _buildPrayerNotificationSetting(
                 prayerName: 'Maghrib',
                 notifId: 4,
-                isEnabled: _isMaghribEnabled,
+                isEnabled: drawerProvider.isMaghribEnabled,
                 onChanged: (value) {
-                  setState(() {
-                    _isMaghribEnabled = value;
-                  });
+                  drawerProvider.toggleMaghrib(value);
                   _schedulePrayerNotification(
                     prayerName: 'Maghrib',
                     notifId: 4,
@@ -231,11 +215,9 @@ class _DrawerPageState extends State<DrawerPage> {
               _buildPrayerNotificationSetting(
                 prayerName: 'Isha',
                 notifId: 5,
-                isEnabled: _isIshaEnabled,
+                isEnabled: drawerProvider.isIshaEnabled,
                 onChanged: (value) {
-                  setState(() {
-                    _isIshaEnabled = value;
-                  });
+                  drawerProvider.toggleIsha(value);
                   _schedulePrayerNotification(
                     prayerName: 'Isha',
                     notifId: 5,
@@ -246,36 +228,26 @@ class _DrawerPageState extends State<DrawerPage> {
               const SizedBox(height: 24),
               _buildTitle('Time Adjustment'),
               const SizedBox(height: 12),
-              _buildPrayerTimeAdjustment('Fajr', _fajradjustment, (value) {
-                setState(() {
-                  _fajradjustment = value;
-                });
+              _buildPrayerTimeAdjustment('Fajr', drawerProvider.fajradjustment, (value) {
+                drawerProvider.setFajrAdjustment(value);
               }),
               const SizedBox(height: 6),
-              _buildPrayerTimeAdjustment('Dhuhr', _dhuhradjustment, (value) {
-                setState(() {
-                  _dhuhradjustment = value;
-                });
+              _buildPrayerTimeAdjustment('Dhuhr', drawerProvider.dhuhradjustment, (value) {
+                drawerProvider.setDhuhrAdjustment(value);
               }),
               const SizedBox(height: 6),
-              _buildPrayerTimeAdjustment('Asr', _asradjustment, (value) {
-                setState(() {
-                  _asradjustment = value;
-                });
+              _buildPrayerTimeAdjustment('Asr', drawerProvider.asradjustment, (value) {
+                drawerProvider.setAsrAdjustment(value);
               }),
               const SizedBox(height: 6),
-              _buildPrayerTimeAdjustment('Maghrib', _maghribadjustment, (
+              _buildPrayerTimeAdjustment('Maghrib', drawerProvider.maghribadjustment, (
                 value,
               ) {
-                setState(() {
-                  _maghribadjustment = value;
-                });
+                drawerProvider.setMaghribAdjustment(value);
               }),
               const SizedBox(height: 6),
-              _buildPrayerTimeAdjustment('Isha', _ishadjustment, (value) {
-                setState(() {
-                  _ishadjustment = value;
-                });
+              _buildPrayerTimeAdjustment('Isha', drawerProvider.ishadjustment, (value) {
+                drawerProvider.setIshaAdjustment(value);
               }),
               const SizedBox(height: 20),
               Center(

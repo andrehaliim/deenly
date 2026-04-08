@@ -1,4 +1,5 @@
 import 'package:deenly/components/app_theme.dart';
+import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/pages/main_page.dart';
 import 'package:deenly/components/theme_provider.dart';
@@ -17,8 +18,11 @@ void main() {
   SharedPreferences.getInstance().then((prefs) {
     final isDark = prefs.getBool('isDarkMode') ?? false;
     runApp(
-      ChangeNotifierProvider(
-        create: (_) => ThemeProvider(isDark),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ThemeProvider(isDark)),
+          ChangeNotifierProvider(create: (_) => DrawerProvider(prefs)),
+        ],
         child: const MyApp(),
       ),
     );
