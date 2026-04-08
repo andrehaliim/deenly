@@ -19,7 +19,7 @@ class DrawerPage extends StatefulWidget {
 
 class _DrawerPageState extends State<DrawerPage> {
 
-  Future<void> _schedulePrayerNotification({
+  Future<bool> _schedulePrayerNotification({
     required String prayerName,
     required int notifId,
     required bool isEnabled,
@@ -72,13 +72,21 @@ class _DrawerPageState extends State<DrawerPage> {
 
       final scheduledTime = tz.TZDateTime.from(prayerDateTime, tz.local);
 
-      await NotificationHelper().schedulePrayerNotification(
+      bool isScheduled = await NotificationHelper().schedulePrayerNotification(
         notifId: notifId,
         prayerName: prayerName,
         scheduledTime: scheduledTime,
       );
+
+      if (!isScheduled) {
+        debugPrint("Notification failed to schedule for $prayerName");
+        return false; 
+      }
+
+      return true;
     } else {
       await NotificationHelper().cancelNotification(notifId);
+      return true;
     }
   }
 
@@ -160,13 +168,22 @@ class _DrawerPageState extends State<DrawerPage> {
                 prayerName: 'Fajr',
                 notifId: 1,
                 isEnabled: drawerProvider.isFajrEnabled,
-                onChanged: (value) {
+                onChanged: (value) async {
                   drawerProvider.toggleFajr(value);
-                  _schedulePrayerNotification(
+                  bool success = await _schedulePrayerNotification(
                     prayerName: 'Fajr',
                     notifId: 1,
                     isEnabled: value,
                   );
+
+                  if (!success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to schedule notification'),
+                      ),
+                    );
+                    drawerProvider.toggleFajr(false);
+                  }
                 },
               ),
               const SizedBox(height: 6),
@@ -174,13 +191,22 @@ class _DrawerPageState extends State<DrawerPage> {
                 prayerName: 'Dhuhr',
                 notifId: 2,
                 isEnabled: drawerProvider.isDhuhrEnabled,
-                onChanged: (value) {
+                onChanged: (value) async {
                   drawerProvider.toggleDhuhr(value);
-                  _schedulePrayerNotification(
+                  bool success = await _schedulePrayerNotification(
                     prayerName: 'Dhuhr',
                     notifId: 2,
                     isEnabled: value,
                   );
+
+                  if (!success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to schedule notification'),
+                      ),
+                    );
+                    drawerProvider.toggleDhuhr(false);
+                  }
                 },
               ),
               const SizedBox(height: 6),
@@ -188,13 +214,22 @@ class _DrawerPageState extends State<DrawerPage> {
                 prayerName: 'Asr',
                 notifId: 3,
                 isEnabled: drawerProvider.isAsrEnabled,
-                onChanged: (value) {
+                onChanged: (value) async {
                   drawerProvider.toggleAsr(value);
-                  _schedulePrayerNotification(
+                  bool success = await _schedulePrayerNotification(
                     prayerName: 'Asr',
                     notifId: 3,
                     isEnabled: value,
                   );
+
+                  if (!success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to schedule notification'),
+                      ),
+                    );
+                    drawerProvider.toggleAsr(false);
+                  }
                 },
               ),
               const SizedBox(height: 6),
@@ -202,13 +237,22 @@ class _DrawerPageState extends State<DrawerPage> {
                 prayerName: 'Maghrib',
                 notifId: 4,
                 isEnabled: drawerProvider.isMaghribEnabled,
-                onChanged: (value) {
+                onChanged: (value) async {
                   drawerProvider.toggleMaghrib(value);
-                  _schedulePrayerNotification(
+                  bool success = await _schedulePrayerNotification(
                     prayerName: 'Maghrib',
                     notifId: 4,
                     isEnabled: value,
                   );
+
+                  if (!success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to schedule notification'),
+                      ),
+                    );
+                    drawerProvider.toggleMaghrib(false);
+                  }
                 },
               ),
               const SizedBox(height: 6),
@@ -216,13 +260,22 @@ class _DrawerPageState extends State<DrawerPage> {
                 prayerName: 'Isha',
                 notifId: 5,
                 isEnabled: drawerProvider.isIshaEnabled,
-                onChanged: (value) {
+                onChanged: (value) async {
                   drawerProvider.toggleIsha(value);
-                  _schedulePrayerNotification(
+                  bool success = await _schedulePrayerNotification(
                     prayerName: 'Isha',
                     notifId: 5,
                     isEnabled: value,
                   );
+
+                  if (!success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to schedule notification'),
+                      ),
+                    );
+                    drawerProvider.toggleIsha(false);
+                  }
                 },
               ),
               const SizedBox(height: 24),

@@ -80,11 +80,16 @@ class NotificationHelper {
     );
   }
 
-  Future<void> schedulePrayerNotification({
+  Future<bool> schedulePrayerNotification({
     required int notifId,
     required String prayerName,
     required TZDateTime scheduledTime,
   }) async {
+    bool isGranted = await requestPermission();
+    if (!isGranted) {
+      return false;
+    }
+
     const androidNotificationDetails = AndroidNotificationDetails(
       'deenly_notification_channel',
       'Deenly Notifications',
@@ -106,6 +111,7 @@ class NotificationHelper {
     );
 
     debugPrint("Notification scheduled for $prayerName at $scheduledTime");
+    return true;
   }
 
   Future<void> cancelAllNotifications() async {
