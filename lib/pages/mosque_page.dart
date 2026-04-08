@@ -176,10 +176,10 @@ class _MosquePageState extends State<MosquePage> {
                     children: [
                       Text(
                         mosque.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -188,14 +188,14 @@ class _MosquePageState extends State<MosquePage> {
                           Icon(
                             Icons.location_on,
                             size: 14,
-                            color: Colors.teal.shade200,
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             _formatDistance(mosque.distance),
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.teal.shade100,
+                              color: Theme.of(context).colorScheme.surface,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -205,9 +205,9 @@ class _MosquePageState extends State<MosquePage> {
                       if (mosque.address != null)
                         Text(
                           mosque.address!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color: Colors.white70,
+                            color: Theme.of(context).colorScheme.surface,
                             height: 1.4,
                           ),
                         )

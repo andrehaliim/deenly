@@ -83,9 +83,10 @@ class _TasbihPageState extends State<TasbihPage>
         children: [
           Text(
             'Current Session',
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onTertiary,
+            ),
           ),
           const SizedBox(height: 5),
           SizedBox(
@@ -195,9 +196,10 @@ class _TasbihPageState extends State<TasbihPage>
           const SizedBox(height: 30),
           Text(
             'SELECT TARGET',
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onTertiary,
+            ),
           ),
           const SizedBox(height: 20),
           Container(
@@ -229,7 +231,10 @@ class _TasbihPageState extends State<TasbihPage>
                         child: Text(
                           '33',
                           style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onTertiary,
+                              ),
                         ),
                       ),
                     ),
@@ -252,7 +257,10 @@ class _TasbihPageState extends State<TasbihPage>
                         child: Text(
                           '100',
                           style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onTertiary,
+                              ),
                         ),
                       ),
                     ),
@@ -276,7 +284,10 @@ class _TasbihPageState extends State<TasbihPage>
                         child: Text(
                           '∞',
                           style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onTertiary,
+                              ),
                         ),
                       ),
                     ),

@@ -69,6 +69,7 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
+                  color: Theme.of(context).colorScheme.onTertiary,
                 ),
               ),
               Container(

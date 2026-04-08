@@ -159,9 +159,10 @@ class _QuranPageState extends State<QuranPage> {
           const SizedBox(height: 12),
           Text(
             'Al Quran',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onTertiary,
+            ),
           ),
           const SizedBox(height: 12),
           Expanded(
