@@ -4,6 +4,7 @@ import 'package:deenly/models/surah_list_model.dart';
 import 'package:deenly/pages/quran/quran_detail_page.dart';
 import 'package:deenly/proxys/quran_proxy.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -229,10 +230,10 @@ class _QuranPageState extends State<QuranPage> {
                     ),
                     Row(
                       children: [
-                        Icon(
+                        FaIcon(
                           data.revelation == 'Madina'
-                              ? Icons.mosque
-                              : Icons.home,
+                              ? FontAwesomeIcons.mosque
+                              : FontAwesomeIcons.kaaba,
                           size: Theme.of(context).textTheme.bodySmall?.fontSize,
                           color: Theme.of(
                             context,

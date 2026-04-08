@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomBottomNav extends StatelessWidget {
   final int selectedIndex;
@@ -13,11 +14,11 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      {'icon': Icons.book, 'label': 'QURAN'},
-      {'icon': Icons.mosque, 'label': 'MOSQUE'},
-      {'icon': Icons.home, 'label': 'HOME'},
-      {'icon': Icons.explore, 'label': 'QIBLA'},
-      {'icon': Icons.fingerprint, 'label': 'TASBIH'},
+      {'icon': FontAwesomeIcons.bookQuran, 'label': 'QURAN'},
+      {'icon': FontAwesomeIcons.mosque, 'label': 'MOSQUE'},
+      {'icon': FontAwesomeIcons.house, 'label': 'HOME'},
+      {'icon': FontAwesomeIcons.compass, 'label': 'QIBLA'},
+      {'icon': FontAwesomeIcons.fingerprint, 'label': 'TASBIH'},
     ];
 
     return Container(
@@ -42,8 +43,8 @@ class CustomBottomNav extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      items[index]['icon'] as IconData,
+                    FaIcon(
+                      items[index]['icon'] as FaIconData,
                       color: isSelected ? Colors.white : Colors.grey,
                       size: 22,
                     ),
