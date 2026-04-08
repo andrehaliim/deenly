@@ -28,6 +28,9 @@ class DrawerProvider extends ChangeNotifier {
   int get maghribadjustment => _maghribadjustment;
   int get ishadjustment => _ishadjustment;
 
+  bool _isAdjustmentExpanded = false;
+  bool get isAdjustmentExpanded => _isAdjustmentExpanded;
+
   DrawerProvider(this.prefs) {
     _loadSettings();
   }
@@ -105,5 +108,10 @@ class DrawerProvider extends ChangeNotifier {
     await prefs.setInt('ishAdjustment', value);
     notifyListeners();
   }
+
+  void toggleAdjustmentExpansion() {
+    _isAdjustmentExpanded = !_isAdjustmentExpanded;
+    notifyListeners();
+  }
 }
-
+

@@ -18,7 +18,6 @@ class DrawerPage extends StatefulWidget {
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-
   Future<bool> _schedulePrayerNotification({
     required String prayerName,
     required int notifId,
@@ -80,7 +79,7 @@ class _DrawerPageState extends State<DrawerPage> {
 
       if (!isScheduled) {
         debugPrint("Notification failed to schedule for $prayerName");
-        return false; 
+        return false;
       }
 
       return true;
@@ -96,7 +95,6 @@ class _DrawerPageState extends State<DrawerPage> {
     final width = size.width;
     final provider = Provider.of<ThemeProvider>(context);
     final drawerProvider = Provider.of<DrawerProvider>(context);
-
 
     return Drawer(
       width: width * 0.75,
@@ -279,29 +277,78 @@ class _DrawerPageState extends State<DrawerPage> {
                 },
               ),
               const SizedBox(height: 24),
-              _buildTitle('Time Adjustment'),
+              Row(
+                children: [
+                  _buildTitle('Time Adjustment'),
+                  const Spacer(),
+                  IconButton(
+                    icon: drawerProvider.isAdjustmentExpanded
+                        ? const Icon(Icons.arrow_drop_up)
+                        : const Icon(Icons.arrow_drop_down),
+                    onPressed: () {
+                      drawerProvider.toggleAdjustmentExpansion();
+                    },
+                  ),
+                ],
+              ),
               const SizedBox(height: 12),
-              _buildPrayerTimeAdjustment('Fajr', drawerProvider.fajradjustment, (value) {
-                drawerProvider.setFajrAdjustment(value);
-              }),
-              const SizedBox(height: 6),
-              _buildPrayerTimeAdjustment('Dhuhr', drawerProvider.dhuhradjustment, (value) {
-                drawerProvider.setDhuhrAdjustment(value);
-              }),
-              const SizedBox(height: 6),
-              _buildPrayerTimeAdjustment('Asr', drawerProvider.asradjustment, (value) {
-                drawerProvider.setAsrAdjustment(value);
-              }),
-              const SizedBox(height: 6),
-              _buildPrayerTimeAdjustment('Maghrib', drawerProvider.maghribadjustment, (
-                value,
-              ) {
-                drawerProvider.setMaghribAdjustment(value);
-              }),
-              const SizedBox(height: 6),
-              _buildPrayerTimeAdjustment('Isha', drawerProvider.ishadjustment, (value) {
-                drawerProvider.setIshaAdjustment(value);
-              }),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                child: ClipRect(
+                  child: AnimatedAlign(
+                    alignment: Alignment.topCenter,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                    heightFactor:
+                        drawerProvider.isAdjustmentExpanded ? 1.0 : 0.0,
+                    child: Column(
+                      children: [
+                        _buildPrayerTimeAdjustment(
+                          'Fajr',
+                          drawerProvider.fajradjustment,
+                          (value) {
+                            drawerProvider.setFajrAdjustment(value);
+                          },
+                        ),
+
+                        const SizedBox(height: 6),
+                        _buildPrayerTimeAdjustment(
+                          'Dhuhr',
+                          drawerProvider.dhuhradjustment,
+                          (value) {
+                            drawerProvider.setDhuhrAdjustment(value);
+                          },
+                        ),
+                        const SizedBox(height: 6),
+                        _buildPrayerTimeAdjustment(
+                          'Asr',
+                          drawerProvider.asradjustment,
+                          (value) {
+                            drawerProvider.setAsrAdjustment(value);
+                          },
+                        ),
+                        const SizedBox(height: 6),
+                        _buildPrayerTimeAdjustment(
+                          'Maghrib',
+                          drawerProvider.maghribadjustment,
+                          (value) {
+                            drawerProvider.setMaghribAdjustment(value);
+                          },
+                        ),
+                        const SizedBox(height: 6),
+                        _buildPrayerTimeAdjustment(
+                          'Isha',
+                          drawerProvider.ishadjustment,
+                          (value) {
+                            drawerProvider.setIshaAdjustment(value);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
               Center(
                 child: Text(
