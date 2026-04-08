@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:deenly/models/hadith_model.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/home/home_hadith_skeleton.dart';
@@ -55,6 +57,7 @@ class _HomePageState extends State<HomePage> {
     if (location != prefLocation) {
       prefs.setString('location', location);
     }
+      prefs.setString('prayer_data', json.encode(prayerModel.toJson()));
 
     final HadithModel hadithModel = await HadithProxy().getDailyHadith();
 

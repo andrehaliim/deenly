@@ -27,6 +27,16 @@ class PrayerModel {
         date: dateName,
     );
     }
+    factory PrayerModel.fromJsonSaved(Map<String, dynamic> json) {
+        return PrayerModel(
+        fajr: json["Fajr"],
+        dhuhr: json["Dhuhr"],
+        asr: json["Asr"],
+        maghrib: json["Maghrib"],
+        isha: json["Isha"],
+        date: json["date"],
+    );
+    }
 
     Map<String, dynamic> toJson() => {
         "Fajr": fajr,
