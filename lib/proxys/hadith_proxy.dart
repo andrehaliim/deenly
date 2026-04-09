@@ -13,7 +13,7 @@ class HadithProxy {
 
   Future<List<HadithModel>> getAllHadith() async {
     final db = await DatabaseHelper.instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('hadith');
+    final List<Map<String, dynamic>> maps = await db.rawQuery("SELECT * FROM hadith");
 
     if (maps.isNotEmpty) {
       debugPrint('Hadith loaded from local database');

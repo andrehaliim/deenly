@@ -6,20 +6,22 @@ import 'package:http/http.dart' as http;
 
 class QuranProxy {
   Future<List<SurahListModel>> getSurahList() async {
-    final url = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/info.json';
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      List<SurahListModel> surahList = [];
-      for (var x in json['chapters']) {
-        final versesCount = x['verses'].length;
-        surahList.add(SurahListModel.fromJson(x, versesCount));
-      }
-      return surahList;
-    } else {
-      throw Exception('Failed to load surah list');
-    }
+  final url = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/info.json';
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body);
+
+    final futures = (json['chapters'] as List).map((x) async {
+      final surahDetailList = await getSurahDetail(x['chapter']);
+      return SurahListModel.fromJsonApi(x, surahDetailList);
+    });
+
+    return await Future.wait(futures);
+  } else {
+    throw Exception('Failed to load surah list');
   }
+}
 
   Future<List<SurahDetailModel>> getSurahDetail(int id) async {
     final url1 =
@@ -33,7 +35,7 @@ class QuranProxy {
       final json2 = jsonDecode(response2.body);
       List<SurahDetailModel> surahDetailList = [];
       for (var x in json1['chapter']) {
-        surahDetailList.add(SurahDetailModel.fromJson(x));
+        surahDetailList.add(SurahDetailModel.fromJsonApi(x));
       }
       for (var data in surahDetailList) {
         data.translation = json2['chapter'][data.verse - 1]['text'];

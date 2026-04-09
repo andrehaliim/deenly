@@ -11,12 +11,20 @@ class SurahDetailModel {
     required this.translation,
   });
 
-  factory SurahDetailModel.fromJson(Map<String, dynamic> json) =>
+  factory SurahDetailModel.fromJsonApi(Map<String, dynamic> json) =>
       SurahDetailModel(
         chapter: json["chapter"],
         verse: json["verse"],
         text: json["text"],
         translation: json["text"],
+    );
+    
+  factory SurahDetailModel.fromJsonLocal(Map<String, dynamic> json) =>
+      SurahDetailModel(
+        chapter: json["chapter"],
+        verse: json["verse"],
+        text: json["text"],
+        translation: json["translation"],
     );
 
     Map<String, dynamic> toJson() => {

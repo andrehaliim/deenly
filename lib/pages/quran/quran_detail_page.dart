@@ -17,14 +17,12 @@ class QuranDetailPage extends StatefulWidget {
 class _QuranDetailPageState extends State<QuranDetailPage> {
   final quranProxy = QuranProxy();
   List<SurahDetailModel> surahDetailList = [];
-  bool isLoading = false;
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
   @override
   void initState() {
     super.initState();
-    loadSurahDetail();
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
 
@@ -34,24 +32,16 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
 
       if (visibleItems.isEmpty) return;
 
-      final firstVisible = visibleItems.reduce((min, item) =>
-          item.itemLeadingEdge < min.itemLeadingEdge ? item : min);
+      final firstVisible = visibleItems.reduce(
+        (min, item) => item.itemLeadingEdge < min.itemLeadingEdge ? item : min,
+      );
 
       final index = firstVisible.index;
 
       final prefs = await SharedPreferences.getInstance();
       prefs.setInt('lastAyahIndex', index);
     });
-  }
-
-  void loadSurahDetail() async {
-    setState(() {
-      isLoading = true;
-    });
-    surahDetailList = await quranProxy.getSurahDetail(widget.surah.chapter);
-    setState(() {
-      isLoading = false;
-    });
+    surahDetailList = widget.surah.verses;
     loadLastPosition();
   }
 
@@ -97,9 +87,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: isLoading
-              ? Center(child: CircularProgressIndicator())
-              : listSurahDetail(surahDetailList),
+          child: listSurahDetail(surahDetailList)
         ),
       ),
     );
@@ -156,7 +144,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     ),
                   ),
                   Text(
-                    '${widget.surah.verses} Ayahs',
+                    '${widget.surah.verses.length} Ayahs',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,

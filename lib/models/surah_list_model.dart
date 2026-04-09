@@ -1,10 +1,12 @@
+import 'package:deenly/models/surah_detail_model.dart';
+
 class SurahListModel {
   int chapter;
   String name;
   String englishname;
   String arabicname;
   String revelation;
-  int verses;
+  List<SurahDetailModel> verses;
 
   SurahListModel({
     required this.chapter,
@@ -15,15 +17,30 @@ class SurahListModel {
     required this.verses,
   });
 
-  factory SurahListModel.fromJson(Map<String, dynamic> json, int versesCount) =>
-      SurahListModel(
-        chapter: json["chapter"],
-        name: json["name"],
-        englishname: json["englishname"],
-        arabicname: json["arabicname"],
-        revelation: json["revelation"],
-        verses: versesCount,
-      );
+  factory SurahListModel.fromJsonApi(
+    Map<String, dynamic> json,
+    List<SurahDetailModel> ayahs,
+  ) => SurahListModel(
+    chapter: json["chapter"],
+    name: json["name"],
+    englishname: json["englishname"],
+    arabicname: json["arabicname"],
+    revelation: json["revelation"],
+    verses: ayahs,
+  );
+
+  factory SurahListModel.fromJsonLocal(Map<String, dynamic> json) {
+    return SurahListModel(
+      chapter: json["chapter"],
+      name: json["name"],
+      englishname: json["englishname"],
+      arabicname: json["arabicname"],
+      revelation: json["revelation"],
+      verses: (json["verses"] as List)
+          .map((e) => SurahDetailModel.fromJsonLocal(e))
+          .toList(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "chapter": chapter,
@@ -31,6 +48,6 @@ class SurahListModel {
     "englishname": englishname,
     "arabicname": arabicname,
     "revelation": revelation,
-    "verses": verses,
+    "verses": verses.map((e) => e.toJson()).toList(),
   };
 }

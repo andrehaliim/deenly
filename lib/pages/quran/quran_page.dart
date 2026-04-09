@@ -38,7 +38,7 @@ class _QuranPageState extends State<QuranPage> {
     if (surahString != null) {
       final surahMap = jsonDecode(surahString);
       setState(() {
-        currentSurah = SurahListModel.fromJson(surahMap, surahMap['verses']);
+        currentSurah = SurahListModel.fromJsonLocal(surahMap);
         lastSurahAyah = lastAyahIndex;
       });
     }
@@ -229,7 +229,7 @@ class _QuranPageState extends State<QuranPage> {
                           ),
                         ),
                         Text(
-                          '${data.verses} Ayahs',
+                          '${data.verses.length} Ayahs',
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(
