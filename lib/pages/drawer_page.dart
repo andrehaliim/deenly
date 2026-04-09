@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -300,8 +302,9 @@ class _DrawerPageState extends State<DrawerPage> {
                     alignment: Alignment.topCenter,
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOut,
-                    heightFactor:
-                        drawerProvider.isAdjustmentExpanded ? 1.0 : 0.0,
+                    heightFactor: drawerProvider.isAdjustmentExpanded
+                        ? 1.0
+                        : 0.0,
                     child: Column(
                       children: [
                         _buildPrayerTimeAdjustment(
@@ -345,6 +348,30 @@ class _DrawerPageState extends State<DrawerPage> {
                           },
                         ),
                       ],
+                    ),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: kDebugMode,
+                child: Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    onPressed: () {
+                      DatabaseHelper.instance.exportDB();
+                    },
+                    child: Text(
+                      'Export DB',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

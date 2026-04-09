@@ -1,4 +1,5 @@
 import 'package:deenly/components/app_theme.dart';
+import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/pages/main_page.dart';
@@ -9,24 +10,32 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  NotificationHelper().init();
+
+  // Init timezone
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
 
-  SharedPreferences.getInstance().then((prefs) {
-    final isDark = prefs.getBool('isDarkMode') ?? false;
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => ThemeProvider(isDark)),
-          ChangeNotifierProvider(create: (_) => DrawerProvider(prefs)),
-        ],
-        child: const MyApp(),
-      ),
-    );
-  });
+  // Init database
+  await DatabaseHelper.instance.database;
+
+  // Init notification
+  await NotificationHelper().init();
+
+  // Load preferences
+  final prefs = await SharedPreferences.getInstance();
+  final isDark = prefs.getBool('isDarkMode') ?? false;
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider(isDark)),
+        ChangeNotifierProvider(create: (_) => DrawerProvider(prefs)),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
