@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomePrayerSkeleton extends StatelessWidget {
@@ -9,7 +8,6 @@ class HomePrayerSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final baseColor = Theme.of(context).colorScheme.onPrimary;
-    String formattedDate = DateFormat('dd MMM yyyy').format(DateTime.now());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),

@@ -50,12 +50,9 @@ class _HomePageState extends State<HomePage> {
       _location = await LocationProxy().getLocationName(position);
       prefs.setString('locationName', _location!);
 
-      await _prayerProxy.fetchMonthlyPrayer(
-        position.latitude,
-        position.longitude,
-      );
+      await _prayerProxy.fetchMonthlyPrayer(position.latitude, position.longitude);
       prefs.setBool('isFirstLaunch', false);
-    } else {
+    } else{
       _location = locationName;
     }
 
@@ -92,7 +89,13 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 10),
 
-          HomePrayerSkeleton(),
+          _isGettingPrayerData
+              ? HomePrayerSkeleton()
+              : HomePrayerInfo(
+                  location: _location!,
+                  prayerModel: _prayerModel!,
+                  onRefreshLocation: () => _loadPrayerData(false),
+                ),
 
           const SizedBox(height: 10),
 
