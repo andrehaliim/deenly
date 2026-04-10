@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:deenly/models/surah_list_model.dart';
+import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/pages/quran/quran_detail_page.dart';
 import 'package:deenly/proxys/quran_proxy.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +17,9 @@ class QuranPage extends StatefulWidget {
 
 class _QuranPageState extends State<QuranPage> {
   final quranProxy = QuranProxy();
-  List<SurahListModel> surahList = [];
+  List<SurahModel> surahList = [];
   bool isLoading = false;
-  SurahListModel? currentSurah;
+  SurahModel? currentSurah;
   int? lastSurahAyah;
 
   @override
@@ -38,7 +38,7 @@ class _QuranPageState extends State<QuranPage> {
     if (surahString != null) {
       final surahMap = jsonDecode(surahString);
       setState(() {
-        currentSurah = SurahListModel.fromJsonLocal(surahMap);
+        currentSurah = SurahModel.fromJsonLocal(surahMap);
         lastSurahAyah = lastAyahIndex;
       });
     }
@@ -48,7 +48,7 @@ class _QuranPageState extends State<QuranPage> {
     setState(() {
       isLoading = true;
     });
-    surahList = await quranProxy.getSurahList();
+    surahList = await quranProxy.getSurahs();
     setState(() {
       isLoading = false;
     });
@@ -154,7 +154,7 @@ class _QuranPageState extends State<QuranPage> {
     );
   }
 
-  Widget listSurah(List<SurahListModel> surahList) {
+  Widget listSurah(List<SurahModel> surahList) {
     return ListView.builder(
       itemCount: surahList.length,
       itemBuilder: (context, index) {
@@ -188,7 +188,7 @@ class _QuranPageState extends State<QuranPage> {
                     shape: BoxShape.circle,
                   ),
                   child: Text(
-                    data.chapter.toString(),
+                    data.id.toString(),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onPrimary,
@@ -229,7 +229,7 @@ class _QuranPageState extends State<QuranPage> {
                           ),
                         ),
                         Text(
-                          '${data.verses.length} Ayahs',
+                          '${data.totalAyahs} Ayahs',
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(

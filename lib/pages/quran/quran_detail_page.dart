@@ -1,5 +1,5 @@
 import 'package:deenly/models/surah_detail_model.dart';
-import 'package:deenly/models/surah_list_model.dart';
+import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/proxys/quran_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +7,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranDetailPage extends StatefulWidget {
-  final SurahListModel surah;
+  final SurahModel surah;
   const QuranDetailPage({super.key, required this.surah});
 
   @override
@@ -20,9 +20,13 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
+    loadSurahDetails();
+
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
 
@@ -41,7 +45,14 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setInt('lastAyahIndex', index);
     });
-    surahDetailList = widget.surah.verses;
+  }
+
+  Future<void> loadSurahDetails() async {
+    final surahDetails = await quranProxy.getSurahDetails(widget.surah.id);
+    setState(() {
+      surahDetailList = surahDetails;
+      isLoading = false;
+    });
     loadLastPosition();
   }
 
@@ -87,7 +98,9 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: listSurahDetail(surahDetailList)
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : listSurahDetail(surahDetailList),
         ),
       ),
     );
@@ -144,7 +157,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     ),
                   ),
                   Text(
-                    '${widget.surah.verses.length} Ayahs',
+                    '${widget.surah.totalAyahs} Ayahs',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,
@@ -195,7 +208,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     ).colorScheme.tertiary.withValues(alpha: 0.25),
                   ),
                   child: Text(
-                    '${data.chapter}:${data.verse}',
+                    '${data.surahId}:${data.verseNo}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,
