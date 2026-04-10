@@ -2,8 +2,8 @@ import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
-import 'package:deenly/pages/main_page.dart';
 import 'package:deenly/components/theme_provider.dart';
+import 'package:deenly/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
           themeMode: themeProvider.themeMode,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
-          home: const MainPage(),
+          home: SplashPage(),
         );
       },
     );

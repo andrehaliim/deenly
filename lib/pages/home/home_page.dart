@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:deenly/models/hadith_model.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/home/home_hadith_skeleton.dart';
@@ -22,50 +20,57 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final LocationProxy _locationProxy = LocationProxy();
   final PrayerProxy _prayerProxy = PrayerProxy();
-  bool _isGettingPrayerData = false;
-  String _location = '';
+  final HadithProxy _hadithProxy = HadithProxy();
+  bool _isGettingPrayerData = true;
+  bool _isGettingHadithData = true;
+  String? _location;
   PrayerModel? _prayerModel;
   HadithModel? _hadithModel;
 
   @override
   void initState() {
     super.initState();
-    _loadData(true);
+    _loadPrayerData(true);
+    _loadHadithData();
   }
 
-  Future<void> _loadData(bool isInit) async {
-    setState(() {
-      _isGettingPrayerData = true;
-    });
+  Future<void> _loadPrayerData(bool isInit) async {
     final prefs = await SharedPreferences.getInstance();
-    final String prefLocation = prefs.getString('location') ?? '';
+    final locationName = prefs.getString('locationName') ?? '';
+    final isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
 
-    Position position;
-    if (isInit && prefLocation.isEmpty) {
-      position = _locationProxy.getDefaultPosition();
+    Position position = await Geolocator.getCurrentPosition();
+
+    bool? locationChanged = await LocationProxy().isLocationChanged(position);
+
+    if (locationChanged == true || isFirstLaunch) {
+      prefs.setDouble('lat', position.latitude);
+      prefs.setDouble('long', position.longitude);
+      _location = await LocationProxy().getLocationName(position);
+      prefs.setString('locationName', _location!);
+
+      await _prayerProxy.fetchMonthlyPrayer(
+        position.latitude,
+        position.longitude,
+      );
+      prefs.setBool('isFirstLaunch', false);
     } else {
-      position = await _locationProxy.requestLocation();
+      _location = locationName;
     }
-    final String location = await _locationProxy.getAddressFromLatLng(position);
 
-    final PrayerModel prayerModel = await _prayerProxy.getDailyPrayer(
-      position.latitude,
-      position.longitude,
-    );
-    if (location != prefLocation) {
-      prefs.setString('location', location);
-    }
-    prefs.setString('prayer_data', json.encode(prayerModel.toJson()));
-
-    final HadithModel hadithModel = await HadithProxy().getDailyHadith();
+    _prayerModel = await _prayerProxy.getTodayPrayer();
 
     setState(() {
       _isGettingPrayerData = false;
-      _prayerModel = prayerModel;
-      _location = location;
-      _hadithModel = hadithModel;
+    });
+  }
+
+  Future<void> _loadHadithData() async {
+    _hadithModel = await _hadithProxy.getDailyHadith();
+
+    setState(() {
+      _isGettingHadithData = false;
     });
   }
 
@@ -87,13 +92,7 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 10),
 
-          _isGettingPrayerData
-              ? HomePrayerSkeleton()
-              : HomePrayerInfo(
-                  location: _location,
-                  prayerModel: _prayerModel!,
-                  onRefreshLocation: () => _loadData(false),
-                ),
+          HomePrayerSkeleton(),
 
           const SizedBox(height: 10),
 
@@ -101,7 +100,7 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 10),
 
-          _isGettingPrayerData
+          _isGettingHadithData
               ? HomeHadithSkeleton()
               : HomeHadithWidget(hadithModel: _hadithModel!),
 

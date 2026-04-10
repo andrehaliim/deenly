@@ -1,15 +1,13 @@
-import 'dart:convert';
-
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class DrawerPage extends StatefulWidget {
@@ -26,12 +24,7 @@ class _DrawerPageState extends State<DrawerPage> {
     required bool isEnabled,
   }) async {
     if (isEnabled) {
-      final prefs = await SharedPreferences.getInstance();
-      final String prayerData = prefs.getString('prayer_data') ?? '';
-
-      final PrayerModel prayerModel = PrayerModel.fromJsonSaved(
-        json.decode(prayerData),
-      );
+      final PrayerModel prayerModel = await PrayerProxy().getTodayPrayer();
 
       String prayerTime = '';
 

@@ -2,21 +2,21 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:deenly/models/mosque_model.dart';
-import 'package:deenly/proxys/location_proxy.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MosqueProxy {
   final String url = 'https://overpass-api.de/api';
   final int radius = 2000;
 
   Future<List<MosqueModel>> fetchMosques() async {
-    try {
-      Position currentPosition = await LocationProxy().requestLocation();
-      double lat = currentPosition.latitude;
-      double lon = currentPosition.longitude;
+    final prefs = await SharedPreferences.getInstance();
+    final lat = prefs.getDouble('lat') ?? 0;
+    final lon = prefs.getDouble('lon') ?? 0;
 
+    try {
       String query =
           '''
       [out:json][timeout:25];

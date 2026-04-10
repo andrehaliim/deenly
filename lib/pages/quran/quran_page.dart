@@ -16,7 +16,7 @@ class QuranPage extends StatefulWidget {
 }
 
 class _QuranPageState extends State<QuranPage> {
-  final quranProxy = QuranProxy();
+  final QuranProxy quranProxy = QuranProxy();
   List<SurahModel> surahList = [];
   bool isLoading = false;
   SurahModel? currentSurah;
@@ -48,7 +48,7 @@ class _QuranPageState extends State<QuranPage> {
     setState(() {
       isLoading = true;
     });
-    surahList = await quranProxy.getSurahs();
+    surahList = await quranProxy.getSurahList();
     setState(() {
       isLoading = false;
     });

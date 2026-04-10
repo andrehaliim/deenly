@@ -1,25 +1,61 @@
 import 'dart:convert';
+import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:sqflite/sqflite.dart';
 
 class PrayerProxy {
   static const String _baseUrl = 'https://api.aladhan.com/v1';
 
-  Future<PrayerModel> getDailyPrayer(double lat, double lon) async {
+  Future<PrayerModel> getTodayPrayer() async {
+    final db = await DatabaseHelper.instance.database;
     final now = DateTime.now();
-    final formattedDate = '${now.day}-${now.month}-${now.year}';
-    //final tune = '&tune=0%2C2%2C0%2C3%2C1%2C6%2C0%2C2%2C0';
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final formattedDate =
+        "${twoDigits(now.day)}-${twoDigits(now.month)}-${now.year}";
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      "SELECT * FROM prayer WHERE date = ?",
+      [formattedDate],
+    );
+    if (maps.isNotEmpty) {
+      debugPrint('Prayer loaded from local database');
+      return PrayerModel.fromJsonDB(maps.first);
+    } else {
+      throw Exception('Prayer not found in local database');
+    }
+  }
+
+  Future<void> fetchMonthlyPrayer(double lat, double lon) async {
+    final db = await DatabaseHelper.instance.database;
+    final now = DateTime.now();
     final response = await http.get(
       Uri.parse(
-        '$_baseUrl/timings/$formattedDate?latitude=$lat&longitude=$lon&method=20&timezonestring=Asia%2FJakarta',
+        '$_baseUrl/calendar/${now.year}/${now.month}?latitude=$lat&longitude=$lon&method=20&timezonestring=Asia%2FJakarta',
       ),
     );
 
     if (response.statusCode == 200) {
       final decodedResponse = json.decode(response.body);
-      return PrayerModel.fromJson(decodedResponse['data']);
+
+      final prayers = (decodedResponse['data'] as List)
+          .map((e) => PrayerModel.fromJsonApi(e))
+          .toList();
+
+      final batch = db.batch();
+
+      for (var prayer in prayers) {
+        batch.insert(
+          'prayer',
+          prayer.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+
+      await batch.commit(noResult: true);
     } else {
-      throw Exception('Failed to load daily prayer time');
+      throw Exception('Failed to load monthly prayer time');
     }
   }
 
@@ -46,9 +82,6 @@ class PrayerProxy {
         break;
       }
     }
-    return {
-      'nextPrayer': nextPrayer,
-      'nextTime': nextTime,
-    };
+    return {'nextPrayer': nextPrayer, 'nextTime': nextTime};
   }
 }

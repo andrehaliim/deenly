@@ -2,6 +2,7 @@ import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class HomePrayerInfo extends StatefulWidget {
   final String location;
@@ -103,11 +104,12 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                 ),
                 const Spacer(),
                 Text(
-                  widget.prayerModel.date,
+                  '${widget.prayerModel.hijriDate} ${widget.prayerModel.hijriMonth} ${widget.prayerModel.hijriYear} \n ${DateFormat('dd MMM yyyy').format(DateFormat('dd-MM-yyyy').parse(widget.prayerModel.date))}',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
+                  textAlign: TextAlign.right,
                 ),
               ],
             ),

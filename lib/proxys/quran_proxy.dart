@@ -10,30 +10,52 @@ import 'package:sqflite/sqflite.dart';
 class QuranProxy {
   final baseUrl = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1';
 
-  Future<List<SurahModel>> getSurahs() async {
+  Future<void> fetchSurahs() async {
     final db = await DatabaseHelper.instance.database;
-    final List<Map<String, dynamic>> maps = await db.rawQuery("SELECT * FROM surah");
-
-    if (maps.isNotEmpty) {
-      debugPrint('Surah loaded from local database');
-      return List.generate(maps.length, (i) {
-        return SurahModel.fromJsonLocal(maps[i]);
-      });
-    } else {
-      List<SurahModel> apiSurahs = await _fetchSurahs();
-      for (var surah in apiSurahs) {
-        debugPrint('Inserting surah');
-        await db.insert('surah', surah.toJson(),
-            conflictAlgorithm: ConflictAlgorithm.replace);
-      }
-      debugPrint('Surah loaded from API');
-      return apiSurahs;
+    final isEmpty = await db.rawQuery("SELECT * FROM surah");
+    if (isEmpty.isNotEmpty) {
+      debugPrint('Surah data already exists in database');
+      return;
     }
+    final url = '$baseUrl/info.json';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+
+      final batch = db.batch();
+
+      for (var x in json['chapters']) {
+        final surah = SurahModel.fromJsonApi(x);
+
+        batch.insert(
+          'surah',
+          surah.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+      debugPrint('Surah data saved to database');
+      await batch.commit(noResult: true);
+    } else {
+      throw Exception('Failed to load surah list');
+    }
+  }
+
+  Future<List<SurahModel>> getSurahList() async {
+    final db = await DatabaseHelper.instance.database;
+
+    final maps = await db.rawQuery("SELECT * FROM surah");
+
+    return maps.map((e) => SurahModel.fromJsonLocal(e)).toList();
   }
 
   Future<List<SurahDetailModel>> getSurahDetails(int id) async {
     final db = await DatabaseHelper.instance.database;
-    final List<Map<String, dynamic>> maps = await db.rawQuery("SELECT * FROM surah_detail WHERE surah_id = ?", [id]);
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      "SELECT * FROM surah_detail WHERE surah_id = ?",
+      [id],
+    );
 
     if (maps.isNotEmpty) {
       debugPrint('Surah details loaded from local database');
@@ -44,26 +66,14 @@ class QuranProxy {
       List<SurahDetailModel> apiSurahDetails = await _fetchSurahDetails(id);
       for (var surahDetail in apiSurahDetails) {
         debugPrint('Inserting surah detail');
-        await db.insert('surah_detail', surahDetail.toJson(id),
-            conflictAlgorithm: ConflictAlgorithm.replace);
+        await db.insert(
+          'surah_detail',
+          surahDetail.toJson(id),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
       }
       debugPrint('Surah details loaded from API');
       return apiSurahDetails;
-    }
-  }
-
-  Future<List<SurahModel>> _fetchSurahs() async {
-    final url = '$baseUrl/info.json';
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      List<SurahModel> surahList = [];
-      for (var x in json['chapters']) {
-        surahList.add(SurahModel.fromJsonApi(x));
-      }
-      return surahList;
-    } else {
-      throw Exception('Failed to load surah list');
     }
   }
 

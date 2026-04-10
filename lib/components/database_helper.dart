@@ -63,5 +63,20 @@ class DatabaseHelper {
         translation TEXT
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE prayer(
+        id INTEGER PRIMARY KEY,
+        fajr TEXT,
+        dhuhr TEXT,
+        asr TEXT,
+        maghrib TEXT,
+        isha TEXT,
+        date TEXT,
+        hijriDate TEXT,
+        hijriMonth TEXT,
+        hijriYear TEXT
+      )
+    ''');
   }
 }
