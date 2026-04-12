@@ -36,6 +36,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadPrayerData(bool isInit) async {
+    setState(() {
+      _isGettingPrayerData = true;
+    });
     final prefs = await SharedPreferences.getInstance();
     final locationName = prefs.getString('locationName') ?? '';
     final isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
@@ -50,9 +53,12 @@ class _HomePageState extends State<HomePage> {
       _location = await LocationProxy().getLocationName(position);
       prefs.setString('locationName', _location!);
 
-      await _prayerProxy.fetchMonthlyPrayer(position.latitude, position.longitude);
+      await _prayerProxy.fetchMonthlyPrayer(
+        position.latitude,
+        position.longitude,
+      );
       prefs.setBool('isFirstLaunch', false);
-    } else{
+    } else {
       _location = locationName;
     }
 

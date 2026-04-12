@@ -1,5 +1,6 @@
 import 'package:deenly/models/hadith_model.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeHadithWidget extends StatefulWidget {
@@ -54,19 +55,32 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
           const SizedBox(height: 10),
           Text(
             widget.hadithModel.hadithEnglish,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: GoogleFonts.notoSerif(
+              fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
               color: Theme.of(context).colorScheme.onPrimary,
               fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 10),
-          Text(
-            widget.hadithModel.englishNarrator,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Text(
+                "Narrated by:",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+              const SizedBox(width: 5),
+              Text(
+                widget.hadithModel.englishNarrator
+                    .replaceAll("Narrated", "")
+                    .replaceAll(":", ""),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ],
       ),
