@@ -47,16 +47,18 @@ class _HomePageState extends State<HomePage> {
 
     bool? locationChanged = await LocationProxy().isLocationChanged(position);
 
-    if (locationChanged == true || isFirstLaunch) {
-      prefs.setDouble('lat', position.latitude);
-      prefs.setDouble('long', position.longitude);
-      _location = await LocationProxy().getLocationName(position);
-      prefs.setString('locationName', _location!);
 
+    if (locationChanged == true || isFirstLaunch) {
+      await _prayerProxy.clearPrayer();
       await _prayerProxy.fetchMonthlyPrayer(
         position.latitude,
         position.longitude,
       );
+
+      prefs.setDouble('lat', position.latitude);
+      prefs.setDouble('long', position.longitude);
+      _location = await LocationProxy().getLocationName(position);
+      prefs.setString('locationName', _location!);
       prefs.setBool('isFirstLaunch', false);
     } else {
       _location = locationName;

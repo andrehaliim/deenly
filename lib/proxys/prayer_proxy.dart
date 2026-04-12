@@ -52,7 +52,7 @@ class PrayerProxy {
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
-
+      debugPrint('Prayer loaded from API');
       await batch.commit(noResult: true);
     } else {
       throw Exception('Failed to load monthly prayer time');
@@ -83,5 +83,10 @@ class PrayerProxy {
       }
     }
     return {'nextPrayer': nextPrayer, 'nextTime': nextTime};
+  }
+
+  Future<void> clearPrayer() async {
+    final db = await DatabaseHelper.instance.database;
+    await db.delete('prayer');
   }
 }
