@@ -2,6 +2,7 @@ import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/workmanager_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/pages/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,10 @@ void main() async {
 
   // Init notification
   await NotificationHelper().init();
+
+  // Init and schedule background tasks
+  await WorkmanagerHelper.init();
+  await WorkmanagerHelper.scheduleDailyNotification();
 
   // Load preferences
   final prefs = await SharedPreferences.getInstance();

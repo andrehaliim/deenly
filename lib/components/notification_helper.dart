@@ -80,6 +80,26 @@ class NotificationHelper {
     );
   }
 
+  Future<void> showDailyMidnightNotification(String date) async {
+    const androidNotificationDetails = AndroidNotificationDetails(
+      'daily_midnight_channel',
+      'Daily Notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    const notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      id: 100,
+      title: 'Daily Notification',
+      body: "its midnight at $date (now)",
+      notificationDetails: notificationDetails,
+    );
+  }
+
   Future<bool> schedulePrayerNotification({
     required int notifId,
     required String prayerName,
