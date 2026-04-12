@@ -1,4 +1,5 @@
 import 'package:deenly/pages/main_page.dart';
+import 'package:deenly/pages/no_location_page.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
 import 'package:deenly/proxys/location_proxy.dart';
 import 'package:deenly/proxys/quran_proxy.dart';
@@ -26,16 +27,20 @@ class _SplashPageState extends State<SplashPage> {
   Future<void> _loadData() async {
     await _hadithProxy.fetchHadith();
     await _quranProxy.fetchSurahs();
-    bool permission = await _locationProxy.requestPermission();
-    if (permission) {
-      await _locationProxy.getLocation();
+    bool? permission = await _locationProxy.requestPermission();
+    if (permission == true) {
+      await _locationProxy.getLocation().then((value) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainPage()),
+        );
+      });
     } else {
-      await _locationProxy.getLocationDefault();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const NoLocationPage()),
+      );
     }
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const MainPage()),
-    );
   }
 
   @override

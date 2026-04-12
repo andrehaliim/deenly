@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProxy {
-  Future<bool> requestPermission() async {
+  Future<bool?> requestPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -21,7 +21,7 @@ class LocationProxy {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return false;
+      return null;
     }
     return true;
   }
@@ -39,14 +39,6 @@ class LocationProxy {
     prefs.setDouble('long', position.longitude);
     String locName = await getLocationName(position);
     prefs.setString('locationName', locName);
-  }
-
-  Future<void> getLocationDefault() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    prefs.setDouble('lat', -6.1753083);
-    prefs.setDouble('long', 106.8271106);
-    prefs.setString('locationName', 'Jakarta, Indonesia');
   }
 
   Future<String> getLocationName(Position position) async {

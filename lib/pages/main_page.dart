@@ -18,13 +18,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 2;
-  final List<Widget> _pages = [
-    const QuranPage(),
-    const MosquePage(),
-    const HomePage(),
-    const QiblaPage(),
-    const TasbihPage(),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +49,16 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      body: IndexedStack(index: _selectedIndex, children: _pages),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          const QuranPage(),
+          const MosquePage(),
+          const HomePage(),
+          QiblaPage(isActive: _selectedIndex == 3),
+          const TasbihPage(),
+        ],
+      ),
       bottomNavigationBar: CustomBottomNav(
         selectedIndex: _selectedIndex,
         onTap: (index) {

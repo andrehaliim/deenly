@@ -1,11 +1,11 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QiblaPage extends StatefulWidget {
-  const QiblaPage({super.key});
+  final bool isActive;
+  const QiblaPage({super.key, this.isActive = false});
 
   @override
   State<QiblaPage> createState() => _QiblaPageState();
@@ -13,59 +13,38 @@ class QiblaPage extends StatefulWidget {
 
 class _QiblaPageState extends State<QiblaPage>
     with SingleTickerProviderStateMixin {
-  bool _hasPermissions = false;
   bool _isLoading = true;
   double? _qiblaDirection;
-  Position? _currentPosition;
   String _location = '';
 
   @override
   void initState() {
     super.initState();
-    _loadLocation();
-    _initializeQibla();
+    init();
+  }
+
+  @override
+  void didUpdateWidget(QiblaPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive && !oldWidget.isActive) {
+      init();
+    }
+  }
+
+  Future<void> init() async {
+    await _loadLocation();
   }
 
   Future<void> _loadLocation() async {
     final prefs = await SharedPreferences.getInstance();
-    final String prefLocation = prefs.getString('location') ?? '';
+    final prefLocation = prefs.getString('locationName') ?? '';
+    final lat = prefs.getDouble('lat') ?? 0;
+    final lng = prefs.getDouble('long') ?? 0;
+    
+    _qiblaDirection = _calculateQiblaDirection(lat, lng);
+
     setState(() {
       _location = prefLocation;
-    });
-  }
-
-  Future<void> _initializeQibla() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      setState(() => _isLoading = false);
-      return;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        setState(() => _isLoading = false);
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      setState(() => _isLoading = false);
-      return;
-    }
-
-    _hasPermissions = true;
-    _currentPosition = await Geolocator.getCurrentPosition();
-    _qiblaDirection = _calculateQiblaDirection(
-      _currentPosition!.latitude,
-      _currentPosition!.longitude,
-    );
-
-    setState(() {
       _isLoading = false;
     });
   }
@@ -101,48 +80,6 @@ class _QiblaPageState extends State<QiblaPage>
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
-    }
-
-    if (!_hasPermissions) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.location_off_rounded,
-              size: 64,
-              color: Colors.white54,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Location permission required',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                setState(() => _isLoading = true);
-                _initializeQibla();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFD4AF37),
-                foregroundColor: Colors.black87,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: const Text('Grant Permission'),
-            ),
-          ],
-        ),
-      );
     }
 
     return StreamBuilder<CompassEvent>(
@@ -304,7 +241,9 @@ class _QiblaPageState extends State<QiblaPage>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                            color: const Color(
+                              0xFFD4AF37,
+                            ).withValues(alpha: 0.5),
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
