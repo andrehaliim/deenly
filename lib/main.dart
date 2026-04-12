@@ -10,6 +10,51 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:intl/intl.dart';
+import 'package:workmanager/workmanager.dart';
+
+const String dailyTaskName = "daily_midnight_notification_task";
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    debugPrint('🔵 Workmanager START');
+    debugPrint('📌 Task: $task');
+    debugPrint('📦 InputData: $inputData');
+
+    try {
+      tz.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
+
+      final notificationHelper = NotificationHelper();
+      await notificationHelper.init();
+
+      if (task == dailyTaskName) {
+        final now = DateTime.now();
+        debugPrint('⏰ Current time: $now');
+
+        final formatter = DateFormat('dd-MM-yyyy');
+        final dateString = formatter.format(now);
+
+        debugPrint('📅 Formatted date: $dateString');
+
+        await notificationHelper.showDailyMidnightNotification(dateString);
+
+        debugPrint('✅ Notification triggered successfully');
+      } else {
+        debugPrint('⚠️ Unknown task received');
+      }
+
+      debugPrint('🟢 Workmanager END');
+      return Future.value(true);
+    } catch (e, stack) {
+      debugPrint('🔴 ERROR in Workmanager');
+      debugPrint(e.toString());
+      debugPrint(stack.toString());
+      return Future.value(false);
+    }
+  });
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,8 +70,16 @@ void main() async {
   await NotificationHelper().init();
 
   // Init and schedule background tasks
-  await WorkmanagerHelper.init();
-  await WorkmanagerHelper.scheduleDailyNotification();
+  await Workmanager().initialize(callbackDispatcher);
+  await Workmanager().cancelAll();
+
+  // Still register the periodic one for the future
+  await Workmanager().registerPeriodicTask(
+    "dailyNotificationTask",
+    dailyTaskName,
+    frequency: const Duration(days: 1),
+    initialDelay: const Duration(minutes: 5),
+  );
 
   // Load preferences
   final prefs = await SharedPreferences.getInstance();

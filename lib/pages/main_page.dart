@@ -5,6 +5,7 @@ import 'package:deenly/components/custom_navigation_bar.dart';
 import 'package:deenly/pages/qibla_page.dart';
 import 'package:deenly/pages/quran/quran_page.dart';
 import 'package:deenly/pages/tasbih_page.dart';
+import 'package:deenly/components/notification_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,6 +39,12 @@ class _MainPageState extends State<MainPage> {
         elevation: 0,
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_active),
+            onPressed: () {
+              NotificationHelper().showDailyMidnightNotification("TEST-DATE");
+            },
+          ),
           IconButton(
             icon: Icon(
               Icons.settings,
