@@ -22,7 +22,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -39,12 +38,6 @@ class _MainPageState extends State<MainPage> {
         elevation: 0,
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_active),
-            onPressed: () {
-              NotificationHelper().showDailyMidnightNotification("TEST-DATE");
-            },
-          ),
           IconButton(
             icon: Icon(
               Icons.settings,
@@ -74,7 +67,7 @@ class _MainPageState extends State<MainPage> {
           });
         },
       ),
-      endDrawer: DrawerPage() 
+      endDrawer: DrawerPage(),
     );
   }
 }
