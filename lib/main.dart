@@ -72,14 +72,7 @@ void main() async {
   // Init and schedule background tasks
   await Workmanager().initialize(callbackDispatcher);
   await Workmanager().cancelAll();
-
-  // Still register the periodic one for the future
-  await Workmanager().registerPeriodicTask(
-    "dailyNotificationTask",
-    dailyTaskName,
-    frequency: const Duration(days: 1),
-    initialDelay: const Duration(minutes: 5),
-  );
+  await WorkmanagerHelper.scheduleDailyNotification();
 
   // Load preferences
   final prefs = await SharedPreferences.getInstance();
