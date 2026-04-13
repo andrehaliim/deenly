@@ -2,6 +2,7 @@ import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
+import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/foundation.dart';
@@ -358,6 +359,34 @@ class _DrawerPageState extends State<DrawerPage> {
                     },
                     child: Text(
                       'Export DB',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: kDebugMode,
+                child: Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    onPressed: () async {
+                      final PrayerModel prayerModel = await PrayerProxy()
+                          .getTodayPrayer();
+
+                      WidgetHelper().updateWidgetPrayer(prayerModel);
+                      WidgetHelper().updateWidgetLocation();
+                    },
+                    child: Text(
+                      'Update Widget',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: Theme.of(

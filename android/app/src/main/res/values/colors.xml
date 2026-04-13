@@ -1,0 +1,15 @@
+<resources>
+    <color name="lightPrimary">#FF004D40</color>
+    <color name="lightSecondary">#FFC5A059</color>
+    <color name="lightTertiary">#FFE6D5B8</color>
+    <color name="lightNeutral">#FFF7F8F7</color>
+
+    <color name="lightSurface">#FFF7F8F7</color>;
+    <color name="lightSurfaceLow">#FFEDEFED</color>
+    <color name="lightSurfaceLowest">#FFFFFFFF</color>
+    <color name="lightSurfaceHighest">#FFE1E4E1</color>
+
+    <color name="lightOnSurface">#FF191C1B</color>
+    <color name="lightOnSurfaceVariant">#FF3F4946</color>
+    <color name="lightOutline">#FF707974</color>
+</resources>

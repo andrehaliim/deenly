@@ -1,0 +1,270 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/prayer_widget_root"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@color/lightPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/next_prayer_text"
+                android:textColor="@color/lightSurface"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/prayer_default"
+                android:fontFamily="serif"
+                android:textColor="@color/lightSurface"
+                android:textSize="28sp"
+                android:layout_marginStart="6dp"
+                android:textStyle="bold|italic"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/hijri_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hijri_default"
+                android:textColor="@color/lightSurface"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/gregorian_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gregorian_default"
+                android:textColor="@color/lightSurface"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/location_default"
+                android:textColor="@color/lightSurface"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@drawable/rounded_grey_background"
+        android:layout_marginVertical="4dp">
+
+        <TextView
+            android:text="@string/fajr_name"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/fajr_time"
+            android:text="@string/no_time"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"/>
+
+
+        <ImageView
+            android:id="@+id/fajr_notification"
+            android:contentDescription="@string/fajr_notification_icon"
+            android:src="@drawable/ic_notification_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/lightSurface"
+            android:layout_marginEnd="6dp"
+            android:layout_marginStart="6dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@drawable/rounded_grey_background"
+        android:layout_marginVertical="4dp">
+
+        <TextView
+            android:text="@string/dhuhr_name"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/dhuhr_time"
+            android:text="@string/no_time"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"/>
+
+
+        <ImageView
+            android:id="@+id/dhuhr_notification"
+            android:contentDescription="@string/dhuhr_notification_icon"
+            android:src="@drawable/ic_notification_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/lightSurface"
+            android:layout_marginEnd="6dp"
+            android:layout_marginStart="6dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@drawable/rounded_grey_background"
+        android:layout_marginVertical="4dp">
+
+        <TextView
+            android:text="@string/asr_name"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/asr_time"
+            android:text="@string/no_time"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"/>
+
+
+        <ImageView
+            android:id="@+id/asr_notification"
+            android:contentDescription="@string/asr_notification_icon"
+            android:src="@drawable/ic_notification_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/lightSurface"
+            android:layout_marginEnd="6dp"
+            android:layout_marginStart="6dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@drawable/rounded_grey_background"
+        android:layout_marginVertical="4dp">
+
+        <TextView
+            android:text="@string/maghrib_name"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/maghrib_time"
+            android:text="@string/no_time"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"/>
+
+
+        <ImageView
+            android:id="@+id/maghrib_notification"
+            android:contentDescription="@string/maghrib_notification_icon"
+            android:src="@drawable/ic_notification_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/lightSurface"
+            android:layout_marginEnd="6dp"
+            android:layout_marginStart="6dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@drawable/rounded_grey_background"
+        android:layout_marginVertical="4dp">
+
+        <TextView
+            android:text="@string/isha_name"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/isha_time"
+            android:text="@string/no_time"
+            android:textColor="@color/lightSurface"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"/>
+
+
+        <ImageView
+            android:id="@+id/isha_notification"
+            android:contentDescription="@string/isha_notification_icon"
+            android:src="@drawable/ic_notification_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/lightSurface"
+            android:layout_marginEnd="6dp"
+            android:layout_marginStart="6dp"
+            />
+    </LinearLayout>
+</LinearLayout>
