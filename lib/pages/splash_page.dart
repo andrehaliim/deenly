@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _loadData() async {
-    await _hadithProxy.fetchHadith();
+    await _hadithProxy.load();
     await _quranProxy.fetchSurahs();
     await NotificationHelper().requestPermission();
     bool? permission = await _locationProxy.requestPermission();
