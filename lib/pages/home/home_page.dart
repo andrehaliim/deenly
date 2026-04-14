@@ -1,3 +1,4 @@
+import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/models/hadith_model.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/home/home_hadith_skeleton.dart';
@@ -65,6 +66,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     _prayerModel = await _prayerProxy.getTodayPrayer();
+
+    WidgetHelper().updateWidgetPrayer(_prayerModel!);
+    WidgetHelper().updateWidgetLocation();
 
     setState(() {
       _isGettingPrayerData = false;

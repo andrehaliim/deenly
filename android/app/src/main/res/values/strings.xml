@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+    <string name="fajr_name">Fajr</string>
+    <string name="dhuhr_name">Dhuhr</string>
+    <string name="asr_name">Asr</string>
+    <string name="maghrib_name">Maghrib</string>
+    <string name="isha_name">Isha</string>
+    <string name="no_time">--:--</string>
+    <string name="fajr_notification_icon">fajr notification icon</string>
+    <string name="dhuhr_notification_icon">dhuhr notification icon</string>
+    <string name="asr_notification_icon">asr notification icon</string>
+    <string name="maghrib_notification_icon">maghrib notification icon</string>
+    <string name="isha_notification_icon">isha notification icon</string>
+    <string name="next_prayer_text">Next Prayer</string>
+    <string name="hijri_default">01 Hijri 1447</string>
+    <string name="gregorian_default">01 Jan 2026</string>
+    <string name="prayer_default">Prayer</string>
+    <string name="location_default">Jakarta, Indonesia</string>
+
+</resources>

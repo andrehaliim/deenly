@@ -63,6 +63,7 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
           ),
           const SizedBox(height: 10),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Narrated by:",
@@ -71,13 +72,15 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
                 ),
               ),
               const SizedBox(width: 5),
-              Text(
-                widget.hadithModel.englishNarrator
-                    .replaceAll("Narrated", "")
-                    .replaceAll(":", ""),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  widget.hadithModel.englishNarrator
+                      .replaceAll("Narrated", "")
+                      .replaceAll(":", ""),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

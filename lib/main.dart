@@ -2,6 +2,7 @@ import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/components/workmanager_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/pages/splash_page.dart';
@@ -10,6 +11,39 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:intl/intl.dart';
+import 'package:workmanager/workmanager.dart';
+
+const String dailyTaskName = "daily_midnight_notification_task";
+const String updateNextPrayerTaskName = "update_next_prayer_task";
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    try {
+      tz.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
+
+      final notificationHelper = NotificationHelper();
+      await notificationHelper.init();
+      if (task == dailyTaskName) {
+        final now = DateTime.now();
+
+        final formatter = DateFormat('dd-MM-yyyy');
+        final dateString = formatter.format(now);
+
+        await notificationHelper.showDailyMidnightNotification(dateString);
+      } else if(task == updateNextPrayerTaskName){
+        final prayerName = inputData?['next_prayer_name'];
+        await WidgetHelper().updateWidgetNextPrayer(prayerName);
+      }
+
+      return Future.value(true);
+    } catch (e) {
+      return Future.value(false);
+    }
+  });
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +59,8 @@ void main() async {
   await NotificationHelper().init();
 
   // Init and schedule background tasks
-  await WorkmanagerHelper.init();
+  await Workmanager().initialize(callbackDispatcher);
+  await Workmanager().cancelAll();
   await WorkmanagerHelper.scheduleDailyNotification();
 
   // Load preferences

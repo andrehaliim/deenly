@@ -1,3 +1,4 @@
+import 'package:deenly/components/widget_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,30 +53,35 @@ class DrawerProvider extends ChangeNotifier {
   Future<void> toggleFajr(bool value) async {
     _isFajrEnabled = value;
     await prefs.setBool('isFajrEnabled', value);
+    WidgetHelper().updateWidgetNotification('fajr', value);
     notifyListeners();
   }
 
   Future<void> toggleDhuhr(bool value) async {
     _isDhuhrEnabled = value;
     await prefs.setBool('isDhuhrEnabled', value);
+    WidgetHelper().updateWidgetNotification('dhuhr', value);
     notifyListeners();
   }
 
   Future<void> toggleAsr(bool value) async {
     _isAsrEnabled = value;
     await prefs.setBool('isAsrEnabled', value);
+    WidgetHelper().updateWidgetNotification('asr', value);
     notifyListeners();
   }
 
   Future<void> toggleMaghrib(bool value) async {
     _isMaghribEnabled = value;
     await prefs.setBool('isMaghribEnabled', value);
+    WidgetHelper().updateWidgetNotification('maghrib', value);
     notifyListeners();
   }
 
   Future<void> toggleIsha(bool value) async {
     _isIshaEnabled = value;
     await prefs.setBool('isIshaEnabled', value);
+    WidgetHelper().updateWidgetNotification('isha', value);
     notifyListeners();
   }
 
