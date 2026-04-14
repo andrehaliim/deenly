@@ -2,6 +2,7 @@ import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/components/workmanager_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/pages/splash_page.dart';
@@ -14,43 +15,31 @@ import 'package:intl/intl.dart';
 import 'package:workmanager/workmanager.dart';
 
 const String dailyTaskName = "daily_midnight_notification_task";
+const String updateNextPrayerTaskName = "update_next_prayer_task";
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    debugPrint('🔵 Workmanager START');
-    debugPrint('📌 Task: $task');
-    debugPrint('📦 InputData: $inputData');
-
     try {
       tz.initializeTimeZones();
       tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
 
       final notificationHelper = NotificationHelper();
       await notificationHelper.init();
-
       if (task == dailyTaskName) {
         final now = DateTime.now();
-        debugPrint('⏰ Current time: $now');
 
         final formatter = DateFormat('dd-MM-yyyy');
         final dateString = formatter.format(now);
 
-        debugPrint('📅 Formatted date: $dateString');
-
         await notificationHelper.showDailyMidnightNotification(dateString);
-
-        debugPrint('✅ Notification triggered successfully');
-      } else {
-        debugPrint('⚠️ Unknown task received');
+      } else if(task == updateNextPrayerTaskName){
+        final prayerName = inputData?['next_prayer_name'];
+        await WidgetHelper().updateWidgetNextPrayer(prayerName);
       }
 
-      debugPrint('🟢 Workmanager END');
       return Future.value(true);
-    } catch (e, stack) {
-      debugPrint('🔴 ERROR in Workmanager');
-      debugPrint(e.toString());
-      debugPrint(stack.toString());
+    } catch (e) {
       return Future.value(false);
     }
   });

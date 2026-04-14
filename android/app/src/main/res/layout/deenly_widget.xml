@@ -1,14 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/prayer_widget_root"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:padding="20dp"
     android:background="@color/lightPrimary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -24,13 +25,13 @@
                 android:textSize="14sp"/>
 
             <TextView
+                android:id="@+id/next_prayer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/prayer_default"
                 android:fontFamily="serif"
                 android:textColor="@color/lightSurface"
                 android:textSize="28sp"
-                android:layout_marginStart="6dp"
                 android:textStyle="bold|italic"/>
         </LinearLayout>
 
@@ -69,6 +70,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/fajr_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -77,6 +79,7 @@
         android:layout_marginVertical="4dp">
 
         <TextView
+            android:id="@+id/fajr_name"
             android:text="@string/fajr_name"
             android:textColor="@color/lightSurface"
             android:textSize="18sp"
@@ -109,6 +112,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/dhuhr_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -117,6 +121,7 @@
         android:layout_marginVertical="4dp">
 
         <TextView
+            android:id="@+id/dhuhr_name"
             android:text="@string/dhuhr_name"
             android:textColor="@color/lightSurface"
             android:textSize="18sp"
@@ -149,6 +154,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/asr_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -157,6 +163,7 @@
         android:layout_marginVertical="4dp">
 
         <TextView
+            android:id="@+id/asr_name"
             android:text="@string/asr_name"
             android:textColor="@color/lightSurface"
             android:textSize="18sp"
@@ -189,6 +196,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/maghrib_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -197,6 +205,7 @@
         android:layout_marginVertical="4dp">
 
         <TextView
+            android:id="@+id/maghrib_name"
             android:text="@string/maghrib_name"
             android:textColor="@color/lightSurface"
             android:textSize="18sp"
@@ -229,6 +238,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/isha_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -237,6 +247,7 @@
         android:layout_marginVertical="4dp">
 
         <TextView
+            android:id="@+id/isha_name"
             android:text="@string/isha_name"
             android:textColor="@color/lightSurface"
             android:textSize="18sp"
