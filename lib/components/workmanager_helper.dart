@@ -1,7 +1,7 @@
 import 'package:deenly/models/prayer_model.dart';
 import 'package:workmanager/workmanager.dart';
 
-const String dailyTaskName = "daily_midnight_notification_task";
+const String dailyTaskName = "daily_refresh_prayer";
 const String updateNextPrayerTaskName = "update_next_prayer_task";
 
 class WorkmanagerHelper {
