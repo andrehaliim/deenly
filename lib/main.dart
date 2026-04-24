@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
@@ -16,22 +18,23 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 const String dailyTaskName = "daily_refresh_prayer";
-const String updateNextPrayerTaskName = "update_next_prayer_task";
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     final notificationHelper = NotificationHelper();
+    WidgetsFlutterBinding.ensureInitialized();
+    DartPluginRegistrant.ensureInitialized();
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
 
     try {
-      tz.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
       await notificationHelper.init();
 
       if (task == dailyTaskName) {
         final now = DateTime.now();
 
-        if (now.day == 1) {
+        if (now.day <= 2) {
           final prefs = await SharedPreferences.getInstance();
           final lat = prefs.getDouble('latitude');
           final lon = prefs.getDouble('longitude');
@@ -44,14 +47,13 @@ void callbackDispatcher() {
         final PrayerModel prayerModel = await PrayerProxy().getTodayPrayer();
         await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
         await WidgetHelper().updateWidgetPrayer(prayerModel);
-        Map<String, String> nextPrayer = PrayerProxy().getNextPrayer(prayerModel.toJson());
-        await WidgetHelper().updateWidgetNextPrayer(nextPrayer['nextPrayer']!);
-
-      } else if (task == updateNextPrayerTaskName) {
-        final prayerName = inputData?['next_prayer_name'];
-        await WidgetHelper().updateWidgetNextPrayer(prayerName);
       }
 
+      await notificationHelper.showNotification(
+        id: 69,
+        title: task,
+        body: 'Background Task Success',
+      );
       return Future.value(true);
     } catch (e) {
       await notificationHelper.showNotification(

@@ -61,7 +61,7 @@ class NotificationHelper {
     }
     return false;
   }
-  
+
   Future<bool> schedulePrayerNotification({
     required int notifId,
     required String prayerName,
@@ -101,49 +101,46 @@ class NotificationHelper {
 
     final prefs = await SharedPreferences.getInstance();
 
-    bool isFajrEnabled = prefs.getBool('isFajrEnabled') ?? false;
-    bool isDhuhrEnabled = prefs.getBool('isDhuhrEnabled') ?? false;
-    bool isAsrEnabled = prefs.getBool('isAsrEnabled') ?? false;
-    bool isMaghribEnabled = prefs.getBool('isMaghribEnabled') ?? false;
-    bool isIshaEnabled = prefs.getBool('isIshaEnabled') ?? false;
+    final prayers = [
+      (
+        id: 1,
+        name: 'Fajr',
+        enabled: prefs.getBool('isFajrEnabled') ?? false,
+        time: prayerModel.fajr,
+      ),
+      (
+        id: 2,
+        name: 'Dhuhr',
+        enabled: prefs.getBool('isDhuhrEnabled') ?? false,
+        time: prayerModel.dhuhr,
+      ),
+      (
+        id: 3,
+        name: 'Asr',
+        enabled: prefs.getBool('isAsrEnabled') ?? false,
+        time: prayerModel.asr,
+      ),
+      (
+        id: 4,
+        name: 'Maghrib',
+        enabled: prefs.getBool('isMaghribEnabled') ?? false,
+        time: prayerModel.maghrib,
+      ),
+      (
+        id: 5,
+        name: 'Isha',
+        enabled: prefs.getBool('isIshaEnabled') ?? false,
+        time: prayerModel.isha,
+      ),
+    ];
 
-    if (isFajrEnabled) {
-      await schedulePrayerNotification(
-        notifId: 1,
-        prayerName: 'Fajr',
-        scheduledTime: convertToTZ(prayerModel.fajr),
-      );
-    }
+    for (final prayer in prayers) {
+      if (!prayer.enabled) continue;
 
-    if (isDhuhrEnabled) {
       await schedulePrayerNotification(
-        notifId: 2,
-        prayerName: 'Dhuhr',
-        scheduledTime: convertToTZ(prayerModel.dhuhr),
-      );
-    }
-
-    if (isAsrEnabled) {
-      await schedulePrayerNotification(
-        notifId: 3,
-        prayerName: 'Asr',
-        scheduledTime: convertToTZ(prayerModel.asr),
-      );
-    }
-
-    if (isMaghribEnabled) {
-      await schedulePrayerNotification(
-        notifId: 4,
-        prayerName: 'Maghrib',
-        scheduledTime: convertToTZ(prayerModel.maghrib),
-      );
-    }
-
-    if (isIshaEnabled) {
-      await schedulePrayerNotification(
-        notifId: 5,
-        prayerName: 'Isha',
-        scheduledTime: convertToTZ(prayerModel.isha),
+        notifId: prayer.id,
+        prayerName: prayer.name,
+        scheduledTime: convertToTZ(prayer.time),
       );
     }
   }
@@ -178,25 +175,31 @@ class NotificationHelper {
   }
 
   Future<void> showNotification({
-  required int id,
-  required String title,
-  required String body,
-}) async {
-  const androidDetails = AndroidNotificationDetails(
-    'error_channel',
-    'Error Notifications',
-    channelDescription: 'Notifications for background task errors',
-    importance: Importance.high,
-    priority: Priority.high,
-  );
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    final androidDetails = AndroidNotificationDetails(
+      'error_channel',
+      'Error Notifications',
+      channelDescription: 'Notifications for background task errors',
+      importance: Importance.high,
+      priority: Priority.high,
 
-  const notificationDetails = NotificationDetails(android: androidDetails);
+      styleInformation: BigTextStyleInformation(
+        body,
+        contentTitle: title,
+        summaryText: 'Tap to view',
+      ),
+    );
 
-  await flutterLocalNotificationsPlugin.show(
-    id: id,
-    title: title,
-    body: body,
-    notificationDetails: notificationDetails,
-  );
-}
+    final notificationDetails = NotificationDetails(android: androidDetails);
+
+    await flutterLocalNotificationsPlugin.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+    );
+  }
 }

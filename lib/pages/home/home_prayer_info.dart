@@ -1,4 +1,3 @@
-import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
@@ -31,11 +30,6 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
   void initState() {
     super.initState();
     _next = PrayerProxy().getNextPrayer(widget.prayerModel.toJson());
-    updateWidget();
-  }
-
-  void updateWidget() async {
-    await WidgetHelper().updateWidgetNextPrayer(_next['nextPrayer']!);
   }
 
   @override
