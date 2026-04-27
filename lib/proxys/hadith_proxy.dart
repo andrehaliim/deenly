@@ -3,7 +3,9 @@ import 'dart:math';
 
 import 'package:deenly/models/hadith_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 class HadithProxy {
   static const String _assetPath = 'assets/jsons/hadiths.json';
 
@@ -19,6 +21,7 @@ class HadithProxy {
     _cache = await _loadFromAsset();
     debugPrint('[HadithProxy] ${_cache!.length} hadiths loaded.');
   }
+
   Future<HadithModel> getDailyHadith() async {
     if (_cache == null) await load();
 
@@ -35,21 +38,20 @@ class HadithProxy {
   }
 
   Future<List<HadithModel>> _loadFromAsset() async {
-    late String raw;
-
     try {
-      raw = await rootBundle.loadString(_assetPath);
+      WidgetsFlutterBinding.ensureInitialized();
+      final raw = await rootBundle.loadString(_assetPath);
+      return compute(_parse, raw);
     } catch (e) {
       throw HadithException('Failed to load asset "$_assetPath": $e');
     }
-
-    return _parse(raw);
   }
 
-  List<HadithModel> _parse(String raw) {
+  static List<HadithModel> _parse(String raw) {
     try {
       final decoded = json.decode(raw) as Map<String, dynamic>;
-      final data = (decoded['hadiths']['data'] as List).cast<Map<String, dynamic>>();
+      final data = (decoded['hadiths']['data'] as List)
+          .cast<Map<String, dynamic>>();
       return data.map(HadithModel.fromJson).toList();
     } catch (e) {
       throw HadithException('Failed to parse hadiths JSON: $e');

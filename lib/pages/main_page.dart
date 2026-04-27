@@ -17,6 +17,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<HomePageState> _homeKey = GlobalKey<HomePageState>();
   int _selectedIndex = 2;
 
   @override
@@ -53,7 +54,7 @@ class _MainPageState extends State<MainPage> {
         children: [
           const QuranPage(),
           const MosquePage(),
-          const HomePage(),
+          HomePage(key: _homeKey),
           QiblaPage(isActive: _selectedIndex == 3),
           const TasbihPage(),
         ],
@@ -66,7 +67,9 @@ class _MainPageState extends State<MainPage> {
           });
         },
       ),
-      endDrawer: DrawerPage(),
+      endDrawer: DrawerPage(
+        onSaved: () => _homeKey.currentState?.loadPrayerData(false),
+      ),
     );
   }
 }

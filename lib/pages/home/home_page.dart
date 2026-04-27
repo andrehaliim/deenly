@@ -1,3 +1,4 @@
+import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/models/hadith_model.dart';
 import 'package:deenly/models/prayer_model.dart';
@@ -17,10 +18,10 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   final PrayerProxy _prayerProxy = PrayerProxy();
   final HadithProxy _hadithProxy = HadithProxy();
   bool _isGettingPrayerData = true;
@@ -32,11 +33,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadPrayerData(true);
+    loadPrayerData(true);
     _loadHadithData();
   }
 
-  Future<void> _loadPrayerData(bool isInit) async {
+  Future<void> loadPrayerData(bool isInit) async {
     setState(() {
       _isGettingPrayerData = true;
     });
@@ -69,6 +70,8 @@ class _HomePageState extends State<HomePage> {
 
     WidgetHelper().updateWidgetPrayer(_prayerModel!);
     WidgetHelper().updateWidgetLocation();
+
+    await NotificationHelper().scheduleAllPrayerNotifications(_prayerModel!);
 
     setState(() {
       _isGettingPrayerData = false;
@@ -106,7 +109,7 @@ class _HomePageState extends State<HomePage> {
               : HomePrayerInfo(
                   location: _location!,
                   prayerModel: _prayerModel!,
-                  onRefreshLocation: () => _loadPrayerData(false),
+                  onRefreshLocation: () => loadPrayerData(false),
                 ),
 
           const SizedBox(height: 10),

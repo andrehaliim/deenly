@@ -25,18 +25,31 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _loadData() async {
+    debugPrint('🔄 [1/5] Starting _loadData...');
+
     await _hadithProxy.load();
+    debugPrint('✅ [2/5] Hadith loaded');
+
     await _quranProxy.fetchSurahs();
+    debugPrint('✅ [3/5] Surahs fetched');
+
     await NotificationHelper().requestPermission();
+    debugPrint('✅ [4/5] Notification permission done');
+
     bool? permission = await _locationProxy.requestPermission();
+    debugPrint('✅ [5/5] Location permission result: $permission');
+
     if (permission == true) {
+      debugPrint('📍 Getting location...');
       await _locationProxy.getLocation().then((value) {
+        debugPrint('✅ Location received');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainPage()),
         );
       });
     } else {
+      print('🚫 Location permission denied, redirecting...');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const NoLocationPage()),

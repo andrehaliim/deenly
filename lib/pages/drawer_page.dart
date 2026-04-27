@@ -12,77 +12,35 @@ import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class DrawerPage extends StatefulWidget {
-  const DrawerPage({super.key});
+  const DrawerPage({super.key, this.onSaved});
+
+  final VoidCallback? onSaved;
 
   @override
   State<DrawerPage> createState() => _DrawerPageState();
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-  Future<bool> _schedulePrayerNotification({
-    required String prayerName,
-    required int notifId,
-    required bool isEnabled,
-  }) async {
-    if (isEnabled) {
-      final PrayerModel prayerModel = await PrayerProxy().getTodayPrayer();
+  bool _isSaving = false;
+  int savedFajrAdjustment = 0;
+  int savedDhuhrAdjustment = 0;
+  int savedAsrAdjustment = 0;
+  int savedMaghribAdjustment = 0;
+  int savedIshaAdjustment = 0;
 
-      String prayerTime = '';
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
 
-      switch (prayerName) {
-        case 'Fajr':
-          prayerTime = prayerModel.fajr;
-          break;
-        case 'Dhuhr':
-          prayerTime = prayerModel.dhuhr;
-          break;
-        case 'Asr':
-          prayerTime = prayerModel.asr;
-          break;
-        case 'Maghrib':
-          prayerTime = prayerModel.maghrib;
-          break;
-        case 'Isha':
-          prayerTime = prayerModel.isha;
-          break;
-      }
-
-      final parts = prayerTime.split(':');
-      final hour = int.parse(parts[0]);
-      final minute = int.parse(parts[1]);
-
-      final now = DateTime.now();
-
-      DateTime prayerDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        hour,
-        minute,
-      );
-
-      if (prayerDateTime.isBefore(now)) {
-        prayerDateTime = prayerDateTime.add(const Duration(days: 1));
-      }
-
-      final scheduledTime = tz.TZDateTime.from(prayerDateTime, tz.local);
-
-      bool isScheduled = await NotificationHelper().schedulePrayerNotification(
-        notifId: notifId,
-        prayerName: prayerName,
-        scheduledTime: scheduledTime,
-      );
-
-      if (!isScheduled) {
-        debugPrint("Notification failed to schedule for $prayerName");
-        return false;
-      }
-
-      return true;
-    } else {
-      await NotificationHelper().cancelNotification(notifId);
-      return true;
-    }
+  void _loadSettings() {
+    final prefs = Provider.of<DrawerProvider>(context, listen: false);
+    savedFajrAdjustment = prefs.fajradjustment;
+    savedDhuhrAdjustment = prefs.dhuhradjustment;
+    savedAsrAdjustment = prefs.asradjustment;
+    savedMaghribAdjustment = prefs.maghribadjustment;
+    savedIshaAdjustment = prefs.ishadjustment;
   }
 
   @override
@@ -341,11 +299,103 @@ class _DrawerPageState extends State<DrawerPage> {
                             drawerProvider.setIshaAdjustment(value);
                           },
                         ),
+                        const SizedBox(height: 6),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              foregroundColor: Theme.of(
+                                context,
+                              ).colorScheme.onPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () async {
+                              setState(() {
+                                _isSaving = true;
+                              });
+                              final adjustments = {
+                                'fajr':
+                                    drawerProvider.fajradjustment -
+                                    savedFajrAdjustment,
+                                'dhuhr':
+                                    drawerProvider.dhuhradjustment -
+                                    savedDhuhrAdjustment,
+                                'asr':
+                                    drawerProvider.asradjustment -
+                                    savedAsrAdjustment,
+                                'maghrib':
+                                    drawerProvider.maghribadjustment -
+                                    savedMaghribAdjustment,
+                                'isha':
+                                    drawerProvider.ishadjustment -
+                                    savedIshaAdjustment,
+                              };
+
+                              await PrayerProxy().updatePrayerTimesInDB(
+                                adjustments,
+                              );
+                              final PrayerModel prayerModel =
+                                  await PrayerProxy().getTodayPrayer();
+                              await WidgetHelper().updateWidgetPrayer(
+                                prayerModel,
+                              );
+                              debugPrint(
+                                'Fajr adjustment: ${drawerProvider.fajradjustment} - ${savedFajrAdjustment} = ${drawerProvider.fajradjustment - savedFajrAdjustment}',
+                              );
+                              debugPrint(
+                                'Dhuhr adjustment: ${drawerProvider.dhuhradjustment} - ${savedDhuhrAdjustment} = ${drawerProvider.dhuhradjustment - savedDhuhrAdjustment}',
+                              );
+                              debugPrint(
+                                'Asr adjustment: ${drawerProvider.asradjustment} - ${savedAsrAdjustment} = ${drawerProvider.asradjustment - savedAsrAdjustment}',
+                              );
+                              debugPrint(
+                                'Maghrib adjustment: ${drawerProvider.maghribadjustment} - ${savedMaghribAdjustment} = ${drawerProvider.maghribadjustment - savedMaghribAdjustment}',
+                              );
+                              debugPrint(
+                                'Isha adjustment: ${drawerProvider.ishadjustment} - ${savedIshaAdjustment} = ${drawerProvider.ishadjustment - savedIshaAdjustment}',
+                              );
+                              setState(() {
+                                savedFajrAdjustment =
+                                    drawerProvider.fajradjustment;
+                                savedDhuhrAdjustment =
+                                    drawerProvider.dhuhradjustment;
+                                savedAsrAdjustment =
+                                    drawerProvider.asradjustment;
+                                savedMaghribAdjustment =
+                                    drawerProvider.maghribadjustment;
+                                savedIshaAdjustment =
+                                    drawerProvider.ishadjustment;
+                                _isSaving = false;
+                              });
+                              widget.onSaved?.call();
+                            },
+                            child: _isSaving
+                                ? const CircularProgressIndicator()
+                                : Text(
+                                    'Save',
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                      fontSize: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium?.fontSize,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
+
               Visibility(
                 visible: kDebugMode,
                 child: Center(
@@ -379,14 +429,10 @@ class _DrawerPageState extends State<DrawerPage> {
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     ),
                     onPressed: () async {
-                      final PrayerModel prayerModel = await PrayerProxy()
-                          .getTodayPrayer();
-
-                      WidgetHelper().updateWidgetPrayer(prayerModel);
-                      WidgetHelper().updateWidgetLocation();
+                      await NotificationHelper().getPendingNotifications();
                     },
                     child: Text(
-                      'Update Widget',
+                      'List Pending Notification',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: Theme.of(
@@ -541,5 +587,71 @@ class _DrawerPageState extends State<DrawerPage> {
         ],
       ),
     );
+  }
+
+  Future<bool> _schedulePrayerNotification({
+    required String prayerName,
+    required int notifId,
+    required bool isEnabled,
+  }) async {
+    if (isEnabled) {
+      final PrayerModel prayerModel = await PrayerProxy().getTodayPrayer();
+
+      String prayerTime = '';
+
+      switch (prayerName) {
+        case 'Fajr':
+          prayerTime = prayerModel.fajr;
+          break;
+        case 'Dhuhr':
+          prayerTime = prayerModel.dhuhr;
+          break;
+        case 'Asr':
+          prayerTime = prayerModel.asr;
+          break;
+        case 'Maghrib':
+          prayerTime = prayerModel.maghrib;
+          break;
+        case 'Isha':
+          prayerTime = prayerModel.isha;
+          break;
+      }
+
+      final parts = prayerTime.split(':');
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
+
+      final now = DateTime.now();
+
+      DateTime prayerDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        hour,
+        minute,
+      );
+
+      if (prayerDateTime.isBefore(now)) {
+        prayerDateTime = prayerDateTime.add(const Duration(days: 1));
+      }
+
+      final scheduledTime = tz.TZDateTime.from(prayerDateTime, tz.local);
+
+      bool isScheduled = await NotificationHelper().schedulePrayerNotification(
+        notifId: notifId,
+        prayerName: prayerName,
+        scheduledTime: scheduledTime,
+      );
+
+      if (!isScheduled) {
+        debugPrint("Notification failed to schedule for $prayerName");
+        return false;
+      }
+
+      return true;
+    } else {
+      await NotificationHelper().cancelNotification(notifId);
+      return true;
+    }
   }
 }

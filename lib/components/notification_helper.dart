@@ -214,4 +214,20 @@ class NotificationHelper {
       notificationDetails: notificationDetails,
     );
   }
+
+  Future<void> getPendingNotifications() async {
+    final List<PendingNotificationRequest> pending =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+
+    if (pending.isEmpty) {
+      debugPrint('No scheduled notifications');
+      return;
+    }
+
+    for (var notification in pending) {
+      debugPrint('ID: ${notification.id}');
+      debugPrint('Title: ${notification.title}');
+      debugPrint('Body: ${notification.body}');
+    }
+  }
 }

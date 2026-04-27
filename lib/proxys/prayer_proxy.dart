@@ -89,4 +89,31 @@ class PrayerProxy {
     final db = await DatabaseHelper.instance.database;
     await db.delete('prayer');
   }
+
+  Future<void> updatePrayerTimesInDB(Map<String, int> adjustments) async {
+    final db = await DatabaseHelper.instance.database;
+    final maps = await db.query('prayer');
+    final batch = db.batch();
+
+    for (final map in maps) {
+      final updated = {
+        for (final entry in adjustments.entries)
+          entry.key: _adjustTime(map[entry.key] as String, entry.value),
+      };
+
+      batch.update('prayer', updated, where: 'id = ?', whereArgs: [map['id']]);
+    }
+
+    await batch.commit(noResult: true);
+  }
+
+  String _adjustTime(String time, int minutes) {
+    if (time.isEmpty) return time;
+    final parts = time.split(':');
+    if (parts.length != 2) return time;
+    int h = int.parse(parts[0]);
+    int m = int.parse(parts[1]);
+    DateTime dt = DateTime(2000, 1, 1, h, m).add(Duration(minutes: minutes));
+    return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+  }
 }
