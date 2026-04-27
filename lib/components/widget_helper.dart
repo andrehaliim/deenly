@@ -1,4 +1,5 @@
 import 'package:home_widget/home_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/prayer_model.dart';
@@ -11,7 +12,9 @@ class WidgetHelper {
       'asr_time': prayerModel.asr,
       'maghrib_time': prayerModel.maghrib,
       'isha_time': prayerModel.isha,
-      'gregorian_date': prayerModel.date,
+      'gregorian_date': DateFormat('dd MMM yyyy').format(
+        DateFormat('dd-MM-yyyy').parse(prayerModel.date),
+      ),
       'hijri_date':
           '${prayerModel.hijriDate} '
           '${prayerModel.hijriMonth} '

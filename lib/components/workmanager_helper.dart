@@ -11,21 +11,13 @@ class WorkmanagerHelper {
       scheduledTime = scheduledTime.add(const Duration(days: 1));
     }
 
-    final initialDelay = scheduledTime.difference(now);
+    final initialDelays = scheduledTime.difference(now);
 
-    await Workmanager().registerPeriodicTask(
+    await Workmanager().registerOneOffTask(
       "dailyNotificationTask",
       dailyTaskName,
-      frequency: const Duration(days: 1),
-      initialDelay: initialDelay,
-      existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
-      constraints: Constraints(
-        networkType: NetworkType.notRequired,
-        requiresBatteryNotLow: false,
-        requiresCharging: false,
-        requiresDeviceIdle: false,
-        requiresStorageNotLow: false,
-      ),
+      initialDelay: initialDelays,
+      existingWorkPolicy: ExistingWorkPolicy.replace,
     );
   }
 }

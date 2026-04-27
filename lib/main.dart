@@ -22,23 +22,23 @@ const String dailyTaskName = "daily_refresh_prayer";
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    final notificationHelper = NotificationHelper();
-    WidgetsFlutterBinding.ensureInitialized();
-    DartPluginRegistrant.ensureInitialized();
-    tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
-
     try {
+      WidgetsFlutterBinding.ensureInitialized();
+      DartPluginRegistrant.ensureInitialized();
+
+      tz.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
+
+      final notificationHelper = NotificationHelper();
+
       await notificationHelper.init();
 
       if (task == dailyTaskName) {
         final now = DateTime.now();
-
         if (now.day <= 2) {
           final prefs = await SharedPreferences.getInstance();
           final lat = prefs.getDouble('latitude');
           final lon = prefs.getDouble('longitude');
-
           if (lat != null && lon != null) {
             await PrayerProxy().fetchMonthlyPrayer(lat, lon);
           }
@@ -47,6 +47,7 @@ void callbackDispatcher() {
         final PrayerModel prayerModel = await PrayerProxy().getTodayPrayer();
         await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
         await WidgetHelper().updateWidgetPrayer(prayerModel);
+        await WorkmanagerHelper.scheduleDailyNotification();
       }
 
       await notificationHelper.showNotification(
@@ -54,14 +55,18 @@ void callbackDispatcher() {
         title: task,
         body: 'Background Task Success',
       );
-      return Future.value(true);
+      return true;
     } catch (e) {
-      await notificationHelper.showNotification(
-        id: 99,
-        title: '[$task] Background Task Failed',
-        body: e.toString(),
-      );
-      return Future.value(false);
+      try {
+        final n = NotificationHelper();
+        await n.init();
+        await n.showNotification(
+          id: 99,
+          title: '[$task] Failed',
+          body: e.toString(),
+        );
+      } catch (_) {}
+      return false;
     }
   });
 }

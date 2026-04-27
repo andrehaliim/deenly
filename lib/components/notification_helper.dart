@@ -67,9 +67,17 @@ class NotificationHelper {
     required String prayerName,
     required TZDateTime scheduledTime,
   }) async {
-    bool isGranted = await requestPermission();
-    if (!isGranted) {
-      return false;
+    if (Platform.isAndroid) {
+      final androidImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+
+      try {
+        final bool? granted = await androidImplementation
+            ?.areNotificationsEnabled();
+        if (granted == false) return false;
+      } catch (_) {}
     }
 
     const androidNotificationDetails = AndroidNotificationDetails(
@@ -150,9 +158,10 @@ class NotificationHelper {
     final hour = int.parse(parts[0]);
     final minute = int.parse(parts[1]);
 
-    final now = DateTime.now();
+    final now = tz.TZDateTime.now(tz.local);
 
-    DateTime prayerDateTime = DateTime(
+    tz.TZDateTime scheduledTime = tz.TZDateTime(
+      tz.local,
       now.year,
       now.month,
       now.day,
@@ -160,7 +169,10 @@ class NotificationHelper {
       minute,
     );
 
-    final scheduledTime = tz.TZDateTime.from(prayerDateTime, tz.local);
+    if (scheduledTime.isBefore(now)) {
+      scheduledTime = scheduledTime.add(const Duration(days: 1));
+    }
+
     return scheduledTime;
   }
 
