@@ -347,19 +347,19 @@ class _DrawerPageState extends State<DrawerPage> {
                                 );
                               }
                               debugPrint(
-                                'Fajr adjustment: ${drawerProvider.fajradjustment} - ${savedFajrAdjustment} = ${drawerProvider.fajradjustment - savedFajrAdjustment}',
+                                'Fajr adjustment: ${drawerProvider.fajradjustment} - $savedFajrAdjustment = ${drawerProvider.fajradjustment - savedFajrAdjustment}',
                               );
                               debugPrint(
-                                'Dhuhr adjustment: ${drawerProvider.dhuhradjustment} - ${savedDhuhrAdjustment} = ${drawerProvider.dhuhradjustment - savedDhuhrAdjustment}',
+                                'Dhuhr adjustment: ${drawerProvider.dhuhradjustment} - $savedDhuhrAdjustment = ${drawerProvider.dhuhradjustment - savedDhuhrAdjustment}',
                               );
                               debugPrint(
-                                'Asr adjustment: ${drawerProvider.asradjustment} - ${savedAsrAdjustment} = ${drawerProvider.asradjustment - savedAsrAdjustment}',
+                                'Asr adjustment: ${drawerProvider.asradjustment} - $savedAsrAdjustment = ${drawerProvider.asradjustment - savedAsrAdjustment}',
                               );
                               debugPrint(
-                                'Maghrib adjustment: ${drawerProvider.maghribadjustment} - ${savedMaghribAdjustment} = ${drawerProvider.maghribadjustment - savedMaghribAdjustment}',
+                                'Maghrib adjustment: ${drawerProvider.maghribadjustment} - $savedMaghribAdjustment = ${drawerProvider.maghribadjustment - savedMaghribAdjustment}',
                               );
                               debugPrint(
-                                'Isha adjustment: ${drawerProvider.ishadjustment} - ${savedIshaAdjustment} = ${drawerProvider.ishadjustment - savedIshaAdjustment}',
+                                'Isha adjustment: ${drawerProvider.ishadjustment} - $savedIshaAdjustment = ${drawerProvider.ishadjustment - savedIshaAdjustment}',
                               );
                               setState(() {
                                 savedFajrAdjustment =

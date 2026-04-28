@@ -49,7 +49,7 @@ class _SplashPageState extends State<SplashPage> {
         );
       });
     } else {
-      print('🚫 Location permission denied, redirecting...');
+      debugPrint('🚫 Location permission denied, redirecting...');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const NoLocationPage()),
