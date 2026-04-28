@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 class PrayerProxy {
   static const String _baseUrl = 'https://api.aladhan.com/v1';
 
-  Future<PrayerModel> getTodayPrayer() async {
+  Future<PrayerModel?> getTodayPrayer() async {
     final db = await DatabaseHelper.instance.database;
     final now = DateTime.now();
     String twoDigits(int n) => n.toString().padLeft(2, '0');
@@ -23,7 +23,7 @@ class PrayerProxy {
       debugPrint('Prayer loaded from local database');
       return PrayerModel.fromJsonDB(maps.first);
     } else {
-      throw Exception('Prayer not found in local database');
+      return null;
     }
   }
 

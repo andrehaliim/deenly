@@ -45,4 +45,9 @@ class WidgetHelper {
     );
     await HomeWidget.updateWidget(name: 'DeenlyWidget');
   }
+
+  Future<void> updateWidgetNextPrayer(String prayerName) async {
+    await HomeWidget.saveWidgetData<String>('next_prayer_name', prayerName);
+    await HomeWidget.updateWidget(name: 'DeenlyWidget');
+  }
 }

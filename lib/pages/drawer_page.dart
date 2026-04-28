@@ -339,11 +339,13 @@ class _DrawerPageState extends State<DrawerPage> {
                               await PrayerProxy().updatePrayerTimesInDB(
                                 adjustments,
                               );
-                              final PrayerModel prayerModel =
+                              final PrayerModel? prayerModel =
                                   await PrayerProxy().getTodayPrayer();
-                              await WidgetHelper().updateWidgetPrayer(
-                                prayerModel,
-                              );
+                              if (prayerModel != null) {
+                                await WidgetHelper().updateWidgetPrayer(
+                                  prayerModel,
+                                );
+                              }
                               debugPrint(
                                 'Fajr adjustment: ${drawerProvider.fajradjustment} - ${savedFajrAdjustment} = ${drawerProvider.fajradjustment - savedFajrAdjustment}',
                               );
@@ -595,7 +597,10 @@ class _DrawerPageState extends State<DrawerPage> {
     required bool isEnabled,
   }) async {
     if (isEnabled) {
-      final PrayerModel prayerModel = await PrayerProxy().getTodayPrayer();
+      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+      if (prayerModel == null) {
+        return false;
+      }
 
       String prayerTime = '';
 

@@ -18,6 +18,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 const String dailyTaskName = "daily_refresh_prayer";
+const String nextPrayerTaskName = "next_prayer_update";
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -44,10 +45,18 @@ void callbackDispatcher() {
           }
         }
 
-        final PrayerModel prayerModel = await PrayerProxy().getTodayPrayer();
-        await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
-        await WidgetHelper().updateWidgetPrayer(prayerModel);
+        final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+        if (prayerModel != null) {
+          await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
+          await WidgetHelper().updateWidgetPrayer(prayerModel);
+        }
         await WorkmanagerHelper.scheduleDailyNotification();
+        await WorkmanagerHelper.scheduleDailyNextPrayerUpdate();
+      } else if (task == nextPrayerTaskName) {
+        final prayerName = inputData?["prayerName"] as String?;
+        if (prayerName != null) {
+          WidgetHelper().updateWidgetNextPrayer(prayerName);
+        }
       }
 
       await notificationHelper.showNotification(
@@ -88,6 +97,7 @@ void main() async {
   await Workmanager().initialize(callbackDispatcher);
   await Workmanager().cancelAll();
   await WorkmanagerHelper.scheduleDailyNotification();
+  await WorkmanagerHelper.scheduleDailyNextPrayerUpdate();
 
   // Load preferences
   final prefs = await SharedPreferences.getInstance();
