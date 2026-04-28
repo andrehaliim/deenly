@@ -39,7 +39,9 @@ class WorkmanagerHelper {
       "isha": prayerModel.isha,
     };
 
-    for (var prayer in data.entries) {
+    final entries = data.entries.toList();
+    for (int i = 0; i < entries.length; i++) {
+      final prayer = entries[i];
       final prayerTime = prayer.value;
       final prayerName = prayer.key;
       final hour = int.parse(prayerTime.split(":")[0]);
@@ -63,13 +65,25 @@ class WorkmanagerHelper {
 
       final initialDelays = prayerDateTime.difference(now);
 
+      // Determine the prayer that follows this one to be shown next
+      String followingPrayerName;
+      if (i < entries.length - 1) {
+        followingPrayerName = entries[i + 1].key;
+      } else {
+        followingPrayerName = entries[0].key; // After Isha, next is Fajr
+      }
+
       await Workmanager().registerOneOffTask(
         "nextPrayer_${prayerName}_${now.month}_${now.day}",
         nextPrayerTaskName,
         initialDelay: initialDelays,
         existingWorkPolicy: ExistingWorkPolicy.replace,
-        inputData: {"prayerName": prayerName},
+        inputData: {"prayerName": followingPrayerName},
       );
+    }
+
+    if (nextPrayerName == null) {
+      await WidgetHelper().updateWidgetNextPrayer("fajr");
     }
   }
 }

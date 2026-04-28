@@ -8,6 +8,7 @@ import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -27,11 +28,20 @@ class _DrawerPageState extends State<DrawerPage> {
   int savedAsrAdjustment = 0;
   int savedMaghribAdjustment = 0;
   int savedIshaAdjustment = 0;
+  String _version = '';
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = packageInfo.version;
+    });
   }
 
   void _loadSettings() {
@@ -450,6 +460,17 @@ class _DrawerPageState extends State<DrawerPage> {
               Center(
                 child: Text(
                   'Deenly © 2026 @andrehaliim',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 5),
+              Center(
+                child: Text(
+                  'v$_version',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
