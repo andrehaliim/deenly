@@ -30,9 +30,12 @@ class LocationProxy {
     return await Geolocator.isLocationServiceEnabled();
   }
 
-  Future<void> getLocation() async {
+  Future<Position> getLocation() async {
     Position position = await Geolocator.getCurrentPosition();
+    return position;
+  }
 
+  Future<void> saveLocation(Position position) async {
     final prefs = await SharedPreferences.getInstance();
 
     prefs.setDouble('lat', position.latitude);

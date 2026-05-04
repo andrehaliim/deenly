@@ -45,18 +45,16 @@ class HomePageState extends State<HomePage> {
     final locationName = prefs.getString('locationName') ?? '';
     final isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
 
-    Position position = await Geolocator.getCurrentPosition();
-
+    Position position = await LocationProxy().getLocation();
     bool? locationChanged = await LocationProxy().isLocationChanged(position);
 
-
-    if (locationChanged == true || isFirstLaunch) {
+    if (locationChanged != false || isFirstLaunch) {
       await _prayerProxy.clearPrayer();
       await _prayerProxy.fetchMonthlyPrayer(
         position.latitude,
         position.longitude,
       );
-
+      
       prefs.setDouble('lat', position.latitude);
       prefs.setDouble('long', position.longitude);
       _location = await LocationProxy().getLocationName(position);
@@ -67,8 +65,17 @@ class HomePageState extends State<HomePage> {
     }
 
     _prayerModel = await _prayerProxy.getTodayPrayer();
-
-    WidgetHelper().updateWidgetPrayer(_prayerModel!);
+    if (_prayerModel != null) {
+      WidgetHelper().updateWidgetPrayer(_prayerModel!);
+    } else {
+      await _prayerProxy.clearPrayer();
+      await _prayerProxy.fetchMonthlyPrayer(
+        position.latitude,
+        position.longitude,
+      );
+      _prayerModel = await _prayerProxy.getTodayPrayer();
+      WidgetHelper().updateWidgetPrayer(_prayerModel!);
+    }
     WidgetHelper().updateWidgetLocation();
 
     await NotificationHelper().scheduleAllPrayerNotifications(_prayerModel!);

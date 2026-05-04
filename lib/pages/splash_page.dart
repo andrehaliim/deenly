@@ -40,14 +40,10 @@ class _SplashPageState extends State<SplashPage> {
     debugPrint('✅ [5/5] Location permission result: $permission');
 
     if (permission == true) {
-      debugPrint('📍 Getting location...');
-      await _locationProxy.getLocation().then((value) {
-        debugPrint('✅ Location received');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainPage()),
-        );
-      });
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainPage()),
+      );
     } else {
       debugPrint('🚫 Location permission denied, redirecting...');
       Navigator.pushReplacement(
