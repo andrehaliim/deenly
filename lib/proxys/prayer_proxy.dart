@@ -27,37 +27,43 @@ class PrayerProxy {
     }
   }
 
-  Future<void> fetchMonthlyPrayer(double lat, double lon) async {
-    final db = await DatabaseHelper.instance.database;
-    final now = DateTime.now();
-    final response = await http.get(
-      Uri.parse(
-        '$_baseUrl/calendar/${now.year}/${now.month}?latitude=$lat&longitude=$lon&method=20&timezonestring=Asia%2FJakarta',
-      ),
-    );
+  Future<void> fetchYearlyPrayer(double lat, double lon) async {
+  final db = await DatabaseHelper.instance.database;
+  final now = DateTime.now();
 
-    if (response.statusCode == 200) {
-      final decodedResponse = json.decode(response.body);
+  final response = await http.get(
+    Uri.parse(
+      '$_baseUrl/calendar/${now.year}?latitude=$lat&longitude=$lon&method=20&timezonestring=Asia%2FJakarta&annual=true',
+    ),
+  );
 
-      final prayers = (decodedResponse['data'] as List)
-          .map((e) => PrayerModel.fromJsonApi(e))
-          .toList();
+  if (response.statusCode == 200) {
+    final decodedResponse = json.decode(response.body);
 
-      final batch = db.batch();
+    // Annual response: data is a Map<String, List> where keys are month numbers ("1".."12")
+    final monthsMap = decodedResponse['data'] as Map<String, dynamic>;
 
-      for (var prayer in prayers) {
-        batch.insert(
-          'prayer',
-          prayer.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
-      debugPrint('Prayer loaded from API');
-      await batch.commit(noResult: true);
-    } else {
-      throw Exception('Failed to load monthly prayer time');
+    final prayers = monthsMap.values
+        .expand((monthList) => (monthList as List))
+        .map((e) => PrayerModel.fromJsonApi(e))
+        .toList();
+
+    final batch = db.batch();
+
+    for (var prayer in prayers) {
+      batch.insert(
+        'prayer',
+        prayer.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
+
+    debugPrint('Prayer loaded from API (yearly: ${now.year})');
+    await batch.commit(noResult: true);
+  } else {
+    throw Exception('Failed to load yearly prayer time');
   }
+}
 
   Map<String, String> getNextPrayer(Map<String, dynamic> timings) {
     final now = DateTime.now();

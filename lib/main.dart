@@ -18,7 +18,6 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 const String dailyTaskName = "daily_refresh_prayer";
-const String nextPrayerTaskName = "next_prayer_update";
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -35,35 +34,13 @@ void callbackDispatcher() {
       await notificationHelper.init();
 
       if (task == dailyTaskName) {
-        final now = DateTime.now();
-        if (now.day <= 2) {
-          final prefs = await SharedPreferences.getInstance();
-          final lat = prefs.getDouble('latitude');
-          final lon = prefs.getDouble('longitude');
-          if (lat != null && lon != null) {
-            await PrayerProxy().fetchMonthlyPrayer(lat, lon);
-          }
-        }
-
         final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
         if (prayerModel != null) {
           await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
           await WidgetHelper().updateWidgetPrayer(prayerModel);
         }
         await WorkmanagerHelper.scheduleDailyNotification();
-        await WorkmanagerHelper.scheduleDailyNextPrayerUpdate();
-      } else if (task == nextPrayerTaskName) {
-        final prayerName = inputData?["prayerName"] as String?;
-        if (prayerName != null) {
-          WidgetHelper().updateWidgetNextPrayer(prayerName);
-        }
       }
-
-      await notificationHelper.showNotification(
-        id: 69,
-        title: task,
-        body: 'Background Task Success',
-      );
       return true;
     } catch (e) {
       try {
@@ -97,7 +74,6 @@ void main() async {
   await Workmanager().initialize(callbackDispatcher);
   await Workmanager().cancelAll();
   await WorkmanagerHelper.scheduleDailyNotification();
-  await WorkmanagerHelper.scheduleDailyNextPrayerUpdate();
 
   // Load preferences
   final prefs = await SharedPreferences.getInstance();

@@ -47,14 +47,13 @@ class HomePageState extends State<HomePage> {
 
     Position position = await LocationProxy().getLocation();
     bool? locationChanged = await LocationProxy().isLocationChanged(position);
-
     if (locationChanged != false || isFirstLaunch) {
       await _prayerProxy.clearPrayer();
-      await _prayerProxy.fetchMonthlyPrayer(
+      await _prayerProxy.fetchYearlyPrayer(
         position.latitude,
         position.longitude,
       );
-      
+
       prefs.setDouble('lat', position.latitude);
       prefs.setDouble('long', position.longitude);
       _location = await LocationProxy().getLocationName(position);
@@ -69,7 +68,7 @@ class HomePageState extends State<HomePage> {
       WidgetHelper().updateWidgetPrayer(_prayerModel!);
     } else {
       await _prayerProxy.clearPrayer();
-      await _prayerProxy.fetchMonthlyPrayer(
+      await _prayerProxy.fetchYearlyPrayer(
         position.latitude,
         position.longitude,
       );
