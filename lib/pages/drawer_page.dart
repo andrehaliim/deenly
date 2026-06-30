@@ -1,5 +1,7 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
+import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/components/widget_helper.dart';
@@ -81,6 +83,63 @@ class _DrawerPageState extends State<DrawerPage> {
                 ),
               ),
               const SizedBox(height: 20),
+              _buildTitle('Language'),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.language,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Indonesia',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge?.fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    CountryFlag.fromLanguageCode(
+                      'id',
+                      theme: ImageTheme(width: 30, height: 20),
+                    ),
+                    const Spacer(),
+                    Consumer<LocaleProvider>(
+                      builder: (context, provider, _) {
+                        final isIndonesian =
+                            (provider.locale ?? const Locale('en'))
+                                .languageCode ==
+                            'id';
+
+                        return Transform.scale(
+                          scale: 1,
+                          child: Switch(
+                            padding: EdgeInsets.zero,
+                            value: isIndonesian,
+                            onChanged: (value) {
+                              provider.setLocale(Locale(value ? 'id' : 'en'));
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
               _buildTitle('Appearance'),
               const SizedBox(height: 12),
               Container(

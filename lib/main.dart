@@ -3,14 +3,17 @@ import 'dart:ui';
 import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
+import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/components/workmanager_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/splash_page.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -84,6 +87,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider(isDark)),
         ChangeNotifierProvider(create: (_) => DrawerProvider(prefs)),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
       ],
       child: const MyApp(),
     ),
@@ -95,6 +99,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localeProvider = context.watch<LocaleProvider>();
+
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
@@ -102,6 +108,14 @@ class MyApp extends StatelessWidget {
           themeMode: themeProvider.themeMode,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
+          locale: localeProvider.locale,
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('en'), Locale('id')],
           home: SplashPage(),
         );
       },

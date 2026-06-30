@@ -1,3 +1,4 @@
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
             Row(
               children: [
                 Text(
-                  'Next Prayer',
+                  AppLocalizations.of(context)!.nextPrayerTitle,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
