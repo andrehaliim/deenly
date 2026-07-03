@@ -47,7 +47,7 @@ class HomePageState extends State<HomePage> {
 
     Position position = await LocationProxy().getLocation();
     bool? locationChanged = await LocationProxy().isLocationChanged(position);
-    if (locationChanged != false || isFirstLaunch) {
+    if (locationChanged == true || isFirstLaunch) {
       await _prayerProxy.clearPrayer();
       await _prayerProxy.fetchYearlyPrayer(
         position.latitude,

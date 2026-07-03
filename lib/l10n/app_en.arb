@@ -1,4 +1,10 @@
 {
     "@@locale": "en",
-    "nextPrayerTitle": "Next Prayer"
+    "nextPrayerTitle": "Next Prayer",
+    "prayerTimes": "Prayer Times",
+    "fajr": "Fajr",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha"
 }

@@ -1,4 +1,10 @@
 {
     "@@locale": "id",
-    "nextPrayerTitle": "Shalat Berikutnya"
+    "nextPrayerTitle": "Shalat Berikutnya",
+    "prayerTimes": "Jadwal Shalat",
+    "fajr": "Subuh",
+    "dhuhr": "Dzuhur",
+    "asr": "Ashar",
+    "maghrib": "Maghrib",
+    "isha": "Isya"
 }

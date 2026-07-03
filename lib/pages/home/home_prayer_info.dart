@@ -1,9 +1,11 @@
+import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class HomePrayerInfo extends StatefulWidget {
   final String location;
@@ -33,8 +35,28 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
     _next = PrayerProxy().getNextPrayer(widget.prayerModel.toJson());
   }
 
+  String getPrayerLabel(BuildContext context, String prayer) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (prayer) {
+      case 'Fajr':
+        return l10n.fajr;
+      case 'Dhuhr':
+        return l10n.dhuhr;
+      case 'Asr':
+        return l10n.asr;
+      case 'Maghrib':
+        return l10n.maghrib;
+      case 'Isha':
+        return l10n.isha;
+      default:
+        return prayer;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Container(
@@ -105,7 +127,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                 ),
                 const Spacer(),
                 Text(
-                  '${widget.prayerModel.hijriDate} ${widget.prayerModel.hijriMonth} ${widget.prayerModel.hijriYear} \n ${DateFormat('dd MMM yyyy').format(DateFormat('dd-MM-yyyy').parse(widget.prayerModel.date))}',
+                  '${widget.prayerModel.hijriDate} ${widget.prayerModel.hijriMonth} ${widget.prayerModel.hijriYear} \n ${DateFormat('dd MMMM yyyy', localeProvider.locale?.languageCode).format(DateFormat('dd-MM-yyyy').parse(widget.prayerModel.date))}',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onPrimary,
@@ -116,7 +138,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
             ),
             const SizedBox(height: 10),
             Text(
-              _next['nextPrayer'] ?? '',
+              getPrayerLabel(context, _next['nextPrayer'] ?? ''),
               style: GoogleFonts.notoSerif(
                 textStyle: Theme.of(context).textTheme.headlineLarge,
                 color: Theme.of(context).colorScheme.onPrimary,
@@ -140,7 +162,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                   child: Row(
                     children: [
                       Text(
-                        'Prayer Times',
+                        AppLocalizations.of(context)!.prayerTimes,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -207,7 +229,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    prayer,
+                                    getPrayerLabel(context, prayer),
                                     style: Theme.of(context).textTheme.bodyLarge
                                         ?.copyWith(
                                           fontWeight: isNext

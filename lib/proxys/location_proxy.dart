@@ -53,12 +53,11 @@ class LocationProxy {
 
       Placemark place = placemarks[0];
 
-      String city = place.subAdministrativeArea ?? '';
-      String country = place.country ?? '';
+      String city = place.subLocality ?? '';
 
-      if (city.isEmpty && country.isEmpty) return 'Error';
+      if (city.isEmpty) return 'Error';
 
-      return '$city, $country';
+      return city;
     } catch (e) {
       return 'Error';
     }
