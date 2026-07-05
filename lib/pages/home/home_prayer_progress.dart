@@ -1,3 +1,5 @@
+import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -65,7 +67,7 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Prayer Progress',
+                AppLocalizations.of(context)!.prayerProgress,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
@@ -84,7 +86,7 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  '$completedCount/${_prayerNames.length} Completed',
+                  '$completedCount/${_prayerNames.length} ${AppLocalizations.of(context)!.completed}',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
@@ -158,7 +160,7 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        prayer,
+                        PrayerProxy().getPrayerLabel(context, prayer),
                         style: Theme.of(context).textTheme.labelMedium
                             ?.copyWith(
                               fontWeight: isCompleted

@@ -1,3 +1,4 @@
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/mosque_model.dart';
 import 'package:deenly/proxys/mosque_proxy.dart';
 import 'package:flutter/material.dart';
@@ -129,7 +130,7 @@ class _MosquePageState extends State<MosquePage> {
                 ),
               ),
               child: Text(
-                'Try Again',
+                AppLocalizations.of(context)!.mosqueTryAgain,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
@@ -220,8 +221,8 @@ class _MosquePageState extends State<MosquePage> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Text(
-                          'Loading address...',
+                        Text(
+                          AppLocalizations.of(context)!.mosqueLoadAddress,
                           style: TextStyle(fontSize: 14, color: Colors.white54),
                         ),
                       ],

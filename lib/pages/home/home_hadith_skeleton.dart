@@ -1,3 +1,4 @@
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -42,7 +43,7 @@ class _HomeHadithSkeletonState extends State<HomeHadithSkeleton> {
           children: [
             Center(
               child: Text(
-                'Daily Hadith',
+                AppLocalizations.of(context)!.hadithTitle,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,

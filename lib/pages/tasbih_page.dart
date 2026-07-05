@@ -1,3 +1,4 @@
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
 
@@ -82,7 +83,7 @@ class _TasbihPageState extends State<TasbihPage>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Current Session',
+            AppLocalizations.of(context)!.sessionTitle,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onTertiary,
@@ -178,7 +179,7 @@ class _TasbihPageState extends State<TasbihPage>
                               ),
                         ),
                         Text(
-                          'TAPS',
+                          AppLocalizations.of(context)!.sessionTap,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.onPrimary,
@@ -195,7 +196,7 @@ class _TasbihPageState extends State<TasbihPage>
           ),
           const SizedBox(height: 30),
           Text(
-            'SELECT TARGET',
+            AppLocalizations.of(context)!.sessionSelect,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onTertiary,
@@ -318,7 +319,7 @@ class _TasbihPageState extends State<TasbihPage>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Reset Counter',
+                    AppLocalizations.of(context)!.sessionReset,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.primary,

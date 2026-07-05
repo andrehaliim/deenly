@@ -1,3 +1,4 @@
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
@@ -70,7 +71,7 @@ class HomePrayerSkeleton extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'Next Prayer',
+                    AppLocalizations.of(context)!.nextPrayerTitle,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
@@ -111,7 +112,7 @@ class HomePrayerSkeleton extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          'Prayer Times',
+                          AppLocalizations.of(context)!.prayerTimes,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,

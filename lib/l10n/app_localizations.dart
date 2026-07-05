@@ -139,6 +139,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Isha'**
   String get isha;
+
+  /// No description provided for @menuHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get menuHome;
+
+  /// No description provided for @menuQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran'**
+  String get menuQuran;
+
+  /// No description provided for @menuMosque.
+  ///
+  /// In en, this message translates to:
+  /// **'Mosque'**
+  String get menuMosque;
+
+  /// No description provided for @menuQibla.
+  ///
+  /// In en, this message translates to:
+  /// **'Qibla'**
+  String get menuQibla;
+
+  /// No description provided for @menuTasbih.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasbih'**
+  String get menuTasbih;
+
+  /// No description provided for @menuSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get menuSetting;
+
+  /// No description provided for @prayerProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Progress'**
+  String get prayerProgress;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @hadithTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Hadith'**
+  String get hadithTitle;
+
+  /// No description provided for @hadithNarrated.
+  ///
+  /// In en, this message translates to:
+  /// **'Narrated by: '**
+  String get hadithNarrated;
+
+  /// No description provided for @continueRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Reading'**
+  String get continueRead;
+
+  /// No description provided for @continueAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah No: '**
+  String get continueAyah;
+
+  /// No description provided for @ayah.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayahs'**
+  String get ayah;
+
+  /// No description provided for @mosqueTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get mosqueTryAgain;
+
+  /// No description provided for @mosqueLoadAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading Address...'**
+  String get mosqueLoadAddress;
+
+  /// Instruction to rotate phone to align with Qibla direction
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate the phone {degree}° to the {direction}'**
+  String qiblaRotate(String degree, String direction);
+
+  /// No description provided for @qiblaFacing.
+  ///
+  /// In en, this message translates to:
+  /// **'You are facing the Qibla!'**
+  String get qiblaFacing;
+
+  /// No description provided for @right.
+  ///
+  /// In en, this message translates to:
+  /// **'right'**
+  String get right;
+
+  /// No description provided for @left.
+  ///
+  /// In en, this message translates to:
+  /// **'left'**
+  String get left;
+
+  /// No description provided for @errorRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading compass'**
+  String get errorRead;
+
+  /// No description provided for @errorNotSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: This device does not support the compass'**
+  String get errorNotSupport;
+
+  /// No description provided for @sessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Session'**
+  String get sessionTitle;
+
+  /// No description provided for @sessionSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Target'**
+  String get sessionSelect;
+
+  /// No description provided for @sessionReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Counter'**
+  String get sessionReset;
+
+  /// No description provided for @sessionTap.
+  ///
+  /// In en, this message translates to:
+  /// **'Taps'**
+  String get sessionTap;
+
+  /// No description provided for @settingLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingLanguageTitle;
+
+  /// No description provided for @settingAppearanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingAppearanceTitle;
+
+  /// No description provided for @settingTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get settingTheme;
+
+  /// No description provided for @settingNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Notifications'**
+  String get settingNotificationTitle;
+
+  /// No description provided for @settingTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Adjustment'**
+  String get settingTimeTitle;
+
+  /// No description provided for @settingSaveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get settingSaveButton;
 }
 
 class _AppLocalizationsDelegate

@@ -28,4 +28,99 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get isha => 'Isya';
+
+  @override
+  String get menuHome => 'Beranda';
+
+  @override
+  String get menuQuran => 'Al-Qur\'an';
+
+  @override
+  String get menuMosque => 'Masjid';
+
+  @override
+  String get menuQibla => 'Kiblat';
+
+  @override
+  String get menuTasbih => 'Tasbih';
+
+  @override
+  String get menuSetting => 'Pengaturan';
+
+  @override
+  String get prayerProgress => 'Progress Shalat';
+
+  @override
+  String get completed => 'Selesai';
+
+  @override
+  String get hadithTitle => 'Hadis Harian';
+
+  @override
+  String get hadithNarrated => 'Diriwayatkan oleh: ';
+
+  @override
+  String get continueRead => 'Lanjutkan Membaca';
+
+  @override
+  String get continueAyah => 'Ayat Ke: ';
+
+  @override
+  String get ayah => 'Ayat';
+
+  @override
+  String get mosqueTryAgain => 'Coba Lagi';
+
+  @override
+  String get mosqueLoadAddress => 'Memuat Alamat...';
+
+  @override
+  String qiblaRotate(String degree, String direction) {
+    return 'Putar ponsel $degree° ke $direction';
+  }
+
+  @override
+  String get qiblaFacing => 'Kamu menghadap arah Kiblat!';
+
+  @override
+  String get right => 'kanan';
+
+  @override
+  String get left => 'kiri';
+
+  @override
+  String get errorRead => 'Error membaca kompas';
+
+  @override
+  String get errorNotSupport => 'Error: Perangkat ini tidak mendukung kompas';
+
+  @override
+  String get sessionTitle => 'Sesi Saat Ini';
+
+  @override
+  String get sessionSelect => 'Pilih Target';
+
+  @override
+  String get sessionReset => 'Reset Penghitung';
+
+  @override
+  String get sessionTap => 'Tap';
+
+  @override
+  String get settingLanguageTitle => 'Bahasa';
+
+  @override
+  String get settingAppearanceTitle => 'Tampilan';
+
+  @override
+  String get settingTheme => 'Mode Gelap';
+
+  @override
+  String get settingNotificationTitle => 'Notifikasi Shalat';
+
+  @override
+  String get settingTimeTitle => 'Penyesuaian Waktu';
+
+  @override
+  String get settingSaveButton => 'Simpan';
 }

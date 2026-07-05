@@ -6,5 +6,56 @@
     "dhuhr": "Dhuhr",
     "asr": "Asr",
     "maghrib": "Maghrib",
-    "isha": "Isha"
+    "isha": "Isha",
+
+    "menuHome": "Home",
+    "menuQuran": "Quran",
+    "menuMosque": "Mosque",
+    "menuQibla": "Qibla",
+    "menuTasbih": "Tasbih",
+    "menuSetting": "Settings",
+
+    "prayerProgress": "Prayer Progress",
+    "completed": "Completed",
+    "hadithTitle": "Daily Hadith",
+    "hadithNarrated": "Narrated by: ",
+
+    "continueRead": "Continue Reading",
+    "continueAyah": "Ayah No: ",
+    "ayah": "Ayahs",
+
+    "mosqueTryAgain": "Try Again",
+    "mosqueLoadAddress": "Loading Address...",
+
+    "qiblaRotate": "Rotate the phone {degree}° to the {direction}",
+    "@qiblaRotate": {
+        "description": "Instruction to rotate phone to align with Qibla direction",
+        "placeholders": {
+            "degree": {
+                "type": "String",
+                "example": "0"
+            },
+            "direction": {
+                "type": "String",
+                "example": "left"
+            }
+        }
+    },
+    "qiblaFacing": "You are facing the Qibla!",
+    "right": "right",
+    "left": "left",
+    "errorRead": "Error reading compass",
+    "errorNotSupport": "Error: This device does not support the compass",
+
+    "sessionTitle": "Current Session",
+    "sessionSelect": "Select Target",
+    "sessionReset": "Reset Counter",
+    "sessionTap": "Taps",
+
+    "settingLanguageTitle": "Language",
+    "settingAppearanceTitle": "Appearance",
+    "settingTheme": "Dark Mode",
+    "settingNotificationTitle": "Prayer Notifications",
+    "settingTimeTitle": "Time Adjustment",
+    "settingSaveButton": "Save"
 }

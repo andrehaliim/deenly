@@ -6,5 +6,56 @@
     "dhuhr": "Dzuhur",
     "asr": "Ashar",
     "maghrib": "Maghrib",
-    "isha": "Isya"
+    "isha": "Isya",
+
+    "menuHome": "Beranda",
+    "menuQuran": "Al-Qur'an",
+    "menuMosque": "Masjid",
+    "menuQibla": "Kiblat",
+    "menuTasbih": "Tasbih",
+    "menuSetting": "Pengaturan",
+
+    "prayerProgress": "Progress Shalat",
+    "completed": "Selesai",
+    "hadithTitle": "Hadis Harian",
+    "hadithNarrated": "Diriwayatkan oleh: ",
+
+    "continueRead": "Lanjutkan Membaca",
+    "continueAyah": "Ayat Ke: ",
+    "ayah": "Ayat",
+
+    "mosqueTryAgain": "Coba Lagi",
+    "mosqueLoadAddress": "Memuat Alamat...",
+
+    "qiblaRotate": "Putar ponsel {degree}° ke {direction}",
+    "@qiblaRotate": {
+        "description": "Instruksi untuk memutar ponsel agar sejajar dengan arah Kiblat",
+        "placeholders": {
+            "degree": {
+                "type": "String",
+                "example": "0"
+            },
+            "direction": {
+                "type": "String",
+                "example": "kiri"
+            }
+        }
+    },
+    "qiblaFacing": "Kamu menghadap arah Kiblat!",
+    "right": "kanan",
+    "left": "kiri",
+    "errorRead": "Error membaca kompas",
+    "errorNotSupport": "Error: Perangkat ini tidak mendukung kompas",
+
+    "sessionTitle": "Sesi Saat Ini",
+    "sessionSelect": "Pilih Target",
+    "sessionReset": "Reset Penghitung",
+    "sessionTap": "Tap",
+
+    "settingLanguageTitle": "Bahasa",
+    "settingAppearanceTitle": "Tampilan",
+    "settingTheme": "Mode Gelap",
+    "settingNotificationTitle": "Notifikasi Shalat",
+    "settingTimeTitle": "Penyesuaian Waktu",
+    "settingSaveButton": "Simpan"
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/pages/quran/quran_detail_page.dart';
 import 'package:deenly/proxys/quran_proxy.dart';
@@ -94,7 +95,7 @@ class _QuranPageState extends State<QuranPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Continue Reading',
+                                AppLocalizations.of(context)!.continueRead,
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: Theme.of(
@@ -118,7 +119,7 @@ class _QuranPageState extends State<QuranPage> {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                'Ayah No: $lastSurahAyah',
+                                '${AppLocalizations.of(context)!.continueAyah}$lastSurahAyah',
                                 style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(
                                       color: Theme.of(
@@ -229,7 +230,7 @@ class _QuranPageState extends State<QuranPage> {
                           ),
                         ),
                         Text(
-                          '${data.totalAyahs} Ayahs',
+                          '${data.totalAyahs} ${AppLocalizations.of(context)!.ayah}',
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(

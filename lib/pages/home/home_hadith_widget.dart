@@ -1,3 +1,4 @@
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/hadith_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,7 +46,7 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
         children: [
           Center(
             child: Text(
-              'Daily Hadith',
+              AppLocalizations.of(context)!.hadithTitle,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
@@ -66,7 +67,7 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Narrated by:",
+                AppLocalizations.of(context)!.hadithNarrated,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),

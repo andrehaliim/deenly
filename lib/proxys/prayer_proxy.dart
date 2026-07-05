@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:deenly/components/database_helper.dart';
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -121,5 +122,25 @@ class PrayerProxy {
     int m = int.parse(parts[1]);
     DateTime dt = DateTime(2000, 1, 1, h, m).add(Duration(minutes: minutes));
     return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+  }
+
+  
+
+  String getPrayerLabel(BuildContext context, String prayer) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (prayer.toLowerCase()) {
+      case 'fajr':
+        return l10n.fajr;
+      case 'dhuhr':
+        return l10n.dhuhr;
+      case 'asr':
+        return l10n.asr;
+      case 'maghrib':
+        return l10n.maghrib;
+      case 'isha':
+        return l10n.isha;
+      default:
+        return prayer;
+    }
   }
 }

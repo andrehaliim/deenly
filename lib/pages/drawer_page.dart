@@ -5,6 +5,7 @@ import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/components/widget_helper.dart';
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/foundation.dart';
@@ -73,7 +74,7 @@ class _DrawerPageState extends State<DrawerPage> {
               const SizedBox(height: 40),
               Center(
                 child: Text(
-                  'Settings',
+                  AppLocalizations.of(context)!.menuSetting,
                   style: GoogleFonts.notoSerif(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 24,
@@ -83,7 +84,7 @@ class _DrawerPageState extends State<DrawerPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              _buildTitle('Language'),
+              _buildTitle(AppLocalizations.of(context)!.settingLanguageTitle),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -140,7 +141,7 @@ class _DrawerPageState extends State<DrawerPage> {
               ),
               const SizedBox(height: 12),
 
-              _buildTitle('Appearance'),
+              _buildTitle(AppLocalizations.of(context)!.settingAppearanceTitle),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -158,7 +159,7 @@ class _DrawerPageState extends State<DrawerPage> {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Dark Mode',
+                      AppLocalizations.of(context)!.settingTheme,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: Theme.of(
@@ -183,10 +184,10 @@ class _DrawerPageState extends State<DrawerPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              _buildTitle('Prayer Notification'),
+              _buildTitle(AppLocalizations.of(context)!.settingNotificationTitle),
               const SizedBox(height: 12),
               _buildPrayerNotificationSetting(
-                prayerName: 'Fajr',
+                prayerName: PrayerProxy().getPrayerLabel(context, 'Fajr'),
                 notifId: 1,
                 isEnabled: drawerProvider.isFajrEnabled,
                 onChanged: (value) async {
@@ -209,7 +210,7 @@ class _DrawerPageState extends State<DrawerPage> {
               ),
               const SizedBox(height: 6),
               _buildPrayerNotificationSetting(
-                prayerName: 'Dhuhr',
+                prayerName: PrayerProxy().getPrayerLabel(context, 'Dhuhr'),
                 notifId: 2,
                 isEnabled: drawerProvider.isDhuhrEnabled,
                 onChanged: (value) async {
@@ -232,7 +233,7 @@ class _DrawerPageState extends State<DrawerPage> {
               ),
               const SizedBox(height: 6),
               _buildPrayerNotificationSetting(
-                prayerName: 'Asr',
+                prayerName: PrayerProxy().getPrayerLabel(context, 'Asr'),
                 notifId: 3,
                 isEnabled: drawerProvider.isAsrEnabled,
                 onChanged: (value) async {
@@ -255,7 +256,7 @@ class _DrawerPageState extends State<DrawerPage> {
               ),
               const SizedBox(height: 6),
               _buildPrayerNotificationSetting(
-                prayerName: 'Maghrib',
+                prayerName: PrayerProxy().getPrayerLabel(context, 'Maghrib'),
                 notifId: 4,
                 isEnabled: drawerProvider.isMaghribEnabled,
                 onChanged: (value) async {
@@ -278,7 +279,7 @@ class _DrawerPageState extends State<DrawerPage> {
               ),
               const SizedBox(height: 6),
               _buildPrayerNotificationSetting(
-                prayerName: 'Isha',
+                prayerName: PrayerProxy().getPrayerLabel(context, 'Isha'),
                 notifId: 5,
                 isEnabled: drawerProvider.isIshaEnabled,
                 onChanged: (value) async {
@@ -302,7 +303,7 @@ class _DrawerPageState extends State<DrawerPage> {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  _buildTitle('Time Adjustment'),
+                  _buildTitle(AppLocalizations.of(context)!.settingTimeTitle),
                   const Spacer(),
                   IconButton(
                     icon: drawerProvider.isAdjustmentExpanded
@@ -329,7 +330,7 @@ class _DrawerPageState extends State<DrawerPage> {
                     child: Column(
                       children: [
                         _buildPrayerTimeAdjustment(
-                          'Fajr',
+                          PrayerProxy().getPrayerLabel(context, 'Fajr'),
                           drawerProvider.fajradjustment,
                           (value) {
                             drawerProvider.setFajrAdjustment(value);
@@ -338,7 +339,7 @@ class _DrawerPageState extends State<DrawerPage> {
 
                         const SizedBox(height: 6),
                         _buildPrayerTimeAdjustment(
-                          'Dhuhr',
+                          PrayerProxy().getPrayerLabel(context, 'Dhuhr'),
                           drawerProvider.dhuhradjustment,
                           (value) {
                             drawerProvider.setDhuhrAdjustment(value);
@@ -346,7 +347,7 @@ class _DrawerPageState extends State<DrawerPage> {
                         ),
                         const SizedBox(height: 6),
                         _buildPrayerTimeAdjustment(
-                          'Asr',
+                          PrayerProxy().getPrayerLabel(context, 'Asr'),
                           drawerProvider.asradjustment,
                           (value) {
                             drawerProvider.setAsrAdjustment(value);
@@ -354,7 +355,7 @@ class _DrawerPageState extends State<DrawerPage> {
                         ),
                         const SizedBox(height: 6),
                         _buildPrayerTimeAdjustment(
-                          'Maghrib',
+                          PrayerProxy().getPrayerLabel(context, 'Maghrib'),
                           drawerProvider.maghribadjustment,
                           (value) {
                             drawerProvider.setMaghribAdjustment(value);
@@ -362,7 +363,7 @@ class _DrawerPageState extends State<DrawerPage> {
                         ),
                         const SizedBox(height: 6),
                         _buildPrayerTimeAdjustment(
-                          'Isha',
+                          PrayerProxy().getPrayerLabel(context, 'Isha'),
                           drawerProvider.ishadjustment,
                           (value) {
                             drawerProvider.setIshaAdjustment(value);
@@ -448,7 +449,7 @@ class _DrawerPageState extends State<DrawerPage> {
                             child: _isSaving
                                 ? const CircularProgressIndicator()
                                 : Text(
-                                    'Save',
+                                    AppLocalizations.of(context)!.settingSaveButton,
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,

@@ -1,3 +1,4 @@
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -14,11 +15,26 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      {'icon': FontAwesomeIcons.bookQuran, 'label': 'QURAN'},
-      {'icon': FontAwesomeIcons.mosque, 'label': 'MOSQUE'},
-      {'icon': FontAwesomeIcons.house, 'label': 'HOME'},
-      {'icon': FontAwesomeIcons.compass, 'label': 'QIBLA'},
-      {'icon': FontAwesomeIcons.fingerprint, 'label': 'TASBIH'},
+      {
+        'icon': FontAwesomeIcons.bookQuran,
+        'label': AppLocalizations.of(context)!.menuQuran,
+      },
+      {
+        'icon': FontAwesomeIcons.mosque,
+        'label': AppLocalizations.of(context)!.menuMosque,
+      },
+      {
+        'icon': FontAwesomeIcons.house,
+        'label': AppLocalizations.of(context)!.menuHome,
+      },
+      {
+        'icon': FontAwesomeIcons.compass,
+        'label': AppLocalizations.of(context)!.menuQibla,
+      },
+      {
+        'icon': FontAwesomeIcons.fingerprint,
+        'label': AppLocalizations.of(context)!.menuTasbih,
+      },
     ];
 
     return Container(

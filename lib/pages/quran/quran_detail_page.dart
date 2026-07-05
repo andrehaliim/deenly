@@ -1,3 +1,4 @@
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/proxys/quran_proxy.dart';
@@ -157,7 +158,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     ),
                   ),
                   Text(
-                    '${widget.surah.totalAyahs} Ayahs',
+                    '${widget.surah.totalAyahs} ${AppLocalizations.of(context)!.ayah}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,

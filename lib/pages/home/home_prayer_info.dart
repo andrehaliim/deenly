@@ -35,24 +35,6 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
     _next = PrayerProxy().getNextPrayer(widget.prayerModel.toJson());
   }
 
-  String getPrayerLabel(BuildContext context, String prayer) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (prayer) {
-      case 'Fajr':
-        return l10n.fajr;
-      case 'Dhuhr':
-        return l10n.dhuhr;
-      case 'Asr':
-        return l10n.asr;
-      case 'Maghrib':
-        return l10n.maghrib;
-      case 'Isha':
-        return l10n.isha;
-      default:
-        return prayer;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
@@ -138,7 +120,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
             ),
             const SizedBox(height: 10),
             Text(
-              getPrayerLabel(context, _next['nextPrayer'] ?? ''),
+              PrayerProxy().getPrayerLabel(context, _next['nextPrayer'] ?? ''),
               style: GoogleFonts.notoSerif(
                 textStyle: Theme.of(context).textTheme.headlineLarge,
                 color: Theme.of(context).colorScheme.onPrimary,
@@ -229,7 +211,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    getPrayerLabel(context, prayer),
+                                    PrayerProxy().getPrayerLabel(context, prayer),
                                     style: Theme.of(context).textTheme.bodyLarge
                                         ?.copyWith(
                                           fontWeight: isNext

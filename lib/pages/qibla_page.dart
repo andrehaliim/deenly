@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,7 +89,7 @@ class _QiblaPageState extends State<QiblaPage>
         if (snapshot.hasError) {
           return Center(
             child: Text(
-              'Error reading compass',
+              AppLocalizations.of(context)!.errorRead,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.error,
                 fontWeight: FontWeight.bold,
@@ -108,7 +109,7 @@ class _QiblaPageState extends State<QiblaPage>
         if (heading == null) {
           return Center(
             child: Text(
-              'Device does not have compass sensors',
+              AppLocalizations.of(context)!.errorNotSupport,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.error,
                 fontWeight: FontWeight.bold,
@@ -126,15 +127,13 @@ class _QiblaPageState extends State<QiblaPage>
         Color textColor;
 
         if (diff.abs() < 2) {
-          turnText = "You are facing the Qibla!";
+          turnText = AppLocalizations.of(context)!.qiblaFacing;
           textColor = Colors.green;
         } else if (diff > 0) {
-          turnText =
-              "Rotate the phone ${diff.toStringAsFixed(0)}° to the right";
+          turnText = AppLocalizations.of(context)!.qiblaRotate(diff.toStringAsFixed(0), AppLocalizations.of(context)!.right);
           textColor = Theme.of(context).colorScheme.onTertiary;
         } else {
-          turnText =
-              "Rotate the phone ${math.min(diff.abs(), 359).toStringAsFixed(0)}° to the left";
+          turnText = AppLocalizations.of(context)!.qiblaRotate(math.min(diff.abs(), 359).toStringAsFixed(0), AppLocalizations.of(context)!.left);
           textColor = Theme.of(context).colorScheme.onTertiary;
         }
 
