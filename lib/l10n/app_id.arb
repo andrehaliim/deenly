@@ -57,5 +57,7 @@
     "settingTheme": "Mode Gelap",
     "settingNotificationTitle": "Notifikasi Shalat",
     "settingTimeTitle": "Penyesuaian Waktu",
-    "settingSaveButton": "Simpan"
+    "settingSaveButton": "Simpan",
+    "settingBeforeTitle": "Notifikasi sebelum adzan",
+    "settingBeforeValue": "Nyalakan"
 }

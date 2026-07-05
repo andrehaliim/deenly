@@ -85,6 +85,8 @@ class NotificationHelper {
       'Deenly Notifications',
       importance: Importance.max,
       priority: Priority.high,
+      sound: RawResourceAndroidNotificationSound('adhan'),
+      playSound: true,
     );
 
     const notificationDetails = NotificationDetails(
@@ -151,6 +153,83 @@ class NotificationHelper {
         scheduledTime: convertToTZ(prayer.time),
       );
     }
+  }
+
+  Future<bool> scheduleReminderNotification({
+    required int notifId,
+    required String prayerName,
+    required TZDateTime scheduledTime,
+  }) async {
+    if (Platform.isAndroid) {
+      final androidImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+
+      try {
+        final bool? granted = await androidImplementation
+            ?.areNotificationsEnabled();
+        if (granted == false) return false;
+      } catch (_) {}
+    }
+
+    const androidNotificationDetails = AndroidNotificationDetails(
+      'deenly_reminder_channel',
+      'Deenly Reminder Notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+      sound: RawResourceAndroidNotificationSound('reminder'),
+      playSound: true,
+    );
+
+    const notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id: notifId,
+      title: 'Prayer Reminder',
+      body: '10 minutes again for $prayerName prayer',
+      notificationDetails: notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      scheduledDate: scheduledTime.subtract(const Duration(minutes: 10)),
+    );
+
+    debugPrint(
+      "Reminder scheduled for $prayerName at ${scheduledTime.subtract(const Duration(minutes: 10))}",
+    );
+    return true;
+  }
+
+  Future<void> scheduleReminderNotifications(PrayerModel prayerModel) async {
+    final prayers = [
+      (id: 11, name: 'Fajr', time: prayerModel.fajr),
+      (id: 22, name: 'Dhuhr', time: prayerModel.dhuhr),
+      (id: 33, name: 'Asr', time: prayerModel.asr),
+      (id: 44, name: 'Maghrib', time: prayerModel.maghrib),
+      (id: 55, name: 'Isha', time: prayerModel.isha),
+    ];
+
+    for (final prayer in prayers) {
+      await scheduleReminderNotification(
+        notifId: prayer.id,
+        prayerName: prayer.name,
+        scheduledTime: convertToTZ(prayer.time),
+      );
+    }
+  }
+
+  Future<void> disableReminderNotifications() async {
+    const reminderIds = [11, 22, 33, 44, 55];
+
+    for (final idx in reminderIds) {
+      await flutterLocalNotificationsPlugin.cancel(id: idx);
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isReminderEnabled', false);
+
+    debugPrint("All reminder notifications disabled");
   }
 
   TZDateTime convertToTZ(String prayerTime) {

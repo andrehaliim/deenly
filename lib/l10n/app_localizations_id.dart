@@ -123,4 +123,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingSaveButton => 'Simpan';
+
+  @override
+  String get settingBeforeTitle => 'Notifikasi sebelum adzan';
+
+  @override
+  String get settingBeforeValue => 'Nyalakan';
 }

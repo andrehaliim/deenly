@@ -124,4 +124,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingSaveButton => 'Save';
+
+  @override
+  String get settingBeforeTitle => 'Notification before adhan';
+
+  @override
+  String get settingBeforeValue => 'Turn on';
 }

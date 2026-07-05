@@ -325,6 +325,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get settingSaveButton;
+
+  /// No description provided for @settingBeforeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification before adhan'**
+  String get settingBeforeTitle;
+
+  /// No description provided for @settingBeforeValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get settingBeforeValue;
 }
 
 class _AppLocalizationsDelegate

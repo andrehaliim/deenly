@@ -154,7 +154,7 @@ class _DrawerPageState extends State<DrawerPage> {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.dark_mode,
+                      Icons.dark_mode_outlined,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(width: 12),
@@ -183,8 +183,10 @@ class _DrawerPageState extends State<DrawerPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              _buildTitle(AppLocalizations.of(context)!.settingNotificationTitle),
+              const SizedBox(height: 12),
+              _buildTitle(
+                AppLocalizations.of(context)!.settingNotificationTitle,
+              ),
               const SizedBox(height: 12),
               _buildPrayerNotificationSetting(
                 prayerName: PrayerProxy().getPrayerLabel(context, 'Fajr'),
@@ -300,7 +302,59 @@ class _DrawerPageState extends State<DrawerPage> {
                   }
                 },
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
+              _buildTitle(AppLocalizations.of(context)!.settingBeforeTitle),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      AppLocalizations.of(context)!.settingBeforeValue,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge?.fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    Transform.scale(
+                      scale: 0.8,
+                      child: Switch(
+                        padding: EdgeInsets.zero,
+                        value: drawerProvider.isReminderEnabled,
+                        onChanged: (value) async {
+                          if (!value) {
+                            await NotificationHelper()
+                                .disableReminderNotifications();
+                            drawerProvider.toggleReminder(value);
+                            return;
+                          }
+                          final PrayerModel? prayerModel = await PrayerProxy()
+                              .getTodayPrayer();
+                          if (prayerModel == null) return;
+                          await NotificationHelper()
+                              .scheduleReminderNotifications(prayerModel);
+                          drawerProvider.toggleReminder(value);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Row(
                 children: [
                   _buildTitle(AppLocalizations.of(context)!.settingTimeTitle),
@@ -449,7 +503,9 @@ class _DrawerPageState extends State<DrawerPage> {
                             child: _isSaving
                                 ? const CircularProgressIndicator()
                                 : Text(
-                                    AppLocalizations.of(context)!.settingSaveButton,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.settingSaveButton,
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,
@@ -575,7 +631,9 @@ class _DrawerPageState extends State<DrawerPage> {
       child: Row(
         children: [
           Icon(
-            isEnabled ? Icons.notifications : Icons.notifications_off,
+            isEnabled
+                ? Icons.notifications_active_outlined
+                : Icons.notifications_off_outlined,
             color: Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(width: 12),

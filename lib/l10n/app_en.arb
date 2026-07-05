@@ -57,5 +57,7 @@
     "settingTheme": "Dark Mode",
     "settingNotificationTitle": "Prayer Notifications",
     "settingTimeTitle": "Time Adjustment",
-    "settingSaveButton": "Save"
+    "settingSaveButton": "Save",
+    "settingBeforeTitle": "Notification before adhan",
+    "settingBeforeValue": "Turn on"
 }

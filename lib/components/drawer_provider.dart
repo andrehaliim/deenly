@@ -32,6 +32,9 @@ class DrawerProvider extends ChangeNotifier {
   bool _isAdjustmentExpanded = false;
   bool get isAdjustmentExpanded => _isAdjustmentExpanded;
 
+  bool _isReminderEnabled = false;
+  bool get isReminderEnabled => _isReminderEnabled;
+
   DrawerProvider(this.prefs) {
     _loadSettings();
   }
@@ -48,6 +51,8 @@ class DrawerProvider extends ChangeNotifier {
     _asradjustment = prefs.getInt('asrAdjustment') ?? 0;
     _maghribadjustment = prefs.getInt('maghribAdjustment') ?? 0;
     _ishadjustment = prefs.getInt('ishAdjustment') ?? 0;
+
+    _isReminderEnabled = prefs.getBool('isReminderEnabled') ?? false;
   }
 
   Future<void> toggleFajr(bool value) async {
@@ -119,5 +124,10 @@ class DrawerProvider extends ChangeNotifier {
     _isAdjustmentExpanded = !_isAdjustmentExpanded;
     notifyListeners();
   }
-}
 
+  Future<void> toggleReminder(bool value) async {
+    _isReminderEnabled = value;
+    await prefs.setBool('isReminderEnabled', value);
+    notifyListeners();
+  }
+}
