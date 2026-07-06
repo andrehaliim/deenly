@@ -78,6 +78,7 @@ class HomePageState extends State<HomePage> {
     WidgetHelper().updateWidgetLocation();
 
     await NotificationHelper().scheduleAllPrayerNotifications(_prayerModel!);
+    await NotificationHelper().scheduleReminderNotifications(_prayerModel!);
 
     setState(() {
       _isGettingPrayerData = false;

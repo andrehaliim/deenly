@@ -202,6 +202,10 @@ class NotificationHelper {
   }
 
   Future<void> scheduleReminderNotifications(PrayerModel prayerModel) async {
+    await disableReminderNotifications(false);
+
+    final prefs = await SharedPreferences.getInstance();
+
     final prayers = [
       (id: 11, name: 'Fajr', time: prayerModel.fajr),
       (id: 22, name: 'Dhuhr', time: prayerModel.dhuhr),
@@ -209,26 +213,29 @@ class NotificationHelper {
       (id: 44, name: 'Maghrib', time: prayerModel.maghrib),
       (id: 55, name: 'Isha', time: prayerModel.isha),
     ];
-
-    for (final prayer in prayers) {
-      await scheduleReminderNotification(
-        notifId: prayer.id,
-        prayerName: prayer.name,
-        scheduledTime: convertToTZ(prayer.time),
-      );
+    if (prefs.getBool('isReminderEnabled') != null &&
+        prefs.getBool('isReminderEnabled') == true) {
+      for (final prayer in prayers) {
+        await scheduleReminderNotification(
+          notifId: prayer.id,
+          prayerName: prayer.name,
+          scheduledTime: convertToTZ(prayer.time),
+        );
+      }
     }
   }
 
-  Future<void> disableReminderNotifications() async {
+  Future<void> disableReminderNotifications(bool isReset) async {
     const reminderIds = [11, 22, 33, 44, 55];
 
     for (final idx in reminderIds) {
       await flutterLocalNotificationsPlugin.cancel(id: idx);
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isReminderEnabled', false);
-
+    if (isReset) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isReminderEnabled', false);
+    }
     debugPrint("All reminder notifications disabled");
   }
 

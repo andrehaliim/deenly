@@ -40,6 +40,7 @@ void callbackDispatcher() {
         final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
         if (prayerModel != null) {
           await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
+          await notificationHelper.scheduleReminderNotifications(prayerModel);
           await WidgetHelper().updateWidgetPrayer(prayerModel);
         }
         await WorkmanagerHelper.scheduleDailyNotification();

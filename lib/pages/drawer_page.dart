@@ -339,7 +339,7 @@ class _DrawerPageState extends State<DrawerPage> {
                         onChanged: (value) async {
                           if (!value) {
                             await NotificationHelper()
-                                .disableReminderNotifications();
+                                .disableReminderNotifications(true);
                             drawerProvider.toggleReminder(value);
                             return;
                           }
