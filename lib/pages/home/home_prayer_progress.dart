@@ -89,7 +89,7 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
                   '$completedCount/${_prayerNames.length} ${AppLocalizations.of(context)!.completed}',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
                 ),
               ),
@@ -167,7 +167,7 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
                                   ? FontWeight.bold
                                   : FontWeight.normal,
                               color: isCompleted
-                                  ? Theme.of(context).colorScheme.primary
+                                  ? Theme.of(context).colorScheme.onSurface
                                   : Theme.of(
                                       context,
                                     ).colorScheme.onSurface.withAlpha(150),

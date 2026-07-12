@@ -186,7 +186,7 @@ class _MosquePageState extends State<MosquePage> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -195,7 +195,7 @@ class _MosquePageState extends State<MosquePage> {
                       Icon(
                         Icons.location_on,
                         size: 14,
-                        color: Theme.of(context).colorScheme.surface,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -203,7 +203,7 @@ class _MosquePageState extends State<MosquePage> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ),
                     ],
@@ -232,7 +232,7 @@ class _MosquePageState extends State<MosquePage> {
                       mosque.address ?? 'error',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.surface,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         height: 1.4,
                       ),
                     ),

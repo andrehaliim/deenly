@@ -15,7 +15,6 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   final HadithProxy _hadithProxy = HadithProxy();
-  final QuranProxy _quranProxy = QuranProxy();
   final LocationProxy _locationProxy = LocationProxy();
 
   @override

@@ -61,7 +61,7 @@ class AppTheme {
   static const _lightOutline = Color(0xFF707974);
 
   /// ---------- DARK COLORS ----------
-  static const _darkPrimary = Color(0xFF80CBC4);
+  static const _darkPrimary = Color(0xFF004D40);
   static const _darkSecondary = Color(0xFFD4B16A);
   static const _darkTertiary = Color(0xFF4D4639);
 

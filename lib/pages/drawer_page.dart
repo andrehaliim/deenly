@@ -174,7 +174,6 @@ class _DrawerPageState extends State<DrawerPage> {
                       child: Switch(
                         padding: EdgeInsets.zero,
                         value: provider.isDarkMode,
-                        activeThumbColor: Theme.of(context).colorScheme.primary,
                         onChanged: (value) {
                           provider.toggleTheme(value);
                         },
