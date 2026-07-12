@@ -50,7 +50,7 @@ class HadithProxy {
   static List<HadithModel> _parse(String raw) {
     try {
       final decoded = json.decode(raw) as Map<String, dynamic>;
-      final data = (decoded['hadiths']['data'] as List)
+      final data = (decoded['data'] as List)
           .cast<Map<String, dynamic>>();
       return data.map(HadithModel.fromJson).toList();
     } catch (e) {
