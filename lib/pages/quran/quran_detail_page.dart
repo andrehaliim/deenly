@@ -169,7 +169,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
               const SizedBox(height: 20),
               Text(
                 'بِسْمِ ٱللّٰهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                style: GoogleFonts.scheherazadeNew(
+                style: GoogleFonts.notoNaskhArabic(
                   fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onTertiary,
@@ -227,11 +227,11 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                 child: Text(
                   data.text,
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.scheherazadeNew(
+                  style: GoogleFonts.notoNaskhArabic(
                     fontSize: Theme.of(
                       context,
-                    ).textTheme.headlineSmall?.fontSize,
-                    fontWeight: FontWeight.bold,
+                    ).textTheme.headlineMedium?.fontSize,
+                    fontWeight: FontWeight.w600,
                     color: Theme.of(context).colorScheme.onTertiary,
                   ),
                 ),

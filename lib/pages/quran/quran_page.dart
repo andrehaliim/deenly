@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/pages/quran/quran_detail_page.dart';
@@ -7,6 +8,7 @@ import 'package:deenly/proxys/quran_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranPage extends StatefulWidget {
@@ -18,15 +20,15 @@ class QuranPage extends StatefulWidget {
 
 class _QuranPageState extends State<QuranPage> {
   final QuranProxy quranProxy = QuranProxy();
-  List<SurahModel> surahList = [];
-  bool isLoading = false;
   SurahModel? currentSurah;
   int? lastSurahAyah;
 
   @override
   void initState() {
     super.initState();
-    loadSurahList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SurahProvider>().getSurahList();
+    });
     loadCurrentSurah();
   }
 
@@ -43,16 +45,6 @@ class _QuranPageState extends State<QuranPage> {
         lastSurahAyah = lastAyahIndex;
       });
     }
-  }
-
-  void loadSurahList() async {
-    setState(() {
-      isLoading = true;
-    });
-    surahList = await quranProxy.getSurahList();
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -146,9 +138,21 @@ class _QuranPageState extends State<QuranPage> {
           ),
           const SizedBox(height: 12),
           Expanded(
-            child: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : listSurah(surahList),
+            child: Consumer<SurahProvider>(
+              builder: (context, provider, _) {
+                if (provider.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final surahList = provider.surahList;
+
+                if (surahList.isEmpty) {
+                  return const Center(child: Text('No Surah found'));
+                }
+
+                return listSurah(surahList);
+              },
+            ),
           ),
         ],
       ),
@@ -210,7 +214,8 @@ class _QuranPageState extends State<QuranPage> {
                     Row(
                       children: [
                         FaIcon(
-                          data.revelation == 'Madina'
+                          data.revelation == 'Madina' ||
+                                  data.revelation == 'Madaniyah'
                               ? FontAwesomeIcons.mosque
                               : FontAwesomeIcons.kaaba,
                           size: Theme.of(context).textTheme.bodySmall?.fontSize,

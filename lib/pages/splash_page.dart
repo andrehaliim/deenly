@@ -30,14 +30,11 @@ class _SplashPageState extends State<SplashPage> {
     await _hadithProxy.load();
     debugPrint('✅ [2/5] Hadith loaded');
 
-    await _quranProxy.fetchSurahs();
-    debugPrint('✅ [3/5] Surahs fetched');
-
     await NotificationHelper().requestPermission();
-    debugPrint('✅ [4/5] Notification permission done');
+    debugPrint('✅ [3/5] Notification permission done');
 
     bool? permission = await _locationProxy.requestPermission();
-    debugPrint('✅ [5/5] Location permission result: $permission');
+    debugPrint('✅ [4/5] Location permission result: $permission');
 
     if (permission == true) {
       Navigator.pushReplacement(

@@ -5,6 +5,7 @@ import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/components/workmanager_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
@@ -89,6 +90,13 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider(isDark)),
         ChangeNotifierProvider(create: (_) => DrawerProvider(prefs)),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProxyProvider<LocaleProvider, SurahProvider>(
+          create: (_) => SurahProvider(),
+          update: (_, localeProvider, surahProvider) {
+            surahProvider!.updateLanguage(localeProvider.locale?.languageCode);
+            return surahProvider;
+          },
+        ),
       ],
       child: const MyApp(),
     ),

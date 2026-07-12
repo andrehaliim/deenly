@@ -26,17 +26,17 @@ class SurahModel {
 
   factory SurahModel.fromJsonLocal(Map<String, dynamic> json) {
     return SurahModel(
-      id: json["id"],
+      id: json["chapter"],
       name: json["name"],
       englishname: json["englishname"],
       arabicname: json["arabicname"],
       revelation: json["revelation"],
-      totalAyahs: json["totalAyahs"],
+      totalAyahs: (json["verses"] as List?)?.length ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    "id": id,
+    "chapter": id,
     "name": name,
     "englishname": englishname,
     "arabicname": arabicname,

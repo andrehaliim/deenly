@@ -4,51 +4,15 @@ import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class QuranProxy {
   final baseUrl = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1';
 
-  Future<void> fetchSurahs() async {
-    final db = await DatabaseHelper.instance.database;
-    final isEmpty = await db.rawQuery("SELECT * FROM surah");
-    if (isEmpty.isNotEmpty) {
-      debugPrint('Surah data already exists in database');
-      return;
-    }
-    final url = '$baseUrl/info.json';
 
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-
-      final batch = db.batch();
-
-      for (var x in json['chapters']) {
-        final surah = SurahModel.fromJsonApi(x);
-
-        batch.insert(
-          'surah',
-          surah.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
-      debugPrint('Surah data saved to database');
-      await batch.commit(noResult: true);
-    } else {
-      throw Exception('Failed to load surah list');
-    }
-  }
-
-  Future<List<SurahModel>> getSurahList() async {
-    final db = await DatabaseHelper.instance.database;
-
-    final maps = await db.rawQuery("SELECT * FROM surah");
-
-    return maps.map((e) => SurahModel.fromJsonLocal(e)).toList();
-  }
 
   Future<List<SurahDetailModel>> getSurahDetails(int id) async {
     final db = await DatabaseHelper.instance.database;
@@ -78,8 +42,12 @@ class QuranProxy {
   }
 
   Future<List<SurahDetailModel>> _fetchSurahDetails(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final code = prefs.getString('selected_locale');
     final url1 = '$baseUrl/editions/ara-quranacademy/$id.json';
-    final url2 = '$baseUrl/editions/eng-ummmuhammad/$id.json';
+    final url2 = code == 'id'
+        ? '$baseUrl/editions/ind-indonesianislam/$id.json'
+        : '$baseUrl/editions/eng-ummmuhammad/$id.json';
     final response1 = await http.get(Uri.parse(url1));
     final response2 = await http.get(Uri.parse(url2));
 
@@ -97,5 +65,11 @@ class QuranProxy {
     } else {
       throw Exception('Failed to load surah detail');
     }
+  }
+
+  Future<void> clearSurahDetails() async {
+    final db = await DatabaseHelper.instance.database;
+    await db.delete('surah_detail');
+    debugPrint('Surah details table cleared');
   }
 }
