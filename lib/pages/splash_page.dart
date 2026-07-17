@@ -3,7 +3,6 @@ import 'package:deenly/pages/main_page.dart';
 import 'package:deenly/pages/no_location_page.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
 import 'package:deenly/proxys/location_proxy.dart';
-import 'package:deenly/proxys/quran_proxy.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {

@@ -1,4 +1,5 @@
 import 'package:deenly/components/locale_provider.dart';
+import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
@@ -33,6 +34,11 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
   void initState() {
     super.initState();
     _next = PrayerProxy().getNextPrayer(widget.prayerModel.toJson());
+    updateWidget();
+  }
+
+  void updateWidget() async {
+    await WidgetHelper().updateWidgetNextPrayer(_next['nextPrayer']!);
   }
 
   @override
@@ -211,7 +217,10 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    PrayerProxy().getPrayerLabel(context, prayer),
+                                    PrayerProxy().getPrayerLabel(
+                                      context,
+                                      prayer,
+                                    ),
                                     style: Theme.of(context).textTheme.bodyLarge
                                         ?.copyWith(
                                           fontWeight: isNext
@@ -237,7 +246,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                                                 ).colorScheme.onPrimary
                                               : Theme.of(
                                                   context,
-                                                ).colorScheme.primary,
+                                                ).colorScheme.onSurface,
                                         ),
                                   ),
                                 ],

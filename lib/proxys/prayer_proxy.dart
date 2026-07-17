@@ -5,6 +5,7 @@ import 'package:deenly/models/prayer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class PrayerProxy {
   static const String _baseUrl = 'https://api.aladhan.com/v1';
@@ -29,42 +30,48 @@ class PrayerProxy {
   }
 
   Future<void> fetchYearlyPrayer(double lat, double lon) async {
-  final db = await DatabaseHelper.instance.database;
-  final now = DateTime.now();
+    final db = await DatabaseHelper.instance.database;
+    final now = DateTime.now();
+    final deviceTimezone = tz.local.name;
 
-  final response = await http.get(
-    Uri.parse(
-      '$_baseUrl/calendar/${now.year}?latitude=$lat&longitude=$lon&method=20&timezonestring=Asia%2FJakarta&annual=true',
-    ),
-  );
+    final uri = Uri.parse('$_baseUrl/calendar/${now.year}').replace(
+      queryParameters: {
+        'latitude': '$lat',
+        'longitude': '$lon',
+        'method': '20',
+        'timezonestring': deviceTimezone,
+        'annual': 'true',
+      },
+    );
 
-  if (response.statusCode == 200) {
-    final decodedResponse = json.decode(response.body);
+    final response = await http.get(uri);
 
-    // Annual response: data is a Map<String, List> where keys are month numbers ("1".."12")
-    final monthsMap = decodedResponse['data'] as Map<String, dynamic>;
+    if (response.statusCode == 200) {
+      final decodedResponse = json.decode(response.body);
 
-    final prayers = monthsMap.values
-        .expand((monthList) => (monthList as List))
-        .map((e) => PrayerModel.fromJsonApi(e))
-        .toList();
+      final monthsMap = decodedResponse['data'] as Map<String, dynamic>;
 
-    final batch = db.batch();
+      final prayers = monthsMap.values
+          .expand((monthList) => (monthList as List))
+          .map((e) => PrayerModel.fromJsonApi(e))
+          .toList();
 
-    for (var prayer in prayers) {
-      batch.insert(
-        'prayer',
-        prayer.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      final batch = db.batch();
+
+      for (var prayer in prayers) {
+        batch.insert(
+          'prayer',
+          prayer.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+
+      debugPrint('Prayer loaded from API (yearly: ${now.year})');
+      await batch.commit(noResult: true);
+    } else {
+      throw Exception('Failed to load yearly prayer time');
     }
-
-    debugPrint('Prayer loaded from API (yearly: ${now.year})');
-    await batch.commit(noResult: true);
-  } else {
-    throw Exception('Failed to load yearly prayer time');
   }
-}
 
   Map<String, String> getNextPrayer(Map<String, dynamic> timings) {
     final now = DateTime.now();
@@ -123,8 +130,6 @@ class PrayerProxy {
     DateTime dt = DateTime(2000, 1, 1, h, m).add(Duration(minutes: minutes));
     return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
   }
-
-  
 
   String getPrayerLabel(BuildContext context, String prayer) {
     final l10n = AppLocalizations.of(context)!;

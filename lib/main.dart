@@ -43,8 +43,14 @@ void callbackDispatcher() {
           await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
           await notificationHelper.scheduleReminderNotifications(prayerModel);
           await WidgetHelper().updateWidgetPrayer(prayerModel);
+          await WorkmanagerHelper.scheduleNextPrayerUpdate();
         }
         await WorkmanagerHelper.scheduleDailyNotification();
+      } else if (task == 'nextPrayerTaskUpdate') {
+        final nextPrayerName = inputData?['nextPrayerName'] as String?;
+        if (nextPrayerName != null) {
+          await WidgetHelper().updateWidgetNextPrayer(nextPrayerName);
+        }
       }
       return true;
     } catch (e) {
@@ -79,7 +85,8 @@ void main() async {
   await Workmanager().initialize(callbackDispatcher);
   await Workmanager().cancelAll();
   await WorkmanagerHelper.scheduleDailyNotification();
-
+  await WorkmanagerHelper.scheduleNextPrayerUpdate();
+  
   // Load preferences
   final prefs = await SharedPreferences.getInstance();
   final isDark = prefs.getBool('isDarkMode') ?? false;
