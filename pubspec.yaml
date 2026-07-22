@@ -1,7 +1,7 @@
 name: deenly
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.1.0
+version: 1.1.1
 
 environment:
   sdk: ^3.11.4
