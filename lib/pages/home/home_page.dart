@@ -38,51 +38,50 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<void> loadPrayerData(bool isInit) async {
-    setState(() {
-      _isGettingPrayerData = true;
-    });
-    final prefs = await SharedPreferences.getInstance();
-    final locationName = prefs.getString('locationName') ?? '';
-    final isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
+    setState(() => _isGettingPrayerData = true);
 
-    Position position = await LocationProxy().getLocation();
-    bool? locationChanged = await LocationProxy().isLocationChanged(position);
-    if (locationChanged == true || isFirstLaunch) {
-      await _prayerProxy.clearPrayer();
-      await _prayerProxy.fetchYearlyPrayer(
-        position.latitude,
-        position.longitude,
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final locationName = prefs.getString('locationName') ?? '';
+
+      final currentPosition = await LocationProxy().getLocation();
+      final checkLocationName = await LocationProxy().getLocationName(
+        currentPosition,
       );
 
-      prefs.setDouble('lat', position.latitude);
-      prefs.setDouble('long', position.longitude);
-      _location = await LocationProxy().getLocationName(position);
-      prefs.setString('locationName', _location!);
-      prefs.setBool('isFirstLaunch', false);
-    } else {
-      _location = locationName;
-    }
+      final locationChanged =
+          locationName.isEmpty || checkLocationName != locationName;
 
-    _prayerModel = await _prayerProxy.getTodayPrayer();
-    if (_prayerModel != null) {
-      WidgetHelper().updateWidgetPrayer(_prayerModel!);
-    } else {
-      await _prayerProxy.clearPrayer();
-      await _prayerProxy.fetchYearlyPrayer(
-        position.latitude,
-        position.longitude,
-      );
+      if (locationChanged) {
+        _location = checkLocationName;
+        await Future.wait([
+          prefs.setDouble('lat', currentPosition.latitude),
+          prefs.setDouble('long', currentPosition.longitude),
+          prefs.setString('locationName', _location!),
+        ]);
+        await _prayerProxy.fetchYearlyPrayer(
+          currentPosition.latitude,
+          currentPosition.longitude,
+        );
+      } else {
+        _location = locationName;
+      }
+
       _prayerModel = await _prayerProxy.getTodayPrayer();
-      WidgetHelper().updateWidgetPrayer(_prayerModel!);
+
+      if (_prayerModel != null) {
+        await Future.wait([
+          WidgetHelper().updateWidgetLocation(),
+          WidgetHelper().updateWidgetPrayer(_prayerModel!),
+          NotificationHelper().scheduleAllPrayerNotifications(_prayerModel!),
+          NotificationHelper().scheduleReminderNotifications(_prayerModel!),
+        ]);
+      }
+    } catch (e, st) {
+      debugPrint('loadPrayerData failed: $e\n$st');
+    } finally {
+      if (mounted) setState(() => _isGettingPrayerData = false);
     }
-    WidgetHelper().updateWidgetLocation();
-
-    await NotificationHelper().scheduleAllPrayerNotifications(_prayerModel!);
-    await NotificationHelper().scheduleReminderNotifications(_prayerModel!);
-
-    setState(() {
-      _isGettingPrayerData = false;
-    });
   }
 
   Future<void> _loadHadithData() async {

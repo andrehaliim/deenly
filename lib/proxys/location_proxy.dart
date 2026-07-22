@@ -35,15 +35,6 @@ class LocationProxy {
     return position;
   }
 
-  Future<void> saveLocation(Position position) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    prefs.setDouble('lat', position.latitude);
-    prefs.setDouble('long', position.longitude);
-    String locName = await getLocationName(position);
-    prefs.setString('locationName', locName);
-  }
-
   Future<String> getLocationName(Position position) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(

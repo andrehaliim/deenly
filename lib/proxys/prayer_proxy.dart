@@ -33,6 +33,7 @@ class PrayerProxy {
     final db = await DatabaseHelper.instance.database;
     final now = DateTime.now();
     final deviceTimezone = tz.local.name;
+    await db.delete('prayer');
 
     final uri = Uri.parse('$_baseUrl/calendar/${now.year}').replace(
       queryParameters: {
@@ -97,11 +98,6 @@ class PrayerProxy {
       }
     }
     return {'nextPrayer': nextPrayer, 'nextTime': nextTime};
-  }
-
-  Future<void> clearPrayer() async {
-    final db = await DatabaseHelper.instance.database;
-    await db.delete('prayer');
   }
 
   Future<void> updatePrayerTimesInDB(Map<String, int> adjustments) async {
