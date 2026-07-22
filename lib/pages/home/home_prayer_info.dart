@@ -33,12 +33,14 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
   @override
   void initState() {
     super.initState();
-    _next = PrayerProxy().getNextPrayer(widget.prayerModel.toJson());
-    updateWidget();
+    _loadNextPrayer();
   }
 
-  void updateWidget() async {
-    await WidgetHelper().updateWidgetNextPrayer(_next['nextPrayer']!);
+  void _loadNextPrayer() async {
+    _next = PrayerProxy().getNextPrayer(widget.prayerModel.toJson());
+    await WidgetHelper().updateWidgetNextPrayer(
+      _next['nextPrayer']!.toLowerCase(),
+    );
   }
 
   @override
