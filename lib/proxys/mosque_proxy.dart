@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'dart:math' hide log;
 
 import 'package:deenly/models/mosque_model.dart';
+import 'package:deenly/proxys/location_proxy.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MosqueProxy {
   static const String _baseUrl = 'https://nominatim.openstreetmap.org/search';
@@ -14,9 +14,9 @@ class MosqueProxy {
   static const String _userAgent = 'DeenlyApp/1.0';
 
   Future<List<MosqueModel>> fetchMosques() async {
-    final prefs = await SharedPreferences.getInstance();
-    final lat = prefs.getDouble('lat') ?? 0;
-    final lon = prefs.getDouble('long') ?? 0;
+    final currentPosition = await LocationProxy().getLocation();
+    final lat = currentPosition.latitude;
+    final lon = currentPosition.longitude;
 
     final bbox = _getBoundingBox(lat, lon, _radiusMeters);
 

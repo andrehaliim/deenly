@@ -22,11 +22,17 @@ class _MosquePageState extends State<MosquePage> {
     _fetchMosques();
   }
 
-  Future<void> _fetchMosques() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
+  Future<void> _fetchMosques({bool showLocalLoading = true}) async {
+    if (showLocalLoading) {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
+    } else {
+      setState(() {
+        errorMessage = null;
+      });
+    }
 
     try {
       final fetchedMosques = await MosqueProxy().fetchMosques();
@@ -40,7 +46,7 @@ class _MosquePageState extends State<MosquePage> {
         errorMessage = e.toString();
       });
     } finally {
-      if (mounted) {
+      if (mounted && showLocalLoading) {
         setState(() {
           isLoading = false;
         });
@@ -94,10 +100,14 @@ class _MosquePageState extends State<MosquePage> {
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      itemCount: mosques.length,
-      itemBuilder: (context, index) => _buildMosqueCard(mosques[index]),
+    return RefreshIndicator(
+      onRefresh: () => _fetchMosques(showLocalLoading: false),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        itemCount: mosques.length,
+        itemBuilder: (context, index) => _buildMosqueCard(mosques[index]),
+      ),
     );
   }
 
