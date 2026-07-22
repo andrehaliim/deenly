@@ -202,10 +202,11 @@ class NotificationHelper {
   }
 
   Future<void> scheduleReminderNotifications(PrayerModel prayerModel) async {
-    await disableReminderNotifications(false);
-
     final prefs = await SharedPreferences.getInstance();
-
+    if (prefs.getBool('isReminderEnabled') == null ||
+        prefs.getBool('isReminderEnabled') == false) {
+      return;
+    }
     final prayers = [
       (id: 11, name: 'Fajr', time: prayerModel.fajr),
       (id: 22, name: 'Dhuhr', time: prayerModel.dhuhr),
@@ -213,15 +214,12 @@ class NotificationHelper {
       (id: 44, name: 'Maghrib', time: prayerModel.maghrib),
       (id: 55, name: 'Isha', time: prayerModel.isha),
     ];
-    if (prefs.getBool('isReminderEnabled') != null &&
-        prefs.getBool('isReminderEnabled') == true) {
-      for (final prayer in prayers) {
-        await scheduleReminderNotification(
-          notifId: prayer.id,
-          prayerName: prayer.name,
-          scheduledTime: convertToTZ(prayer.time),
-        );
-      }
+    for (final prayer in prayers) {
+      await scheduleReminderNotification(
+        notifId: prayer.id,
+        prayerName: prayer.name,
+        scheduledTime: convertToTZ(prayer.time),
+      );
     }
   }
 

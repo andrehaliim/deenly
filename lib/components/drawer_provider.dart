@@ -1,4 +1,7 @@
+import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/widget_helper.dart';
+import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -125,9 +128,24 @@ class DrawerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleReminder(bool value) async {
+  Future<bool> toggleReminder(bool value) async {
     _isReminderEnabled = value;
     await prefs.setBool('isReminderEnabled', value);
+
+    if (!value) {
+      await NotificationHelper().disableReminderNotifications(true);
+    } else {
+      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+      if (prayerModel == null) {
+        _isReminderEnabled = false;
+        await prefs.setBool('isReminderEnabled', false);
+        notifyListeners();
+        return false;
+      }
+      await NotificationHelper().scheduleReminderNotifications(prayerModel);
+    }
+
     notifyListeners();
+    return true;
   }
 }

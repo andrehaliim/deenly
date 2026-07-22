@@ -336,18 +336,16 @@ class _DrawerPageState extends State<DrawerPage> {
                         padding: EdgeInsets.zero,
                         value: drawerProvider.isReminderEnabled,
                         onChanged: (value) async {
-                          if (!value) {
-                            await NotificationHelper()
-                                .disableReminderNotifications(true);
-                            drawerProvider.toggleReminder(value);
-                            return;
+                          final success = await drawerProvider.toggleReminder(
+                            value,
+                          );
+                          if (!success && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Could not enable reminder'),
+                              ),
+                            );
                           }
-                          final PrayerModel? prayerModel = await PrayerProxy()
-                              .getTodayPrayer();
-                          if (prayerModel == null) return;
-                          await NotificationHelper()
-                              .scheduleReminderNotifications(prayerModel);
-                          drawerProvider.toggleReminder(value);
                         },
                       ),
                     ),
