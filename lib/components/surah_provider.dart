@@ -32,7 +32,7 @@ class SurahProvider extends ChangeNotifier {
       final decoded = jsonDecode(jsonStr) as Map<String, dynamic>;
       final data = decoded['chapters'] as List<dynamic>;
       _surahList = data.map((e) => SurahModel.fromJsonApi(e)).toList();
-    } catch (e, st) {
+    } catch (e) {
       debugPrint('Error loading surah list: $e');
     } finally {
       _isLoading = false;

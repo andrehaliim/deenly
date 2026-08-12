@@ -2,9 +2,7 @@ import 'dart:convert';
 
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/models/surah_detail_model.dart';
-import 'package:deenly/models/surah_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
