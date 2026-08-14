@@ -1,46 +1,48 @@
 class SurahModel {
   int id;
-  String name;
-  String englishname;
-  String arabicname;
-  String revelation;
-  int totalAyahs;
+  String nameEng;
+  String nameIndo;
+  String nameArab;
+  String descEng;
+  String descIndo;
+  int surahFrom;
+  int surahTotal;
 
   SurahModel({
     required this.id,
-    required this.name,
-    required this.englishname,
-    required this.arabicname,
-    required this.revelation,
-    required this.totalAyahs,
+    required this.nameEng,
+    required this.nameIndo,
+    required this.nameArab,
+    required this.descEng,
+    required this.descIndo,
+    required this.surahFrom,
+    required this.surahTotal,
   });
 
-  factory SurahModel.fromJsonApi(Map<String, dynamic> json) => SurahModel(
-    id: json["chapter"],
-    name: json["name"],
-    englishname: json["englishname"],
-    arabicname: json["arabicname"],
-    revelation: json["revelation"],
-    totalAyahs: (json["verses"] as List?)?.length ?? 0,
-  );
-
-  factory SurahModel.fromJsonLocal(Map<String, dynamic> json) {
+  factory SurahModel.fromJson(Map<String, dynamic> json) {
     return SurahModel(
       id: json["chapter"],
-      name: json["name"],
-      englishname: json["englishname"],
-      arabicname: json["arabicname"],
-      revelation: json["revelation"],
-      totalAyahs: (json["verses"] as List?)?.length ?? 0,
+      nameEng: json["name_en"],
+      nameIndo: json["name_id"],
+      nameArab: json["name_ar"],
+      descEng: json["desc_en"],
+      descIndo: json["desc_id"],
+      surahFrom: json["from"],
+      surahTotal: json["total"],
     );
   }
 
   Map<String, dynamic> toJson() => {
     "chapter": id,
-    "name": name,
-    "englishname": englishname,
-    "arabicname": arabicname,
-    "revelation": revelation,
-    "totalAyahs": totalAyahs,
+    "name_en": nameEng,
+    "name_id": nameIndo,
+    "name_ar": nameArab,
+    "desc_en": descEng,
+    "desc_id": descIndo,
+    "from": surahFrom,
+    "total": surahTotal,
   };
+
+  String name(String? code) => code == 'id' ? nameIndo : nameEng;
+  String desc(String? code) => code == 'id' ? descIndo : descEng;
 }

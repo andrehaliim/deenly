@@ -1,9 +1,10 @@
+import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_model.dart';
-import 'package:deenly/proxys/quran_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +17,6 @@ class QuranDetailPage extends StatefulWidget {
 }
 
 class _QuranDetailPageState extends State<QuranDetailPage> {
-  final quranProxy = QuranProxy();
   List<SurahDetailModel> surahDetailList = [];
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
@@ -26,7 +26,9 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
   @override
   void initState() {
     super.initState();
-    loadSurahDetails();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SurahProvider>().getSurahDetail(widget.surah.id);
+    });
 
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
@@ -46,15 +48,6 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setInt('lastAyahIndex', index);
     });
-  }
-
-  Future<void> loadSurahDetails() async {
-    final surahDetails = await quranProxy.getSurahDetails(widget.surah.id);
-    setState(() {
-      surahDetailList = surahDetails;
-      isLoading = false;
-    });
-    loadLastPosition();
   }
 
   void loadLastPosition() async {
@@ -99,15 +92,21 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : listSurahDetail(surahDetailList),
+          child: Consumer<SurahProvider>(
+              builder: (context, provider, _) {
+                if (provider.isDetailLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                return listSurahDetail(provider); 
+              },
+            ),
         ),
       ),
     );
   }
 
-  Widget listHeader() {
+  Widget listHeader(String name, String text, int totalAyahs) {
     return Column(
       children: [
         Container(
@@ -129,7 +128,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                widget.surah.name,
+                name,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.secondary,
@@ -140,7 +139,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    widget.surah.englishname,
+                    text,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,
@@ -158,7 +157,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     ),
                   ),
                   Text(
-                    '${widget.surah.totalAyahs} ${AppLocalizations.of(context)!.ayah}',
+                    '$totalAyahs ${AppLocalizations.of(context)!.ayah}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,
@@ -183,14 +182,21 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
     );
   }
 
-  Widget listSurahDetail(List<SurahDetailModel> surahDetailList) {
+  Widget listSurahDetail(SurahProvider provider) {
+    if (provider.surahDetail == null) {
+      return const Center(child: Text('Failed to fetch surah detail'));
+    }
+
+    List<SurahDetailModel> surahDetailList = provider.surahDetail!;
+    String code = provider.code != null ? provider.code! : 'en';
+
     return ScrollablePositionedList.builder(
       itemScrollController: _itemScrollController,
       itemPositionsListener: _itemPositionsListener,
       itemCount: surahDetailList.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
-          return listHeader();
+          return listHeader(widget.surah.name(code), widget.surah.desc(code), widget.surah.surahTotal);
         }
         final data = surahDetailList[index - 1];
         return Column(
@@ -209,7 +215,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     ).colorScheme.tertiary.withValues(alpha: 0.25),
                   ),
                   child: Text(
-                    '${data.surahId}:${data.verseNo}',
+                    '${data.chapterNo}:${data.verseNo}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,
@@ -225,7 +231,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
               child: SizedBox(
                 width: double.infinity,
                 child: Text(
-                  data.text,
+                  data.textAr,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.notoNaskhArabic(
                     fontSize: Theme.of(
@@ -239,7 +245,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
             ),
             const SizedBox(height: 30),
             Text(
-              data.translation,
+              data.text(code),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(

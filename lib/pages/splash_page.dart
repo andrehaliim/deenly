@@ -1,3 +1,4 @@
+import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/pages/main_page.dart';
 import 'package:deenly/pages/no_location_page.dart';
@@ -33,6 +34,9 @@ class _SplashPageState extends State<SplashPage> {
 
     bool? permission = await _locationProxy.requestPermission();
     debugPrint('✅ [4/5] Location permission result: $permission');
+
+    await DatabaseHelper.instance.seedSurahIfNeeded();
+    debugPrint('✅ [5/5] Surah seeded');
 
     if (permission == true) {
       Navigator.pushReplacement(
