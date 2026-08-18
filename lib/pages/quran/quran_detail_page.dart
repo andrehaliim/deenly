@@ -90,17 +90,14 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Consumer<SurahProvider>(
-              builder: (context, provider, _) {
-                if (provider.isDetailLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+        child: Consumer<SurahProvider>(
+          builder: (context, provider, _) {
+            if (provider.isDetailLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-                return listSurahDetail(provider); 
-              },
-            ),
+            return listSurahDetail(provider);
+          },
         ),
       ),
     );
@@ -112,15 +109,24 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(24.0),
+          margin: const EdgeInsets.symmetric(horizontal: 16.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             boxShadow: [
               BoxShadow(
                 color: Theme.of(
                   context,
-                ).colorScheme.secondary.withValues(alpha: 0.25),
-                blurRadius: 2,
-                offset: const Offset(0, 2),
+                ).colorScheme.primary.withValues(alpha: 0.5),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -131,7 +137,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                 name,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
               const SizedBox(height: 6),
@@ -142,7 +148,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     text,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onTertiary,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                   Container(
@@ -152,7 +158,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     decoration: BoxDecoration(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onTertiary.withValues(alpha: 0.5),
+                      ).colorScheme.onPrimary.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -160,7 +166,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     '$totalAyahs ${AppLocalizations.of(context)!.ayah}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onTertiary,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -171,7 +177,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                 style: GoogleFonts.notoNaskhArabic(
                   fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onTertiary,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ],
@@ -196,73 +202,96 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       itemCount: surahDetailList.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
-          return listHeader(widget.surah.name(code), widget.surah.desc(code), widget.surah.surahTotal);
+          return listHeader(
+            widget.surah.name(code),
+            widget.surah.desc(code),
+            widget.surah.surahTotal,
+          );
         }
         final data = surahDetailList[index - 1];
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 75,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.tertiary.withValues(alpha: 0.25),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 75,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).colorScheme.tertiary,
+                          Theme.of(
+                            context,
+                          ).colorScheme.tertiary.withValues(alpha: 0.75),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.tertiary.withValues(alpha: 0.5),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      '${data.chapterNo}:${data.verseNo}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onTertiary,
+                      ),
+                    ),
                   ),
+                  Spacer(),
+                ],
+              ),
+              const SizedBox(height: 30),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: SizedBox(
+                  width: double.infinity,
                   child: Text(
-                    '${data.chapterNo}:${data.verseNo}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    data.textAr,
+                    textAlign: TextAlign.right,
+                    style: GoogleFonts.notoNaskhArabic(
+                      fontSize: Theme.of(
+                        context,
+                      ).textTheme.headlineMedium?.fontSize,
+                      fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.onTertiary,
                     ),
                   ),
                 ),
-                Spacer(),
-              ],
-            ),
-            const SizedBox(height: 30),
-            Directionality(
-              textDirection: TextDirection.rtl,
-              child: SizedBox(
-                width: double.infinity,
-                child: Text(
-                  data.textAr,
-                  textAlign: TextAlign.right,
-                  style: GoogleFonts.notoNaskhArabic(
-                    fontSize: Theme.of(
-                      context,
-                    ).textTheme.headlineMedium?.fontSize,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onTertiary,
-                  ),
+              ),
+              const SizedBox(height: 30),
+              Text(
+                data.text(code),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onTertiary.withValues(alpha: 0.5),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            Text(
-              data.text(code),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onTertiary.withValues(alpha: 0.5),
+              const SizedBox(height: 20),
+              Visibility(
+                visible: index != surahDetailList.length - 1,
+                child: Divider(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onTertiary.withValues(alpha: 0.25),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: index != surahDetailList.length - 1,
-              child: Divider(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onTertiary.withValues(alpha: 0.25),
-              ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
