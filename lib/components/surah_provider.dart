@@ -49,6 +49,10 @@ class SurahProvider extends ChangeNotifier {
     }
   }
 
+  Future<SurahModel> getSurahById(int id) async {
+    return _surahList.firstWhere((s) => s.id == id);
+  }
+
   Future<List<SurahDetailModel>> getSurahDetail(int chapterNo) async {
     final cached = await _getFromDatabase(chapterNo);
     if (cached.isNotEmpty) {
