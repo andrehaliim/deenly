@@ -38,6 +38,9 @@ class _SplashPageState extends State<SplashPage> {
     await DatabaseHelper.instance.seedSurahIfNeeded();
     debugPrint('✅ [5/5] Surah seeded');
 
+    await DatabaseHelper.instance.seedJuzIfNeeded();
+    debugPrint('✅ [6/6] Juz seeded');
+
     if (permission == true) {
       Navigator.pushReplacement(
         context,

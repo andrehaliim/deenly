@@ -19,29 +19,18 @@ class SurahModel {
     required this.surahTotal,
   });
 
-  factory SurahModel.fromJson(Map<String, dynamic> json) {
+  factory SurahModel.fromDatabase(Map<String, dynamic> json) {
     return SurahModel(
-      id: json["chapter"],
-      nameEng: json["name_en"],
-      nameIndo: json["name_id"],
-      nameArab: json["name_ar"],
-      descEng: json["desc_en"],
-      descIndo: json["desc_id"],
-      surahFrom: json["from"],
-      surahTotal: json["total"],
+      id: json["id"],
+      nameEng: json["name_english"],
+      nameIndo: json["name_indonesian"],
+      nameArab: json["name_arabic"],
+      descEng: json["desc_english"],
+      descIndo: json["desc_indonesian"],
+      surahFrom: json["surah_from"],
+      surahTotal: json["ayah_total"],
     );
   }
-
-  Map<String, dynamic> toJson() => {
-    "chapter": id,
-    "name_en": nameEng,
-    "name_id": nameIndo,
-    "name_ar": nameArab,
-    "desc_en": descEng,
-    "desc_id": descIndo,
-    "from": surahFrom,
-    "total": surahTotal,
-  };
 
   String name(String? code) => code == 'id' ? nameIndo : nameEng;
   String desc(String? code) => code == 'id' ? descIndo : descEng;

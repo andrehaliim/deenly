@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:deenly/components/database_helper.dart';
+import 'package:deenly/models/juz_model.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 
@@ -12,6 +12,7 @@ class SurahProvider extends ChangeNotifier {
   final baseUrl = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1';
 
   List<SurahModel> _surahList = [];
+  List<JuzModel> _surahJuzList = [];
   bool _isLoading = false;
   String? _code;
   List<SurahDetailModel>? _surahDetail;
@@ -19,6 +20,7 @@ class SurahProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   List<SurahModel> get surahList => _surahList;
+  List<JuzModel> get surahJuzList => _surahJuzList;
   String? get code => _code;
   List<SurahDetailModel>? get surahDetail => _surahDetail;
   bool get isDetailLoading => _isDetailLoading;
@@ -35,14 +37,31 @@ class SurahProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final asset = 'assets/jsons/surah.json';
-
-      final jsonStr = await rootBundle.loadString(asset);
-      final decoded = jsonDecode(jsonStr) as Map<String, dynamic>;
-      final data = decoded['chapters'] as List<dynamic>;
-      _surahList = data.map((e) => SurahModel.fromJson(e)).toList();
+      final db = await DatabaseHelper.instance.database;
+      final result = await db.query('surah');
+      _surahList = result.map((e) => SurahModel.fromDatabase(e)).toList();
     } catch (e) {
       debugPrint('Error loading surah list: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getJuzList() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final db = await DatabaseHelper.instance.database;
+      final result = await db.query('juz');
+      for(final data in result) {
+        debugPrint('Juz Data: $data');
+        final surah = await getSurahById(data['surah_id'] as int);
+        _surahJuzList.add(JuzModel.fromDatabase(data, surah));
+      }
+    } catch (e) {
+      debugPrint('Error loading juz list: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

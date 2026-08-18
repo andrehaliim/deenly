@@ -11,6 +11,7 @@ class DatabaseHelper {
   static const String tableSurahDetail = 'surah_detail';
   static const String tablePrayer = 'prayer';
   static const String tableHadith = 'hadith';
+  static const String tableJuz = 'juz';
 
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
@@ -29,7 +30,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 5,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -82,13 +83,22 @@ class DatabaseHelper {
         hadithEnglish TEXT
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE $tableJuz(
+        juz_number INTEGER,
+        surah_id INTEGER,
+        ayah_from INTEGER,
+        ayah_to INTEGER
+      )
+    ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 3) {
       await db.execute('DROP TABLE IF EXISTS $tableSurah');
       await db.execute('DROP TABLE IF EXISTS $tableSurahDetail');
-      
+
       await db.execute('''
       CREATE TABLE $tableSurah(
         id INTEGER PRIMARY KEY,
@@ -112,6 +122,18 @@ class DatabaseHelper {
       text_indonesian TEXT
     )
   ''');
+    }
+
+    if (oldVersion < 5) {
+      await db.execute('DROP TABLE IF EXISTS $tableJuz');
+      await db.execute('''
+      CREATE TABLE $tableJuz(
+        juz_number INTEGER,
+        surah_id INTEGER,
+        ayah_from INTEGER,
+        ayah_to INTEGER
+      )
+    ''');
     }
   }
 
@@ -170,5 +192,49 @@ class DatabaseHelper {
     final Map<String, dynamic> data = jsonDecode(jsonString);
     final List<dynamic> chapters = data['chapters'];
     return chapters.cast<Map<String, dynamic>>();
+  }
+
+  Future<void> seedJuzIfNeeded() async {
+    final alreadySeeded = await _isJuzSeeded();
+    if (alreadySeeded) return;
+
+    final db = await database;
+    final juzs = await _loadJuzJson();
+
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+
+      for (final juz in juzs) {
+        for (final surah in juz['surahs']) {
+          batch.insert(tableJuz, {
+            'juz_number': juz['juz'],
+            'surah_id': surah['chapter'],
+            'ayah_from': surah['ayah_from'],
+            'ayah_to': surah['ayah_to'],
+          }, conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+
+      await batch.commit(noResult: true);
+    });
+  }
+
+  Future<bool> _isJuzSeeded() async {
+    final db = await database;
+    final result = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM juz'),
+    );
+    return (result ?? 0) > 0;
+  }
+
+  Future<List<Map<String, dynamic>>> _loadJuzJson() async {
+    final jsonString = await rootBundle.loadString('assets/jsons/juz.json');
+    return compute(_parseJuzJson, jsonString);
+  }
+
+  static List<Map<String, dynamic>> _parseJuzJson(String jsonString) {
+    final Map<String, dynamic> data = jsonDecode(jsonString);
+    final List<dynamic> juzs = data['juz'];
+    return juzs.cast<Map<String, dynamic>>();
   }
 }
