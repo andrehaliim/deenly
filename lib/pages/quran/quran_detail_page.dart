@@ -10,7 +10,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranDetailPage extends StatefulWidget {
   final SurahModel surah;
-  const QuranDetailPage({super.key, required this.surah});
+  final int juzFrom;
+  const QuranDetailPage({
+    super.key,
+    required this.surah,
+    required this.juzFrom,
+  });
 
   @override
   State<QuranDetailPage> createState() => _QuranDetailPageState();
@@ -97,26 +102,29 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
               duration: const Duration(milliseconds: 500),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 final isIncoming = child.key == ValueKey(_activeSurah.id);
-                final offsetAnimation = Tween<Offset>(
-                  begin: isIncoming ? const Offset(0.0, 1.0) : const Offset(0.0, -1.0),
-                  end: const Offset(0.0, 0.0),
-                ).animate(CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeInOutCubic,
-                ));
-                return SlideTransition(
-                  position: offsetAnimation,
-                  child: child,
-                );
+                final offsetAnimation =
+                    Tween<Offset>(
+                      begin: isIncoming
+                          ? const Offset(0.0, 1.0)
+                          : const Offset(0.0, -1.0),
+                      end: const Offset(0.0, 0.0),
+                    ).animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeInOutCubic,
+                      ),
+                    );
+                return SlideTransition(position: offsetAnimation, child: child);
               },
-              layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
-                return Stack(
-                  children: <Widget>[
-                    ...previousChildren,
-                    if (currentChild != null) currentChild,
-                  ],
-                );
-              },
+              layoutBuilder:
+                  (Widget? currentChild, List<Widget> previousChildren) {
+                    return Stack(
+                      children: <Widget>[
+                        ...previousChildren,
+                        if (currentChild != null) currentChild,
+                      ],
+                    );
+                  },
               child: SurahDetailList(
                 key: ValueKey(_activeSurah.id),
                 surah: _activeSurah,
@@ -125,6 +133,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                 restorePosition: _isInitialSurah,
                 isLoadingNextSurah: _isLoadingNextSurah,
                 onNextSurahTriggered: _goToNextSurah,
+                juzFrom: widget.juzFrom,
               ),
             );
           },
@@ -141,6 +150,7 @@ class SurahDetailList extends StatefulWidget {
   final bool restorePosition;
   final bool isLoadingNextSurah;
   final VoidCallback onNextSurahTriggered;
+  final int juzFrom;
 
   const SurahDetailList({
     super.key,
@@ -150,6 +160,7 @@ class SurahDetailList extends StatefulWidget {
     required this.restorePosition,
     required this.isLoadingNextSurah,
     required this.onNextSurahTriggered,
+    required this.juzFrom,
   });
 
   @override
@@ -170,6 +181,14 @@ class _SurahDetailListState extends State<SurahDetailList> {
   void initState() {
     super.initState();
 
+    _addScrollListener();
+
+    if (widget.restorePosition && widget.juzFrom > 0) {
+      _loadLastPosition();
+    }
+  }
+
+  void _addScrollListener() async {
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
       if (positions.isEmpty) return;
@@ -185,22 +204,26 @@ class _SurahDetailListState extends State<SurahDetailList> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setInt('lastAyahIndex', index);
     });
-
-    if (widget.restorePosition) {
-      loadLastPosition();
-    }
   }
 
-  void loadLastPosition() async {
-    final prefs = await SharedPreferences.getInstance();
-    final lastIndex = prefs.getInt('lastAyahIndex') ?? 0;
+  void _loadLastPosition() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _warmUpAndJump();
+    });
+  }
 
-    if (lastIndex > 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_itemScrollController.isAttached) {
-          _itemScrollController.jumpTo(index: lastIndex);
-        }
-      });
+  Future<void> _warmUpAndJump() async {
+    if (!_itemScrollController.isAttached) {
+      await Future.delayed(const Duration(milliseconds: 50));
+      return _warmUpAndJump();
+    }
+
+    _itemScrollController.jumpTo(index: widget.juzFrom);
+
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (_itemScrollController.isAttached) {
+      _itemScrollController.jumpTo(index: widget.juzFrom);
     }
   }
 
@@ -212,9 +235,9 @@ class _SurahDetailListState extends State<SurahDetailList> {
     if (positions.isEmpty) return false;
 
     final lastItem = positions.cast<ItemPosition?>().firstWhere(
-          (pos) => pos?.index == lastItemIndex,
-          orElse: () => null,
-        );
+      (pos) => pos?.index == lastItemIndex,
+      orElse: () => null,
+    );
 
     final isAtBottom = lastItem != null && lastItem.itemTrailingEdge <= 1.001;
 
@@ -281,7 +304,10 @@ class _SurahDetailListState extends State<SurahDetailList> {
 
           final data = widget.details[index - 1];
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 4.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -478,7 +504,10 @@ class _SurahDetailListState extends State<SurahDetailList> {
               : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.keyboard_double_arrow_down_rounded, color: color),
+                    Icon(
+                      Icons.keyboard_double_arrow_down_rounded,
+                      color: color,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       'Continue scrolling down to move to the next surah',
