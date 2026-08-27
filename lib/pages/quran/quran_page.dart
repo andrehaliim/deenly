@@ -25,77 +25,140 @@ class _QuranPageState extends State<QuranPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SurahProvider>().getSurahList();
       context.read<SurahProvider>().getJuzList();
+      context.read<SurahProvider>().getContinueList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Consumer<SurahProvider>(
-            builder: (context, provider, _) {
-              if (provider.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+    return Consumer<SurahProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-              return listSurah(provider);
-            },
-          ),
-        ),
-      ],
+        return Column(
+          children: [
+            provider.continueList.isNotEmpty
+                ? listContinue(provider)
+                : Container(),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'Surah List',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onTertiary,
+                    ),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        filterByJuz = !filterByJuz;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withAlpha(100),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        filterByJuz ? 'Filter by : Juz' : 'Filter by : Surah',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: filterByJuz
+                  ? listPerJuz(provider)
+                  : listPerSurah(provider),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Widget listSurah(SurahProvider provider) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-          child: Row(
-            children: [
-              Text(
-                'Surah List',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onTertiary,
+  Widget listContinue(SurahProvider provider) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 8,
+      width: double.infinity,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: provider.continueList.length,
+        itemBuilder: (context, index) {
+          final data = provider.continueList[index];
+          return InkWell(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuranDetailPage(
+                    surah: data.surah,
+                    juzFrom: data.ayahNumber,
+                  ),
                 ),
+              );
+              if (context.mounted) {
+                context.read<SurahProvider>().getContinueList();
+              }
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width / 4,
+              height: MediaQuery.of(context).size.height / 8,
+              margin: const EdgeInsets.symmetric(horizontal: 4.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withAlpha(100),
               ),
-              Spacer(),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    filterByJuz = !filterByJuz;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withAlpha(100),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    filterByJuz ? 'Filter by : Juz' : 'Filter by : Surah',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      data.surah.name(provider.code ?? 'id'),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                     ),
-                  ),
+                    Text(
+                      'Ayat ${data.ayahNumber}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: filterByJuz ? listPerJuz(provider) : listPerSurah(provider),
-        ),
-      ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -123,6 +186,9 @@ class _QuranPageState extends State<QuranPage> {
                 builder: (context) => QuranDetailPage(surah: data, juzFrom: 0),
               ),
             );
+            if (context.mounted) {
+              context.read<SurahProvider>().getContinueList();
+            }
           },
           child: Container(
             width: double.infinity,
@@ -277,6 +343,9 @@ class _QuranPageState extends State<QuranPage> {
                     ),
                   ),
                 );
+                if (context.mounted) {
+                  context.read<SurahProvider>().getContinueList();
+                }
               },
               child: Container(
                 width: double.infinity,

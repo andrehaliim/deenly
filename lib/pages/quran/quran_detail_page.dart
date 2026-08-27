@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_detail_model.dart';
@@ -7,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class QuranDetailPage extends StatefulWidget {
   final SurahModel surah;
@@ -176,6 +180,8 @@ class _SurahDetailListState extends State<SurahDetailList> {
   double _overscrollAtBottom = 0;
   static const double _overscrollTriggerThreshold = 120.0;
   static const int _maxSurahId = 114;
+  int? _pendingIndex;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -188,8 +194,15 @@ class _SurahDetailListState extends State<SurahDetailList> {
     }
   }
 
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    _saveLastAyah(_pendingIndex);
+    super.dispose();
+  }
+
   void _addScrollListener() async {
-    _itemPositionsListener.itemPositions.addListener(() async {
+    _itemPositionsListener.itemPositions.addListener(() {
       final positions = _itemPositionsListener.itemPositions.value;
       if (positions.isEmpty) return;
 
@@ -200,10 +213,27 @@ class _SurahDetailListState extends State<SurahDetailList> {
         (min, item) => item.itemLeadingEdge < min.itemLeadingEdge ? item : min,
       );
 
-      final index = firstVisible.index;
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setInt('lastAyahIndex', index);
+      _pendingIndex = firstVisible.index;
+
+      _debounceTimer?.cancel();
+      _debounceTimer = Timer(const Duration(milliseconds: 600), () {
+        _saveLastAyah(_pendingIndex);
+      });
     });
+  }
+
+  Future<void> _saveLastAyah(int? index) async {
+    if (index == null) return;
+    final db = await DatabaseHelper.instance.database;
+    await db.insert(
+      DatabaseHelper.tableContinueReading,
+      {
+        'surah_id': widget.surah.id,
+        'ayah_number': index,
+        'updatedAt': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   void _loadLastPosition() {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:deenly/components/database_helper.dart';
+import 'package:deenly/models/continue_model.dart';
 import 'package:deenly/models/juz_model.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_model.dart';
@@ -13,6 +14,7 @@ class SurahProvider extends ChangeNotifier {
 
   List<SurahModel> _surahList = [];
   List<JuzModel> _surahJuzList = [];
+  List<ContinueModel> _continueList = [];
   bool _isLoading = false;
   String? _code;
   List<SurahDetailModel>? _surahDetail;
@@ -21,6 +23,7 @@ class SurahProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   List<SurahModel> get surahList => _surahList;
   List<JuzModel> get surahJuzList => _surahJuzList;
+  List<ContinueModel> get continueList => _continueList;
   String? get code => _code;
   List<SurahDetailModel>? get surahDetail => _surahDetail;
   bool get isDetailLoading => _isDetailLoading;
@@ -55,7 +58,7 @@ class SurahProvider extends ChangeNotifier {
     try {
       final db = await DatabaseHelper.instance.database;
       final result = await db.query('juz');
-      for(final data in result) {
+      for (final data in result) {
         debugPrint('Juz Data: $data');
         final surah = await getSurahById(data['surah_id'] as int);
         _surahJuzList.add(JuzModel.fromDatabase(data, surah));
@@ -166,5 +169,31 @@ class SurahProvider extends ChangeNotifier {
       }
       await batch.commit(noResult: true);
     });
+  }
+
+  Future<void> getContinueList() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final db = await DatabaseHelper.instance.database;
+      final result = await db.query(
+        DatabaseHelper.tableContinueReading,
+        orderBy: 'updatedAt DESC',
+      );
+
+      final List<ContinueModel> tempList = [];
+      for (var data in result) {
+        final surah = await getSurahById(data['surah_id'] as int);
+        tempList.add(ContinueModel.fromMap(data, surah));
+      }
+
+      _continueList = tempList;
+    } catch (e) {
+      debugPrint('Error loading continue list: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

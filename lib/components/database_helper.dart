@@ -12,6 +12,7 @@ class DatabaseHelper {
   static const String tablePrayer = 'prayer';
   static const String tableHadith = 'hadith';
   static const String tableJuz = 'juz';
+  static const String tableContinueReading = 'continue_reading';
 
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
@@ -30,7 +31,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -92,6 +93,14 @@ class DatabaseHelper {
         ayah_to INTEGER
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE $tableContinueReading(
+        surah_id INTEGER PRIMARY KEY,
+        ayah_number INTEGER,
+        updatedAt TEXT
+      )
+    ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -112,7 +121,7 @@ class DatabaseHelper {
       )
     ''');
 
-    await db.execute('''
+      await db.execute('''
       CREATE TABLE $tableSurahDetail(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       chapter_no INTEGER,
@@ -132,6 +141,17 @@ class DatabaseHelper {
         surah_id INTEGER,
         ayah_from INTEGER,
         ayah_to INTEGER
+      )
+    ''');
+    }
+
+    if (oldVersion < 6) {
+      await db.execute('DROP TABLE IF EXISTS $tableContinueReading');
+      await db.execute('''
+      CREATE TABLE $tableContinueReading(
+        surah_id INTEGER,
+        ayah_number INTEGER,
+        updatedAt TEXT
       )
     ''');
     }
