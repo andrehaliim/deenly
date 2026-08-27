@@ -76,14 +76,22 @@ class SurahProvider extends ChangeNotifier {
   }
 
   Future<List<SurahDetailModel>> getSurahDetail(int chapterNo) async {
+    if (_surahDetail != null &&
+        _surahDetail!.isNotEmpty &&
+        _surahDetail!.first.chapterNo != chapterNo) {
+      _surahDetail = null;
+    }
+
     final cached = await _getFromDatabase(chapterNo);
     if (cached.isNotEmpty) {
       _surahDetail = cached;
+      _isDetailLoading = false;
       notifyListeners();
       return cached;
     }
 
     _isDetailLoading = true;
+    _surahDetail = null;
     notifyListeners();
 
     try {

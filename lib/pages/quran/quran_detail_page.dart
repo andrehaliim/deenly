@@ -14,10 +14,12 @@ import 'package:sqflite/sqflite.dart';
 class QuranDetailPage extends StatefulWidget {
   final SurahModel surah;
   final int juzFrom;
+  final String code;
   const QuranDetailPage({
     super.key,
     required this.surah,
     required this.juzFrom,
+    required this.code,
   });
 
   @override
@@ -28,6 +30,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
   late SurahModel _activeSurah;
   bool _isLoadingNextSurah = false;
   bool _isInitialSurah = true;
+  bool _showOptions = false;
 
   @override
   void initState() {
@@ -70,22 +73,30 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          onPressed: () {
-            Navigator.pop(context, true);
+        automaticallyImplyLeading: false,
+        title: GestureDetector(
+          onTap: () {
+            setState(() {
+              _showOptions = !_showOptions;
+            });
           },
-        ),
-        title: Text(
-          'Quran',
-          style: GoogleFonts.notoSerif(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            fontStyle: FontStyle.italic,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _activeSurah.name(widget.code),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              Icon(
+                _showOptions
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down,
+                color: Colors.black,
+              ),
+            ],
           ),
         ),
         centerTitle: true,
@@ -93,54 +104,77 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       body: SafeArea(
         child: Consumer<SurahProvider>(
           builder: (context, provider, _) {
-            final hasValidDetail = provider.surahDetail != null &&
-                provider.surahDetail!.isNotEmpty &&
-                provider.surahDetail!.first.chapterNo == _activeSurah.id;
-
-            if (!hasValidDetail) {
-              if (provider.surahDetail == null && !provider.isDetailLoading) {
-                return const Center(child: Text('Failed to fetch surah detail'));
-              }
+            if (provider.surahDetail == null && provider.isDetailLoading) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            return AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                final isIncoming = child.key == ValueKey(_activeSurah.id);
-                final offsetAnimation =
-                    Tween<Offset>(
-                      begin: isIncoming
-                          ? const Offset(0.0, 1.0)
-                          : const Offset(0.0, -1.0),
-                      end: const Offset(0.0, 0.0),
-                    ).animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: Curves.easeInOutCubic,
-                      ),
-                    );
-                return SlideTransition(position: offsetAnimation, child: child);
-              },
-              layoutBuilder:
-                  (Widget? currentChild, List<Widget> previousChildren) {
-                    return Stack(
-                      children: <Widget>[
-                        ...previousChildren,
-                        (currentChild ?? const SizedBox.shrink()),
-                      ],
-                    );
-                  },
-              child: SurahDetailList(
-                key: ValueKey(_activeSurah.id),
-                surah: _activeSurah,
-                details: provider.surahDetail!,
-                langCode: provider.code ?? 'en',
-                restorePosition: _isInitialSurah,
-                isLoadingNextSurah: _isLoadingNextSurah,
-                onNextSurahTriggered: _goToNextSurah,
-                juzFrom: widget.juzFrom,
-              ),
+            if (provider.surahDetail == null) {
+              return const Center(child: Text('Failed to fetch surah detail'));
+            }
+
+            return Stack(
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                        final isIncoming =
+                            child.key == ValueKey(_activeSurah.id);
+                        final offsetAnimation =
+                            Tween<Offset>(
+                              begin: isIncoming
+                                  ? const Offset(0.0, 1.0)
+                                  : const Offset(0.0, -1.0),
+                              end: const Offset(0.0, 0.0),
+                            ).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeInOutCubic,
+                              ),
+                            );
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                  layoutBuilder:
+                      (Widget? currentChild, List<Widget> previousChildren) {
+                        return Stack(
+                          children: <Widget>[
+                            ...previousChildren,
+                            (currentChild ?? const SizedBox.shrink()),
+                          ],
+                        );
+                      },
+                  child: SurahDetailList(
+                    key: ValueKey(_activeSurah.id),
+                    surah: _activeSurah,
+                    details: provider.surahDetail!,
+                    langCode: provider.code ?? 'en',
+                    restorePosition: _isInitialSurah,
+                    isLoadingNextSurah: _isLoadingNextSurah,
+                    onNextSurahTriggered: _goToNextSurah,
+                    juzFrom: widget.juzFrom,
+                  ),
+                ),
+
+                if (_showOptions)
+                  SurahOptionsPanel(
+                    surah: _activeSurah,
+                    onSurahSelected: (surah) async {
+                      if (surah.id == _activeSurah.id) {
+                        setState(() => _showOptions = false);
+                        return;
+                      }
+                      setState(() {
+                        _activeSurah = surah;
+                        _isInitialSurah = true;
+                        _showOptions = false;
+                      });
+                      context.read<SurahProvider>().getSurahDetail(surah.id);
+                    },
+                  ),
+              ],
             );
           },
         ),
@@ -553,6 +587,97 @@ class _SurahDetailListState extends State<SurahDetailList> {
                 ),
         ),
       ),
+    );
+  }
+}
+
+class SurahOptionsPanel extends StatelessWidget {
+  final SurahModel surah;
+  final ValueChanged<SurahModel> onSurahSelected;
+
+  const SurahOptionsPanel({
+    super.key,
+    required this.surah,
+    required this.onSurahSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SurahProvider>(
+      builder: (context, provider, _) {
+        final surahList = provider.surahList;
+        final code = provider.code ?? 'en';
+
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.45,
+          ),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            clipBehavior: Clip.antiAlias,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: surahList.length,
+              itemBuilder: (context, index) {
+                final item = surahList[index];
+                final isSelected = item.id == surah.id;
+
+                return ListTile(
+                  dense: true,
+                  selected: isSelected,
+                  selectedTileColor: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                  leading: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: isSelected
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
+                    child: Text(
+                      '${item.id}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    item.name(code),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  trailing: Text(
+                    item.nameArab,
+                    style: GoogleFonts.notoNaskhArabic(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  onTap: () => onSurahSelected(item),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

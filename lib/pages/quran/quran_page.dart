@@ -134,6 +134,7 @@ class _QuranPageState extends State<QuranPage> {
                   builder: (context) => QuranDetailPage(
                     surah: data.surah,
                     juzFrom: data.ayahNumber,
+                    code: code,
                   ),
                 ),
               );
@@ -204,7 +205,11 @@ class _QuranPageState extends State<QuranPage> {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => QuranDetailPage(surah: data, juzFrom: 0),
+                builder: (context) => QuranDetailPage(
+                  surah: data,
+                  juzFrom: 0,
+                  code: code!,
+                ),
               ),
             );
             if (context.mounted) {
@@ -361,6 +366,7 @@ class _QuranPageState extends State<QuranPage> {
                     builder: (context) => QuranDetailPage(
                       surah: data,
                       juzFrom: juz.surahFrom > 1 ? juz.surahFrom : 0,
+                      code: code!,
                     ),
                   ),
                 );
