@@ -31,7 +31,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 6,
+      version: 7,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -149,11 +149,50 @@ class DatabaseHelper {
       await db.execute('DROP TABLE IF EXISTS $tableContinueReading');
       await db.execute('''
       CREATE TABLE $tableContinueReading(
-        surah_id INTEGER,
+        surah_id INTEGER PRIMARY KEY,
         ayah_number INTEGER,
         updatedAt TEXT
       )
     ''');
+    }
+
+    if (oldVersion < 7) {
+      List<Map<String, dynamic>> existing = [];
+      try {
+        existing = await db.query(
+          tableContinueReading,
+          orderBy: 'updatedAt DESC',
+        );
+      } catch (_) {}
+
+      await db.execute('DROP TABLE IF EXISTS $tableContinueReading');
+      await db.execute('''
+      CREATE TABLE $tableContinueReading(
+        surah_id INTEGER PRIMARY KEY,
+        ayah_number INTEGER,
+        updatedAt TEXT
+      )
+    ''');
+
+      final Map<int, Map<String, dynamic>> uniqueRows = {};
+      for (final row in existing) {
+        final surahId = row['surah_id'] as int?;
+        if (surahId != null && !uniqueRows.containsKey(surahId)) {
+          uniqueRows[surahId] = row;
+        }
+      }
+
+      for (final row in uniqueRows.values) {
+        await db.insert(
+          tableContinueReading,
+          {
+            'surah_id': row['surah_id'],
+            'ayah_number': row['ayah_number'],
+            'updatedAt': row['updatedAt'],
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
     }
   }
 

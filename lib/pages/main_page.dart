@@ -38,15 +38,17 @@ class _MainPageState extends State<MainPage> {
         elevation: 0,
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
-              _scaffoldKey.currentState?.openEndDrawer();
-            },
-          ),
+          _selectedIndex != 2
+              ? Container()
+              : IconButton(
+                  icon: Icon(
+                    Icons.settings,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    _scaffoldKey.currentState?.openEndDrawer();
+                  },
+                ),
         ],
       ),
       body: IndexedStack(

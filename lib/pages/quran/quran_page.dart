@@ -39,9 +39,28 @@ class _QuranPageState extends State<QuranPage> {
 
         return Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.continueRead,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
             provider.continueList.isNotEmpty
                 ? listContinue(provider)
                 : Container(),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
@@ -51,7 +70,7 @@ class _QuranPageState extends State<QuranPage> {
                 children: [
                   Text(
                     'Surah List',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,
                     ),
@@ -69,9 +88,7 @@ class _QuranPageState extends State<QuranPage> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primaryContainer.withAlpha(100),
+                        color: Theme.of(context).colorScheme.primaryContainer,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -88,6 +105,7 @@ class _QuranPageState extends State<QuranPage> {
                 ],
               ),
             ),
+            SizedBox(height: 10),
             Expanded(
               child: filterByJuz
                   ? listPerJuz(provider)
@@ -101,7 +119,7 @@ class _QuranPageState extends State<QuranPage> {
 
   Widget listContinue(SurahProvider provider) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height / 8,
+      height: MediaQuery.of(context).size.height / 10,
       width: double.infinity,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -129,9 +147,12 @@ class _QuranPageState extends State<QuranPage> {
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: Theme.of(
-                  context,
-                ).colorScheme.primaryContainer.withAlpha(100),
+                color: Theme.of(context).colorScheme.primaryContainer,
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onPrimaryContainer.withValues(alpha: 0.5),
+                ),
               ),
               child: Center(
                 child: Column(
@@ -145,7 +166,7 @@ class _QuranPageState extends State<QuranPage> {
                       ),
                     ),
                     Text(
-                      'Ayat ${data.ayahNumber}',
+                      'Ayat ${data.ayahNumber == 0 ? '1' : data.ayahNumber}',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(
                           context,

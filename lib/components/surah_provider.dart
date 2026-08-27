@@ -13,7 +13,7 @@ class SurahProvider extends ChangeNotifier {
   final baseUrl = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1';
 
   List<SurahModel> _surahList = [];
-  List<JuzModel> _surahJuzList = [];
+  final List<JuzModel> _surahJuzList = [];
   List<ContinueModel> _continueList = [];
   bool _isLoading = false;
   String? _code;
@@ -180,6 +180,7 @@ class SurahProvider extends ChangeNotifier {
       final result = await db.query(
         DatabaseHelper.tableContinueReading,
         orderBy: 'updatedAt DESC',
+        limit: 5,
       );
 
       final List<ContinueModel> tempList = [];

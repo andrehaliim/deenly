@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class QuranDetailPage extends StatefulWidget {
@@ -94,12 +93,15 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
       body: SafeArea(
         child: Consumer<SurahProvider>(
           builder: (context, provider, _) {
-            if (provider.surahDetail == null && provider.isDetailLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            final hasValidDetail = provider.surahDetail != null &&
+                provider.surahDetail!.isNotEmpty &&
+                provider.surahDetail!.first.chapterNo == _activeSurah.id;
 
-            if (provider.surahDetail == null) {
-              return const Center(child: Text('Failed to fetch surah detail'));
+            if (!hasValidDetail) {
+              if (provider.surahDetail == null && !provider.isDetailLoading) {
+                return const Center(child: Text('Failed to fetch surah detail'));
+              }
+              return const Center(child: CircularProgressIndicator());
             }
 
             return AnimatedSwitcher(
@@ -125,7 +127,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     return Stack(
                       children: <Widget>[
                         ...previousChildren,
-                        if (currentChild != null) currentChild,
+                        (currentChild ?? const SizedBox.shrink()),
                       ],
                     );
                   },
