@@ -205,4 +205,41 @@ class SurahProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> searchSurah(String query) async {
+    notifyListeners();
+
+    try {
+      final db = await DatabaseHelper.instance.database;
+      final trimmed = query.trim();
+
+      if (trimmed.isEmpty) {
+        final result = await db.query(DatabaseHelper.tableSurah);
+        _surahList = result.map((e) => SurahModel.fromDatabase(e)).toList();
+        return;
+      }
+
+      final result = await db.query(DatabaseHelper.tableSurah);
+      final normalizedQuery = _normalize(trimmed);
+      final numberQuery = int.tryParse(trimmed);
+
+      _surahList = result
+          .map((e) => SurahModel.fromDatabase(e))
+          .where(
+            (surah) =>
+                _normalize(surah.nameIndo).contains(normalizedQuery) ||
+                _normalize(surah.nameEng).contains(normalizedQuery) ||
+                (numberQuery != null && surah.id == numberQuery),
+          )
+          .toList();
+    } catch (e) {
+      debugPrint('Error searching surah: $e');
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  String _normalize(String input) {
+    return input.toLowerCase().replaceAll(RegExp(r"[-'\s]"), '');
+  }
 }

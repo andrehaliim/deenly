@@ -10,14 +10,33 @@ class QuranPage extends StatefulWidget {
   const QuranPage({super.key});
 
   @override
-  State<QuranPage> createState() => _QuranPageState();
+  State<QuranPage> createState() => QuranPageState();
 }
 
-class _QuranPageState extends State<QuranPage> {
+class QuranPageState extends State<QuranPage> {
   SurahModel? currentSurah;
   int? lastSurahAyah;
   String code = '';
   bool filterByJuz = false;
+
+  bool _isSearching = false;
+  bool get isSearching => _isSearching;
+
+  void toggleSearch() {
+    final provider = context.read<SurahProvider>();
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+      }
+    });
+    if (!_isSearching) {
+      provider.searchSurah('');
+    }
+  }
+
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -30,6 +49,13 @@ class _QuranPageState extends State<QuranPage> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<SurahProvider>(
       builder: (context, provider, _) {
@@ -39,6 +65,37 @@ class _QuranPageState extends State<QuranPage> {
 
         return Column(
           children: [
+            if (_isSearching)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 4.0,
+                ),
+                child: TextField(
+                  key: const ValueKey('searchField'),
+                  controller: _searchController,
+                  focusNode: _searchFocusNode,
+                  autofocus: true,
+                  cursorColor: Theme.of(context).colorScheme.primary,
+                  onChanged: (value) {
+                    setState(() {
+                      filterByJuz = false;
+                    });
+                    provider.searchSurah(value);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Surah name or number...',
+                    hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onTertiary,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
@@ -119,7 +176,7 @@ class _QuranPageState extends State<QuranPage> {
 
   Widget listContinue(SurahProvider provider) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height / 10,
+      height: MediaQuery.of(context).size.height / 8,
       width: double.infinity,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -128,6 +185,7 @@ class _QuranPageState extends State<QuranPage> {
           final data = provider.continueList[index];
           return InkWell(
             onTap: () async {
+              if (_isSearching) toggleSearch();
               await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -144,8 +202,11 @@ class _QuranPageState extends State<QuranPage> {
             },
             child: Container(
               width: MediaQuery.of(context).size.width / 4,
-              height: MediaQuery.of(context).size.height / 8,
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 8.0,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: Theme.of(context).colorScheme.primaryContainer,
@@ -165,6 +226,9 @@ class _QuranPageState extends State<QuranPage> {
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                     ),
                     Text(
                       'Ayat ${data.ayahNumber == 0 ? '1' : data.ayahNumber}',
@@ -202,14 +266,13 @@ class _QuranPageState extends State<QuranPage> {
 
         return InkWell(
           onTap: () async {
+            if (_isSearching) toggleSearch();
+
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => QuranDetailPage(
-                  surah: data,
-                  juzFrom: 0,
-                  code: code!,
-                ),
+                builder: (context) =>
+                    QuranDetailPage(surah: data, juzFrom: 0, code: code!),
               ),
             );
             if (context.mounted) {
@@ -360,6 +423,8 @@ class _QuranPageState extends State<QuranPage> {
               ),
             InkWell(
               onTap: () async {
+                if (_isSearching) toggleSearch();
+
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
