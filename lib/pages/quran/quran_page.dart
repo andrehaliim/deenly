@@ -1,165 +1,259 @@
-import 'dart:convert';
-
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/pages/quran/quran_detail_page.dart';
-import 'package:deenly/proxys/quran_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranPage extends StatefulWidget {
   const QuranPage({super.key});
 
   @override
-  State<QuranPage> createState() => _QuranPageState();
+  State<QuranPage> createState() => QuranPageState();
 }
 
-class _QuranPageState extends State<QuranPage> {
-  final QuranProxy quranProxy = QuranProxy();
+class QuranPageState extends State<QuranPage> {
   SurahModel? currentSurah;
   int? lastSurahAyah;
+  String code = '';
+  bool filterByJuz = false;
+
+  bool _isSearching = false;
+  bool get isSearching => _isSearching;
+
+  void toggleSearch() {
+    final provider = context.read<SurahProvider>();
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+      }
+    });
+    if (!_isSearching) {
+      provider.searchSurah('');
+    }
+  }
+
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SurahProvider>().getSurahList();
+      context.read<SurahProvider>().getJuzList();
+      context.read<SurahProvider>().getContinueList();
     });
-    loadCurrentSurah();
   }
 
-  void loadCurrentSurah() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final surahString = prefs.getString('currentSurah');
-    final lastAyahIndex = prefs.getInt('lastAyahIndex');
-
-    if (surahString != null) {
-      final surahMap = jsonDecode(surahString);
-      setState(() {
-        currentSurah = SurahModel.fromJsonLocal(surahMap);
-        lastSurahAyah = lastAyahIndex;
-      });
-    }
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          currentSurah != null
-              ? Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/quran_background.jpg'),
-                      fit: BoxFit.cover,
+    return Consumer<SurahProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Column(
+          children: [
+            if (_isSearching)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 4.0,
+                ),
+                child: TextField(
+                  key: const ValueKey('searchField'),
+                  controller: _searchController,
+                  focusNode: _searchFocusNode,
+                  autofocus: true,
+                  cursorColor: Theme.of(context).colorScheme.primary,
+                  onChanged: (value) {
+                    setState(() {
+                      filterByJuz = false;
+                    });
+                    provider.searchSurah(value);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Surah name or number...',
+                    hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onTertiary,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.continueRead,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onTertiary,
                     ),
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () async {
-                      bool refresh = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              QuranDetailPage(surah: currentSurah!),
-                        ),
-                      );
-                      if (refresh) {
-                        loadCurrentSurah();
-                      }
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            provider.continueList.isNotEmpty
+                ? listContinue(provider)
+                : Container(),
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'Surah List',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onTertiary,
+                    ),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        filterByJuz = !filterByJuz;
+                      });
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.continueRead,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimary,
-                                    ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                currentSurah!.name,
-                                style: GoogleFonts.notoSerif(
-                                  fontSize: Theme.of(
-                                    context,
-                                  ).textTheme.titleLarge?.fontSize,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                '${AppLocalizations.of(context)!.continueAyah}$lastSurahAyah',
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ],
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        filterByJuz ? 'Filter by : Juz' : 'Filter by : Surah',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
+                        ),
                       ),
                     ),
                   ),
-                )
-              : const SizedBox.shrink(),
-          const SizedBox(height: 12),
-          Text(
-            'Al Quran',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onTertiary,
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: Consumer<SurahProvider>(
-              builder: (context, provider, _) {
-                if (provider.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final surahList = provider.surahList;
-
-                if (surahList.isEmpty) {
-                  return const Center(child: Text('No Surah found'));
-                }
-
-                return listSurah(surahList);
-              },
+            SizedBox(height: 10),
+            Expanded(
+              child: filterByJuz
+                  ? listPerJuz(provider)
+                  : listPerSurah(provider),
             ),
-          ),
-        ],
+          ],
+        );
+      },
+    );
+  }
+
+  Widget listContinue(SurahProvider provider) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 12,
+      width: double.infinity,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: provider.continueList.length,
+        itemBuilder: (context, index) {
+          final data = provider.continueList[index];
+          return InkWell(
+            onTap: () async {
+              if (_isSearching) toggleSearch();
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuranDetailPage(
+                    surah: data.surah,
+                    juzFrom: data.ayahNumber,
+                    code: code,
+                  ),
+                ),
+              );
+              if (context.mounted) {
+                context.read<SurahProvider>().getContinueList();
+              }
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width / 4,
+              margin: const EdgeInsets.symmetric(horizontal: 4.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 8.0,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      data.surah.name(provider.code ?? 'id'),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      'Ayat ${data.ayahNumber == 0 ? '1' : data.ayahNumber}',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget listSurah(List<SurahModel> surahList) {
+  Widget listPerSurah(SurahProvider provider) {
+    final size = MediaQuery.sizeOf(context);
+    final maxWidth = size.width;
+    final maxHeight = size.height;
+
+    if (provider.surahList.isEmpty) {
+      return const Center(child: Text('No Surah found'));
+    }
+
+    final surahList = provider.surahList;
+    final code = provider.code;
     return ListView.builder(
       itemCount: surahList.length,
       itemBuilder: (context, index) {
@@ -167,99 +261,297 @@ class _QuranPageState extends State<QuranPage> {
 
         return InkWell(
           onTap: () async {
-            final prefs = await SharedPreferences.getInstance();
-            prefs.setString('currentSurah', jsonEncode(data.toJson()));
-            prefs.setInt('lastAyahIndex', 0);
-            bool refresh = await Navigator.push(
+            if (_isSearching) toggleSearch();
+
+            await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => QuranDetailPage(surah: data),
+                builder: (context) =>
+                    QuranDetailPage(surah: data, juzFrom: 0, code: code!),
               ),
             );
-            if (refresh) {
-              loadCurrentSurah();
+            if (context.mounted) {
+              context.read<SurahProvider>().getContinueList();
             }
           },
           child: Container(
-            margin: const EdgeInsets.only(bottom: 12.0),
+            width: double.infinity,
+            height: maxHeight / 9,
+            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.5),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
             child: Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: maxWidth / 6,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    shape: BoxShape.circle,
-                  ),
                   child: Text(
                     data.id.toString(),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ),
                 const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.name,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onTertiary,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        FaIcon(
-                          data.revelation == 'Madina' ||
-                                  data.revelation == 'Madaniyah'
-                              ? FontAwesomeIcons.mosque
-                              : FontAwesomeIcons.kaaba,
-                          size: Theme.of(context).textTheme.bodySmall?.fontSize,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onTertiary.withValues(alpha: 0.5),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        data.name(code),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          width: 4,
-                          height: 4,
-                          decoration: BoxDecoration(
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          FaIcon(
+                            data.surahFrom == 1
+                                ? FontAwesomeIcons.kaaba
+                                : FontAwesomeIcons.mosque,
+                            size: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.fontSize,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onTertiary.withValues(alpha: 0.5),
-                            shape: BoxShape.circle,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.5),
                           ),
-                        ),
-                        Text(
-                          '${data.totalAyahs} ${AppLocalizations.of(context)!.ayah}',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onTertiary.withValues(alpha: 0.5),
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                            width: 4,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onPrimary.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          Text(
+                            '${data.surahTotal} ${AppLocalizations.of(context)!.ayah}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.onPrimary
+                                      .withValues(alpha: 0.5),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                Spacer(),
-                Text(
-                  data.arabicname,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onTertiary.withValues(alpha: 0.5),
+                Container(
+                  width: maxWidth / 4,
+                  alignment: Alignment.center,
+                  child: Text(
+                    data.nameArab,
+                    textAlign: TextAlign.right,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Widget listPerJuz(SurahProvider provider) {
+    final size = MediaQuery.sizeOf(context);
+    final maxWidth = size.width;
+    final maxHeight = size.height;
+
+    if (provider.surahJuzList.isEmpty) {
+      return const Center(child: Text('No Juz found'));
+    }
+
+    final juzList = provider.surahJuzList;
+    final code = provider.code;
+    return ListView.builder(
+      itemCount: juzList.length,
+      itemBuilder: (context, index) {
+        final juz = juzList[index];
+        final data = juz.surahDetail;
+        final isNewJuz =
+            index == 0 || juz.juzNumber != juzList[index - 1].juzNumber;
+
+        return Column(
+          children: [
+            if (isNewJuz)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'Juz ${juz.juzNumber}',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                  ),
+                ),
+              ),
+            InkWell(
+              onTap: () async {
+                if (_isSearching) toggleSearch();
+
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QuranDetailPage(
+                      surah: data,
+                      juzFrom: juz.surahFrom > 1 ? juz.surahFrom : 0,
+                      code: code!,
+                    ),
+                  ),
+                );
+                if (context.mounted) {
+                  context.read<SurahProvider>().getContinueList();
+                }
+              },
+              child: Container(
+                width: double.infinity,
+                height: maxHeight / 9,
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 4.0,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.75),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.5),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Row(
+                  children: [
+                    Container(
+                      width: maxWidth / 6,
+                      alignment: Alignment.center,
+                      child: Text(
+                        juz.juzNumber.toString(),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            data.name(code),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              FaIcon(
+                                data.surahFrom == 1
+                                    ? FontAwesomeIcons.kaaba
+                                    : FontAwesomeIcons.mosque,
+                                size: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.fontSize,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimary.withValues(alpha: 0.5),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                                width: 4,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.onPrimary
+                                      .withValues(alpha: 0.5),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              Text(
+                                'Ayah ${juz.surahFrom} - ${juz.surahTo}',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary
+                                          .withValues(alpha: 0.5),
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: maxWidth / 4,
+                      alignment: Alignment.center,
+                      child: Text(
+                        data.nameArab,
+                        textAlign: TextAlign.right,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         );
       },
     );

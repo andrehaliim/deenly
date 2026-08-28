@@ -104,7 +104,6 @@ class _MosquePageState extends State<MosquePage> {
       onRefresh: () => _fetchMosques(showLocalLoading: false),
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
         itemCount: mosques.length,
         itemBuilder: (context, index) => _buildMosqueCard(mosques[index]),
       ),
@@ -158,7 +157,7 @@ class _MosquePageState extends State<MosquePage> {
 
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
@@ -169,6 +168,13 @@ class _MosquePageState extends State<MosquePage> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(

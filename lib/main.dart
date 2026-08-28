@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:deenly/components/app_theme.dart';
+import 'package:deenly/components/audio_provider.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
@@ -104,6 +105,7 @@ void main() async {
             return surahProvider;
           },
         ),
+        ChangeNotifierProvider(create: (_) => AudioProvider()),
       ],
       child: const MyApp(),
     ),

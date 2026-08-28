@@ -1,36 +1,44 @@
 class SurahDetailModel {
-  int surahId;
+  int chapterNo;
   int verseNo;
-  String text;
-  String translation;
+  String textAr;
+  String textEn;
+  String textId;
 
   SurahDetailModel({
-    required this.surahId,
+    required this.chapterNo,
     required this.verseNo,
-    required this.text,
-    required this.translation,
+    required this.textAr,
+    required this.textEn,
+    required this.textId,
   });
 
-  factory SurahDetailModel.fromJsonApi(Map<String, dynamic> json) =>
+  factory SurahDetailModel.fromJson(Map<String, dynamic> json) =>
       SurahDetailModel(
-        surahId: json["chapter"],
-        verseNo: json["verse"],
-        text: json["text"],
-        translation: json["text"],
+        chapterNo: json['chapterNo'],
+        verseNo: json['verseNo'],
+        textAr: json['textAr'],
+        textEn: json['textEn'],
+        textId: json['textId'],
       );
 
-  factory SurahDetailModel.fromJsonLocal(Map<String, dynamic> json) =>
+      factory SurahDetailModel.fromDatabase(Map<String, dynamic> json) =>
       SurahDetailModel(
-        surahId: json["surah_id"],
-        verseNo: json["verse"],
-        text: json["text"],
-        translation: json["translation"],
+        chapterNo: json['chapter_no'],
+        verseNo: json['verse_no'],
+        textAr: json['text_arabic'],
+        textEn: json['text_english'],
+        textId: json['text_indonesian'],
       );
 
   Map<String, dynamic> toJson(int id) => {
-    "surah_id": id,
-    "verse": verseNo,
-    "text": text,
-    "translation": translation,
+    'id': id,
+    'chapterNo': chapterNo,
+    'verseNo': verseNo,
+    'textAr': textAr,
+    'textEn': textEn,
+    'textId': textId,
   };
+
+  String text(String? code) => code == 'id' ? textId : textEn;
 }

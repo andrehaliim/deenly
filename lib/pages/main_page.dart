@@ -18,6 +18,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<HomePageState> _homeKey = GlobalKey<HomePageState>();
+  final GlobalKey<QuranPageState> _quranKey = GlobalKey<QuranPageState>();
   int _selectedIndex = 2;
 
   @override
@@ -38,21 +39,38 @@ class _MainPageState extends State<MainPage> {
         elevation: 0,
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
-              _scaffoldKey.currentState?.openEndDrawer();
-            },
-          ),
+          _selectedIndex == 0
+              ? IconButton(
+                  icon: Icon(
+                    (_quranKey.currentState?.isSearching ?? false)
+                        ? Icons.close
+                        : Icons.search,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _quranKey.currentState?.toggleSearch();
+                    });
+                  },
+                )
+              : Container(),
+          _selectedIndex != 2
+              ? Container()
+              : IconButton(
+                  icon: Icon(
+                    Icons.settings,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    _scaffoldKey.currentState?.openEndDrawer();
+                  },
+                ),
         ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          const QuranPage(),
+          QuranPage(key: _quranKey),
           const MosquePage(),
           HomePage(key: _homeKey),
           QiblaPage(isActive: _selectedIndex == 3),
