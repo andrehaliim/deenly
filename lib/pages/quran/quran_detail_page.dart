@@ -61,6 +61,8 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
 
     if (!mounted) return;
 
+    context.read<AudioProvider>().stopAll();
+
     setState(() {
       _isLoadingNextSurah = false;
       _activeSurah = nextSurah;
@@ -167,6 +169,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                         setState(() => _showOptions = false);
                         return;
                       }
+                      context.read<AudioProvider>().stopAll();
                       setState(() {
                         _activeSurah = surah;
                         _isInitialSurah = true;
@@ -219,6 +222,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
   static const int _maxSurahId = 114;
   int? _pendingIndex;
   Timer? _debounceTimer;
+  int _lastPlayedAyah = -1;
 
   @override
   void initState() {
@@ -314,7 +318,8 @@ class _SurahDetailListState extends State<SurahDetailList> {
       }
       if (!isAtBottom) {
         _overscrollAtBottom = 0;
-      } else if (!widget.isLoadingNextSurah) {
+      } else if (!widget.isLoadingNextSurah &&
+          notification.dragDetails != null) {
         final delta = notification.scrollDelta;
         if (delta != null && delta > 0) {
           _overscrollAtBottom += delta;
@@ -327,6 +332,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
     }
 
     if (notification is OverscrollNotification &&
+        notification.dragDetails != null &&
         notification.overscroll > 0 &&
         isAtBottom &&
         !widget.isLoadingNextSurah) {
@@ -347,6 +353,27 @@ class _SurahDetailListState extends State<SurahDetailList> {
   @override
   Widget build(BuildContext context) {
     final code = widget.langCode;
+    final audio = context.watch<AudioProvider>();
+    if (audio.playedSurah == widget.surah.id) {
+      if (audio.playedAyah != _lastPlayedAyah) {
+        final targetIndex = audio.playedAyah;
+        _lastPlayedAyah = targetIndex;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_itemScrollController.isAttached &&
+              targetIndex >= 0 &&
+              targetIndex < widget.details.length + 1) {
+            _itemScrollController.scrollTo(
+              index: targetIndex,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+      }
+    } else {
+      _lastPlayedAyah = -1;
+    }
+
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
       child: ScrollablePositionedList.builder(
@@ -433,7 +460,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
                               child: Icon(
                                 size: 32,
                                 isPlaying
-                                    ? Icons.pause_circle_filled_rounded
+                                    ? Icons.stop_circle_outlined
                                     : Icons.play_circle_outline_rounded,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
@@ -587,7 +614,9 @@ class _SurahDetailListState extends State<SurahDetailList> {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    isPlaying ? Icons.pause : Icons.play_arrow,
+                    isPlaying
+                        ? Icons.stop_circle_outlined
+                        : Icons.play_circle_outline_rounded,
                     color: Colors.white,
                   ),
                 ),
