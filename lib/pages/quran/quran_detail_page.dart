@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:deenly/components/audio_provider.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
@@ -369,92 +370,122 @@ class _SurahDetailListState extends State<SurahDetailList> {
           }
 
           final data = widget.details[index - 1];
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 4.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 75,
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        gradient: LinearGradient(
-                          colors: [
-                            Theme.of(context).colorScheme.tertiary,
-                            Theme.of(
-                              context,
-                            ).colorScheme.tertiary.withValues(alpha: 0.75),
+          return Column(
+            children: [
+              Consumer<AudioProvider>(
+                builder: (context, audio, _) {
+                  final isPlaying =
+                      audio.detailIndex == index &&
+                      audio.detailSurah == widget.surah.id;
+                  return Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: isPlaying
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.surface,
+                    ),
+                    margin: const EdgeInsets.all(8.0),
+
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 4.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 75,
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Theme.of(context).colorScheme.tertiary,
+                                    Theme.of(context).colorScheme.tertiary
+                                        .withValues(alpha: 0.75),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .tertiary
+                                        .withValues(alpha: 0.5),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                '${data.chapterNo}:${data.verseNo}',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onTertiary,
+                                    ),
+                              ),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              icon: Icon(
+                                isPlaying
+                                    ? Icons.pause_circle_filled_rounded
+                                    : Icons.play_circle_outline_rounded,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              onPressed: () {
+                                audio.testigz(data, index);
+                              },
+                            ),
                           ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.tertiary.withValues(alpha: 0.5),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                        const SizedBox(height: 30),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Text(
+                              data.textAr,
+                              textAlign: TextAlign.right,
+                              style: GoogleFonts.notoNaskhArabic(
+                                fontSize: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium?.fontSize,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.onTertiary,
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        '${data.chapterNo}:${data.verseNo}',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onTertiary,
                         ),
-                      ),
+                        const SizedBox(height: 30),
+                        Text(
+                          data.text(code),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onTertiary.withValues(alpha: 0.5),
+                              ),
+                        ),
+                      ],
                     ),
-                    const Spacer(),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      data.textAr,
-                      textAlign: TextAlign.right,
-                      style: GoogleFonts.notoNaskhArabic(
-                        fontSize: Theme.of(
-                          context,
-                        ).textTheme.headlineMedium?.fontSize,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onTertiary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  data.text(code),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onTertiary.withValues(alpha: 0.5),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Visibility(
-                  visible: index != widget.details.length - 1,
-                  child: Divider(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onTertiary.withValues(alpha: 0.25),
-                  ),
-                ),
-              ],
-            ),
+                  );
+                },
+              ),
+              Divider(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onTertiary.withValues(alpha: 0.25),
+              ),
+            ],
           );
         },
       ),
