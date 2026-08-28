@@ -176,7 +176,7 @@ class QuranPageState extends State<QuranPage> {
 
   Widget listContinue(SurahProvider provider) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height / 8,
+      height: MediaQuery.of(context).size.height / 12,
       width: double.infinity,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -210,11 +210,6 @@ class QuranPageState extends State<QuranPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: Theme.of(context).colorScheme.primaryContainer,
-                border: Border.all(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onPrimaryContainer.withValues(alpha: 0.5),
-                ),
               ),
               child: Center(
                 child: Column(
@@ -222,17 +217,17 @@ class QuranPageState extends State<QuranPage> {
                   children: [
                     Text(
                       data.surah.name(provider.code ?? 'id'),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                     ),
                     Text(
                       'Ayat ${data.ayahNumber == 0 ? '1' : data.ayahNumber}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: Theme.of(
                           context,
                         ).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
