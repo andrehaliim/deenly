@@ -362,11 +362,27 @@ class _SurahDetailListState extends State<SurahDetailList> {
           if (_itemScrollController.isAttached &&
               targetIndex >= 0 &&
               targetIndex < widget.details.length + 1) {
-            _itemScrollController.scrollTo(
-              index: targetIndex,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeInOut,
+            final positions = _itemPositionsListener.itemPositions.value;
+            final lastItemIndex = widget.details.length + 1;
+            final isAtBottom = positions.any(
+              (pos) =>
+                  pos.index == lastItemIndex && pos.itemTrailingEdge <= 1.05,
             );
+
+            final isTargetFullyVisible = positions.any(
+              (pos) =>
+                  pos.index == targetIndex &&
+                  pos.itemLeadingEdge >= 0.0 &&
+                  pos.itemTrailingEdge <= 1.0,
+            );
+
+            if (!isAtBottom && !isTargetFullyVisible) {
+              _itemScrollController.scrollTo(
+                index: targetIndex,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut,
+              );
+            }
           }
         });
       }
@@ -454,19 +470,6 @@ class _SurahDetailListState extends State<SurahDetailList> {
                                       ).colorScheme.onTertiary,
                                     ),
                               ),
-                            ),
-                            const Spacer(),
-                            GestureDetector(
-                              child: Icon(
-                                size: 32,
-                                isPlaying
-                                    ? Icons.stop_circle_outlined
-                                    : Icons.play_circle_outline_rounded,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              onTap: () {
-                                audio.playSingle(data, index);
-                              },
                             ),
                           ],
                         ),
