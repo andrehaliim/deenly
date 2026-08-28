@@ -72,115 +72,122 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: GestureDetector(
-          onTap: () {
-            setState(() {
-              _showOptions = !_showOptions;
-            });
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _activeSurah.name(widget.code),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              Icon(
-                _showOptions
-                    ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down,
-                color: Colors.black,
-              ),
-            ],
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Consumer<SurahProvider>(
-          builder: (context, provider, _) {
-            if (provider.surahDetail == null && provider.isDetailLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (provider.surahDetail == null) {
-              return const Center(child: Text('Failed to fetch surah detail'));
-            }
-
-            return Stack(
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        context.read<AudioProvider>().stopAll();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: GestureDetector(
+            onTap: () {
+              setState(() {
+                _showOptions = !_showOptions;
+              });
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                        final isIncoming =
-                            child.key == ValueKey(_activeSurah.id);
-                        final offsetAnimation =
-                            Tween<Offset>(
-                              begin: isIncoming
-                                  ? const Offset(0.0, 1.0)
-                                  : const Offset(0.0, -1.0),
-                              end: const Offset(0.0, 0.0),
-                            ).animate(
-                              CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeInOutCubic,
-                              ),
-                            );
-                        return SlideTransition(
-                          position: offsetAnimation,
-                          child: child,
-                        );
-                      },
-                  layoutBuilder:
-                      (Widget? currentChild, List<Widget> previousChildren) {
-                        return Stack(
-                          children: <Widget>[
-                            ...previousChildren,
-                            (currentChild ?? const SizedBox.shrink()),
-                          ],
-                        );
-                      },
-                  child: SurahDetailList(
-                    key: ValueKey(_activeSurah.id),
-                    surah: _activeSurah,
-                    details: provider.surahDetail!,
-                    langCode: provider.code ?? 'en',
-                    restorePosition: _isInitialSurah,
-                    isLoadingNextSurah: _isLoadingNextSurah,
-                    onNextSurahTriggered: _goToNextSurah,
-                    juzFrom: widget.juzFrom,
+                Text(
+                  _activeSurah.name(widget.code),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-
-                if (_showOptions)
-                  SurahOptionsPanel(
-                    surah: _activeSurah,
-                    onSurahSelected: (surah) async {
-                      if (surah.id == _activeSurah.id) {
-                        setState(() => _showOptions = false);
-                        return;
-                      }
-                      context.read<AudioProvider>().stopAll();
-                      setState(() {
-                        _activeSurah = surah;
-                        _isInitialSurah = true;
-                        _showOptions = false;
-                      });
-                      context.read<SurahProvider>().getSurahDetail(surah.id);
-                    },
-                  ),
+                Icon(
+                  _showOptions
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: Colors.black,
+                ),
               ],
-            );
-          },
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: Consumer<SurahProvider>(
+            builder: (context, provider, _) {
+              if (provider.surahDetail == null && provider.isDetailLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (provider.surahDetail == null) {
+                return const Center(
+                  child: Text('Failed to fetch surah detail'),
+                );
+              }
+
+              return Stack(
+                children: [
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    transitionBuilder:
+                        (Widget child, Animation<double> animation) {
+                          final isIncoming =
+                              child.key == ValueKey(_activeSurah.id);
+                          final offsetAnimation =
+                              Tween<Offset>(
+                                begin: isIncoming
+                                    ? const Offset(0.0, 1.0)
+                                    : const Offset(0.0, -1.0),
+                                end: const Offset(0.0, 0.0),
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeInOutCubic,
+                                ),
+                              );
+                          return SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          );
+                        },
+                    layoutBuilder:
+                        (Widget? currentChild, List<Widget> previousChildren) {
+                          return Stack(
+                            children: <Widget>[
+                              ...previousChildren,
+                              (currentChild ?? const SizedBox.shrink()),
+                            ],
+                          );
+                        },
+                    child: SurahDetailList(
+                      key: ValueKey(_activeSurah.id),
+                      surah: _activeSurah,
+                      details: provider.surahDetail!,
+                      langCode: provider.code ?? 'en',
+                      restorePosition: _isInitialSurah,
+                      isLoadingNextSurah: _isLoadingNextSurah,
+                      onNextSurahTriggered: _goToNextSurah,
+                      juzFrom: widget.juzFrom,
+                    ),
+                  ),
+
+                  if (_showOptions)
+                    SurahOptionsPanel(
+                      surah: _activeSurah,
+                      onSurahSelected: (surah) async {
+                        if (surah.id == _activeSurah.id) {
+                          setState(() => _showOptions = false);
+                          return;
+                        }
+                        context.read<AudioProvider>().stopAll();
+                        setState(() {
+                          _activeSurah = surah;
+                          _isInitialSurah = true;
+                          _showOptions = false;
+                        });
+                        context.read<SurahProvider>().getSurahDetail(surah.id);
+                      },
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
