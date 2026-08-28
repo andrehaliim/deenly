@@ -6,44 +6,45 @@ import 'package:just_audio/just_audio.dart';
 
 class AudioProvider extends ChangeNotifier {
   final AudioPlayer _player = AudioPlayer();
-  int? currentSurah;
-  int? currentAyah;
-  bool isPlaying = false;
-  String selectedReciter = 'Alafasy_128kbps';
-  bool autoContinue = false;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
-  bool _isDetailLoading = false;
-  bool get isDetailLoading => _isDetailLoading;
-  int _detailSurah = 0;
-  int get detailSurah => _detailSurah;
-  int _detailIndex = 0;
-  int get detailIndex => _detailIndex;
+  int _requestToken = 0;
+
+  int _playedSurah = 0;
+  int get playedSurah => _playedSurah;
+  int _playedAyah = 0;
+  int get playedAyah => _playedAyah;
 
   AudioProvider() {
-    _player.playerStateStream.listen((state) {
-      isPlaying = state.playing;
-
+    _player.playerStateStream.listen((state) async {
       if (state.processingState == ProcessingState.completed) {
-        currentAyah = null;
-        currentSurah = null;
+        await stopAll();
       }
-      notifyListeners();
     });
   }
 
-  Future<void> testigz(SurahDetailModel surah, int index) async {
-    if (isPlaying) {
-      await _player.stop();
-    }
-    _isDetailLoading = true;
-    _detailSurah = surah.chapterNo;
-    _detailIndex = index;
+  Future<void> stopAll() async {
+    await _player.stop();
+    _playedSurah = 0;
+    _playedAyah = 0;
+    _isLoading = false;
     notifyListeners();
-    final url = _getAyahUrl(
-      surah: surah.chapterNo,
-      ayah: surah.verseNo,
-      reciter: selectedReciter,
-    );
+  }
+
+  Future<void> testigz(SurahDetailModel surah, int index) async {
+    if (_playedSurah == surah.chapterNo && _playedAyah == index) {
+      await stopAll();
+      return;
+    }
+
+    final myToken = ++_requestToken;
+
+    _isLoading = true;
+    _playedSurah = surah.chapterNo;
+    _playedAyah = index;
+    notifyListeners();
+    final url = _getAyahUrl(surah: surah.chapterNo, ayah: surah.verseNo);
 
     try {
       await _player.stop();
@@ -53,10 +54,9 @@ class AudioProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Audio error: $e');
     } finally {
-      _isDetailLoading = false;
-      _detailIndex = 0;
-      _detailSurah = 0;
-      notifyListeners();
+      if (myToken == _requestToken) {
+        await stopAll();
+      }
     }
   }
 

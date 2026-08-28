@@ -375,8 +375,8 @@ class _SurahDetailListState extends State<SurahDetailList> {
               Consumer<AudioProvider>(
                 builder: (context, audio, _) {
                   final isPlaying =
-                      audio.detailIndex == index &&
-                      audio.detailSurah == widget.surah.id;
+                      audio.playedAyah == index &&
+                      audio.playedSurah == widget.surah.id;
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
@@ -385,11 +385,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
                           : Theme.of(context).colorScheme.surface,
                     ),
                     margin: const EdgeInsets.all(8.0),
-
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 4.0,
-                    ),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
