@@ -429,15 +429,16 @@ class _SurahDetailListState extends State<SurahDetailList> {
                               ),
                             ),
                             const Spacer(),
-                            IconButton(
-                              icon: Icon(
+                            GestureDetector(
+                              child: Icon(
+                                size: 32,
                                 isPlaying
                                     ? Icons.pause_circle_filled_rounded
                                     : Icons.play_circle_outline_rounded,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              onPressed: () {
-                                audio.testigz(data, index);
+                              onTap: () {
+                                audio.playSingle(data, index);
                               },
                             ),
                           ],
@@ -489,7 +490,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
   }
 
   Widget listHeader(String name, String text, int totalAyahs) {
-    return Column(
+    return Stack(
       children: [
         Container(
           width: double.infinity,
@@ -568,7 +569,32 @@ class _SurahDetailListState extends State<SurahDetailList> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        Positioned(
+          top: 16,
+          right: 32,
+          child: Consumer<AudioProvider>(
+            builder: (context, audioProvider, child) {
+              final isPlaying = audioProvider.playedSurah == widget.surah.id;
+              return GestureDetector(
+                onTap: () {
+                  audioProvider.playMultiple(widget.surah);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onPrimary.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isPlaying ? Icons.pause : Icons.play_arrow,
+                    color: Colors.white,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }
