@@ -59,7 +59,6 @@ class SurahProvider extends ChangeNotifier {
       final db = await DatabaseHelper.instance.database;
       final result = await db.query('juz');
       for (final data in result) {
-        debugPrint('Juz Data: $data');
         final surah = await getSurahById(data['surah_id'] as int);
         _surahJuzList.add(JuzModel.fromDatabase(data, surah));
       }

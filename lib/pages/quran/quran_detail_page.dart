@@ -103,6 +103,30 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                       : Icons.keyboard_arrow_down,
                   color: Colors.black,
                 ),
+                Spacer(),
+                Consumer<AudioProvider>(
+                  builder: (context, audioProvider, child) {
+                    final isPlaying =
+                        audioProvider.playedSurah == widget.surah.id;
+                    return GestureDetector(
+                      onTap: () {
+                        audioProvider.playMultiple(_activeSurah, 1);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isPlaying
+                              ? Icons.stop_circle_outlined
+                              : Icons.play_circle_outline_rounded,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -424,13 +448,13 @@ class _SurahDetailListState extends State<SurahDetailList> {
             children: [
               Consumer<AudioProvider>(
                 builder: (context, audio, _) {
-                  final isPlaying =
-                      audio.playedAyah == index &&
+                  final isPlayingz =
+                      audio.playedAyah == data.verseNo &&
                       audio.playedSurah == widget.surah.id;
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      color: isPlaying
+                      color: isPlayingz
                           ? Theme.of(context).colorScheme.onPrimary
                           : Theme.of(context).colorScheme.surface,
                     ),
@@ -476,6 +500,31 @@ class _SurahDetailListState extends State<SurahDetailList> {
                                         context,
                                       ).colorScheme.onTertiary,
                                     ),
+                              ),
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () async {
+                                SurahProvider surahProvider =
+                                    Provider.of<SurahProvider>(
+                                      context,
+                                      listen: false,
+                                    );
+                                SurahModel surah = await surahProvider
+                                    .getSurahById(data.chapterNo);
+                                audio.playMultiple(surah, data.verseNo);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  isPlayingz
+                                      ? Icons.stop_circle_outlined
+                                      : Icons.play_circle_outline_rounded,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ],
@@ -527,114 +576,80 @@ class _SurahDetailListState extends State<SurahDetailList> {
   }
 
   Widget listHeader(String name, String text, int totalAyahs) {
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(24.0),
-          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              colors: [
-                Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(
-                  context,
-                ).colorScheme.primary.withValues(alpha: 0.5),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            name,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                name,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                text,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
-              const SizedBox(height: 6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    text,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    width: 4,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onPrimary.withValues(alpha: 0.5),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  Text(
-                    '$totalAyahs ${AppLocalizations.of(context)!.ayah}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                ],
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onPrimary.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
               ),
-              const SizedBox(height: 20),
               Text(
-                'بِسْمِ ٱللّٰهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                style: GoogleFonts.notoNaskhArabic(
-                  fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
+                '$totalAyahs ${AppLocalizations.of(context)!.ayah}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ],
           ),
-        ),
-        Positioned(
-          top: 16,
-          right: 32,
-          child: Consumer<AudioProvider>(
-            builder: (context, audioProvider, child) {
-              final isPlaying = audioProvider.playedSurah == widget.surah.id;
-              return GestureDetector(
-                onTap: () {
-                  audioProvider.playMultiple(widget.surah);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onPrimary.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    isPlaying
-                        ? Icons.stop_circle_outlined
-                        : Icons.play_circle_outline_rounded,
-                    color: Colors.white,
-                  ),
-                ),
-              );
-            },
+          const SizedBox(height: 20),
+          Text(
+            'بِسْمِ ٱللّٰهِ الرَّحْمَٰنِ الرَّحِيمِ',
+            style: GoogleFonts.notoNaskhArabic(
+              fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

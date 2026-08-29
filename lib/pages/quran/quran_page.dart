@@ -267,7 +267,7 @@ class QuranPageState extends State<QuranPage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    QuranDetailPage(surah: data, juzFrom: 0, code: code!),
+                    QuranDetailPage(surah: data, juzFrom: 0, code: code ?? 'en'),
               ),
             );
             if (context.mounted) {

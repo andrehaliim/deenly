@@ -17,8 +17,10 @@ class AudioProvider extends ChangeNotifier {
   int _playedAyah = 0;
   int get playedAyah => _playedAyah;
 
-  final audhubillahUrl = 'https://everyayah.com/data/Alafasy_128kbps/audhubillah.mp3';
-  final bismillahUrl = 'https://everyayah.com/data/Alafasy_128kbps/bismillah.mp3';
+  final audhubillahUrl =
+      'https://everyayah.com/data/Alafasy_128kbps/audhubillah.mp3';
+  final bismillahUrl =
+      'https://everyayah.com/data/Alafasy_128kbps/bismillah.mp3';
 
   AudioProvider() {
     _player.playerStateStream.listen((state) async {
@@ -64,7 +66,7 @@ class AudioProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> playMultiple(SurahModel surah) async {
+  Future<void> playMultiple(SurahModel surah, int startFrom) async {
     if (_playedSurah == surah.id) {
       await stopAll();
       return;
@@ -74,16 +76,15 @@ class AudioProvider extends ChangeNotifier {
 
     _isLoading = true;
     _playedSurah = surah.id;
-    _playedAyah = 0;
+    _playedAyah = startFrom;
     notifyListeners();
 
     await _player.stop();
 
-    final start = 1;
+    final start = startFrom;
     final end = surah.surahTotal;
     final playlist = <AudioSource>[
-      AudioSource.uri(Uri.parse(audhubillahUrl)),
-      AudioSource.uri(Uri.parse(bismillahUrl)),
+      if (startFrom == 1) AudioSource.uri(Uri.parse(bismillahUrl)),
       for (int ayah = start; ayah <= end; ayah++)
         AudioSource.uri(Uri.parse(_getAyahUrl(surah: surah.id, ayah: ayah))),
     ];
@@ -98,7 +99,11 @@ class AudioProvider extends ChangeNotifier {
       sub = _player.currentIndexStream.listen((i) {
         if (myToken != _requestToken || i == null) return;
         _playedSurah = surah.id;
-        _playedAyah = i < 2 ? 0 : start + (i - 2);
+        if (startFrom == 1) {
+          _playedAyah = i < 1 ? 0 : start + (i - 1);
+        } else {
+          _playedAyah = start + i;
+        }
         notifyListeners();
       });
       _isLoading = false;
