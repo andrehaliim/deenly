@@ -337,6 +337,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Turn on'**
   String get settingBeforeValue;
+
+  /// No description provided for @searchSurahHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Surah name or number...'**
+  String get searchSurahHint;
+
+  /// No description provided for @surahList.
+  ///
+  /// In en, this message translates to:
+  /// **'Surah List'**
+  String get surahList;
+
+  /// No description provided for @filterByJuz.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by : Juz'**
+  String get filterByJuz;
+
+  /// No description provided for @filterBySurah.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by : Surah'**
+  String get filterBySurah;
+
+  /// Ayah indicator with number
+  ///
+  /// In en, this message translates to:
+  /// **'Ayat {number}'**
+  String ayahCount(String number);
+
+  /// No description provided for @noSurahFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Surah found'**
+  String get noSurahFound;
+
+  /// No description provided for @noJuzFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Juz found'**
+  String get noJuzFound;
+
+  /// Juz header with number
+  ///
+  /// In en, this message translates to:
+  /// **'Juz {number}'**
+  String juzNumber(String number);
+
+  /// Ayah range for a juz
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah {from} - {to}'**
+  String ayahRange(String from, String to);
+
+  /// No description provided for @failedFetchSurahDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to fetch surah detail'**
+  String get failedFetchSurahDetail;
+
+  /// No description provided for @continueScrollNextSurah.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue scrolling down to move to the next surah'**
+  String get continueScrollNextSurah;
 }
 
 class _AppLocalizationsDelegate

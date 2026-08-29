@@ -140,8 +140,10 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
               }
 
               if (provider.surahDetail == null) {
-                return const Center(
-                  child: Text('Failed to fetch surah detail'),
+                return Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.failedFetchSurahDetail,
+                  ),
                 );
               }
 
@@ -683,7 +685,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Continue scrolling down to move to the next surah',
+                      AppLocalizations.of(context)!.continueScrollNextSurah,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: color,

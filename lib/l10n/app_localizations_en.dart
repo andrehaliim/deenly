@@ -130,4 +130,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingBeforeValue => 'Turn on';
+
+  @override
+  String get searchSurahHint => 'Surah name or number...';
+
+  @override
+  String get surahList => 'Surah List';
+
+  @override
+  String get filterByJuz => 'Filter by : Juz';
+
+  @override
+  String get filterBySurah => 'Filter by : Surah';
+
+  @override
+  String ayahCount(String number) {
+    return 'Ayat $number';
+  }
+
+  @override
+  String get noSurahFound => 'No Surah found';
+
+  @override
+  String get noJuzFound => 'No Juz found';
+
+  @override
+  String juzNumber(String number) {
+    return 'Juz $number';
+  }
+
+  @override
+  String ayahRange(String from, String to) {
+    return 'Ayah $from - $to';
+  }
+
+  @override
+  String get failedFetchSurahDetail => 'Failed to fetch surah detail';
+
+  @override
+  String get continueScrollNextSurah =>
+      'Continue scrolling down to move to the next surah';
 }

@@ -59,5 +59,48 @@
     "settingTimeTitle": "Time Adjustment",
     "settingSaveButton": "Save",
     "settingBeforeTitle": "Notification before adhan",
-    "settingBeforeValue": "Turn on"
+    "settingBeforeValue": "Turn on",
+
+    "searchSurahHint": "Surah name or number...",
+    "surahList": "Surah List",
+    "filterByJuz": "Filter by : Juz",
+    "filterBySurah": "Filter by : Surah",
+    "ayahCount": "Ayat {number}",
+    "@ayahCount": {
+        "description": "Ayah indicator with number",
+        "placeholders": {
+            "number": {
+                "type": "String",
+                "example": "1"
+            }
+        }
+    },
+    "noSurahFound": "No Surah found",
+    "noJuzFound": "No Juz found",
+    "juzNumber": "Juz {number}",
+    "@juzNumber": {
+        "description": "Juz header with number",
+        "placeholders": {
+            "number": {
+                "type": "String",
+                "example": "1"
+            }
+        }
+    },
+    "ayahRange": "Ayah {from} - {to}",
+    "@ayahRange": {
+        "description": "Ayah range for a juz",
+        "placeholders": {
+            "from": {
+                "type": "String",
+                "example": "1"
+            },
+            "to": {
+                "type": "String",
+                "example": "7"
+            }
+        }
+    },
+    "failedFetchSurahDetail": "Failed to fetch surah detail",
+    "continueScrollNextSurah": "Continue scrolling down to move to the next surah"
 }

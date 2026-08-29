@@ -59,5 +59,17 @@
     "settingTimeTitle": "Penyesuaian Waktu",
     "settingSaveButton": "Simpan",
     "settingBeforeTitle": "Notifikasi sebelum adzan",
-    "settingBeforeValue": "Nyalakan"
+    "settingBeforeValue": "Nyalakan",
+
+    "searchSurahHint": "Nama atau nomor surat...",
+    "surahList": "Daftar Surat",
+    "filterByJuz": "Filter : Juz",
+    "filterBySurah": "Filter : Surat",
+    "ayahCount": "Ayat {number}",
+    "noSurahFound": "Surat tidak ditemukan",
+    "noJuzFound": "Juz tidak ditemukan",
+    "juzNumber": "Juz {number}",
+    "ayahRange": "Ayat {from} - {to}",
+    "failedFetchSurahDetail": "Gagal memuat detail surat",
+    "continueScrollNextSurah": "Lanjutkan gulir ke bawah untuk berpindah ke surat berikutnya"
 }

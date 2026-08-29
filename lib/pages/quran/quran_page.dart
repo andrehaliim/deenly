@@ -84,7 +84,7 @@ class QuranPageState extends State<QuranPage> {
                     provider.searchSurah(value);
                   },
                   decoration: InputDecoration(
-                    hintText: 'Surah name or number...',
+                    hintText: AppLocalizations.of(context)!.searchSurahHint,
                     hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onTertiary,
                     ),
@@ -126,7 +126,7 @@ class QuranPageState extends State<QuranPage> {
               child: Row(
                 children: [
                   Text(
-                    'Surah List',
+                    AppLocalizations.of(context)!.surahList,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onTertiary,
@@ -149,7 +149,9 @@ class QuranPageState extends State<QuranPage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        filterByJuz ? 'Filter by : Juz' : 'Filter by : Surah',
+                        filterByJuz
+                            ? AppLocalizations.of(context)!.filterByJuz
+                            : AppLocalizations.of(context)!.filterBySurah,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(
@@ -183,6 +185,7 @@ class QuranPageState extends State<QuranPage> {
         itemCount: provider.continueList.length,
         itemBuilder: (context, index) {
           final data = provider.continueList[index];
+          final ayahNum = data.ayahNumber == 0 ? 1 : data.ayahNumber;
           return InkWell(
             onTap: () async {
               if (_isSearching) toggleSearch();
@@ -226,7 +229,7 @@ class QuranPageState extends State<QuranPage> {
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      'Ayat ${data.ayahNumber == 0 ? '1' : data.ayahNumber}',
+                      AppLocalizations.of(context)!.ayahCount(ayahNum.toString()),
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: Theme.of(
                           context,
@@ -249,7 +252,9 @@ class QuranPageState extends State<QuranPage> {
     final maxHeight = size.height;
 
     if (provider.surahList.isEmpty) {
-      return const Center(child: Text('No Surah found'));
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noSurahFound),
+      );
     }
 
     final surahList = provider.surahList;
@@ -390,7 +395,9 @@ class QuranPageState extends State<QuranPage> {
     final maxHeight = size.height;
 
     if (provider.surahJuzList.isEmpty) {
-      return const Center(child: Text('No Juz found'));
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noJuzFound),
+      );
     }
 
     final juzList = provider.surahJuzList;
@@ -409,7 +416,7 @@ class QuranPageState extends State<QuranPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  'Juz ${juz.juzNumber}',
+                  AppLocalizations.of(context)!.juzNumber(juz.juzNumber.toString()),
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onTertiary,
@@ -521,7 +528,10 @@ class QuranPageState extends State<QuranPage> {
                                 ),
                               ),
                               Text(
-                                'Ayah ${juz.surahFrom} - ${juz.surahTo}',
+                                AppLocalizations.of(context)!.ayahRange(
+                                  juz.surahFrom.toString(),
+                                  juz.surahTo.toString(),
+                                ),
                                 style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(
                                       color: Theme.of(context)

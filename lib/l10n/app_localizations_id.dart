@@ -129,4 +129,44 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingBeforeValue => 'Nyalakan';
+
+  @override
+  String get searchSurahHint => 'Nama atau nomor surat...';
+
+  @override
+  String get surahList => 'Daftar Surat';
+
+  @override
+  String get filterByJuz => 'Filter : Juz';
+
+  @override
+  String get filterBySurah => 'Filter : Surat';
+
+  @override
+  String ayahCount(String number) {
+    return 'Ayat $number';
+  }
+
+  @override
+  String get noSurahFound => 'Surat tidak ditemukan';
+
+  @override
+  String get noJuzFound => 'Juz tidak ditemukan';
+
+  @override
+  String juzNumber(String number) {
+    return 'Juz $number';
+  }
+
+  @override
+  String ayahRange(String from, String to) {
+    return 'Ayat $from - $to';
+  }
+
+  @override
+  String get failedFetchSurahDetail => 'Gagal memuat detail surat';
+
+  @override
+  String get continueScrollNextSurah =>
+      'Lanjutkan gulir ke bawah untuk berpindah ke surat berikutnya';
 }
