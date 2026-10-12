@@ -50,3 +50,6 @@ app.*.map.json
 
 # VS Code
 .vscode/
+
+# Claude Code
+CLAUDE.md
