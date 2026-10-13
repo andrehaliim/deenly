@@ -43,25 +43,25 @@
       Home and the background task.
 
 ## 🟢 Easiest (minutes each)
-- [ ] Remove stray `;` after `lightSurface` color in `colors.xml` (line 7)
-- [ ] Add contact email/handle to Nominatim `User-Agent` header in
+- [x] Remove stray `;` after `lightSurface` color in `colors.xml` (line 7)
+- [x] Add contact email/handle to Nominatim `User-Agent` header in
       `mosque_proxy.dart` (currently `'DeenlyApp/1.0'`)
 - [x] Verify `example_appwidget_preview` drawable exists (referenced in
       `deenly_widget_info.xml`)
-- [ ] Delete or rewrite `test/widget_test.dart` (currently the unused counter
+- [x] Delete or rewrite `test/widget_test.dart` (currently the unused counter
       template)
-- [ ] Move `flutter_launcher_icons` from `dependencies` to `dev_dependencies`
-- [ ] Remove duplicate `dailyTaskName` constant (defined in both `main.dart`
+- [x] Move `flutter_launcher_icons` from `dependencies` to `dev_dependencies`
+- [x] Remove duplicate `dailyTaskName` constant (defined in both `main.dart`
       and `workmanager_helper.dart`)
-- [ ] Replace hardcoded splash background `Color(0xfffafaf7)` with theme color
+- [x] Replace hardcoded splash background `Color(0xfffafaf7)` with theme color
 
 ## 🟡 Easy-medium (localization strings)
-- [ ] Add `assalamuAlaikum` key to `.arb` files, use in `home_page.dart:120`
-- [ ] Add `noMosqueFound` key to `.arb` files, use in `mosque_page.dart:99`
-- [ ] Add `couldNotOpenMaps` key to `.arb` files, use in `mosque_page.dart:74`
-- [ ] Add `notificationScheduleFailed` key to `.arb` files, use in
+- [x] Add `assalamuAlaikum` key to `.arb` files, use in `home_page.dart:120`
+- [x] Add `noMosqueFound` key to `.arb` files, use in `mosque_page.dart:99`
+- [x] Add `couldNotOpenMaps` key to `.arb` files, use in `mosque_page.dart:74`
+- [x] Add `notificationScheduleFailed` key to `.arb` files, use in
       `drawer_page.dart` (repeated 5x for each prayer)
-- [ ] Add `reminderEnableFailed` key to `.arb` files, use in
+- [x] Add `reminderEnableFailed` key to `.arb` files, use in
       `drawer_page.dart:345` (currently `'Could not enable reminder'`)
 
 ## 🟠 Medium (logic / config checks)

@@ -4,7 +4,7 @@
     <color name="lightTertiary">#FFE6D5B8</color>
     <color name="lightNeutral">#FFF7F8F7</color>
 
-    <color name="lightSurface">#FFF7F8F7</color>;
+    <color name="lightSurface">#FFF7F8F7</color>
     <color name="lightSurfaceLow">#FFEDEFED</color>
     <color name="lightSurfaceLowest">#FFFFFFFF</color>
     <color name="lightSurfaceHighest">#FFE1E4E1</color>

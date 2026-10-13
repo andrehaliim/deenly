@@ -24,7 +24,6 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
-const String dailyTaskName = "daily_refresh_prayer";
 const String _fallbackTimezone = 'Asia/Jakarta';
 
 Future<void> initTimezone() async {

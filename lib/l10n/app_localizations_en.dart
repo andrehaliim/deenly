@@ -204,4 +204,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get locationPermissionDeniedForever =>
       'Location permission denied forever, please enable it in settings';
+
+  @override
+  String get assalamuAlaikum => 'Assalamu Alaikum,';
+
+  @override
+  String get noMosqueFound => 'No mosques found within 2 km.';
+
+  @override
+  String get couldNotOpenMaps => 'Could not open Google Maps.';
+
+  @override
+  String get notificationScheduleFailed => 'Failed to schedule notification';
+
+  @override
+  String get reminderEnableFailed => 'Could not enable reminder';
 }

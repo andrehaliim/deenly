@@ -201,8 +201,12 @@ class _DrawerPageState extends State<DrawerPage> {
 
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Failed to schedule notification'),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.notificationScheduleFailed,
+                        ),
                       ),
                     );
                     drawerProvider.toggleFajr(false);
@@ -224,8 +228,12 @@ class _DrawerPageState extends State<DrawerPage> {
 
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Failed to schedule notification'),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.notificationScheduleFailed,
+                        ),
                       ),
                     );
                     drawerProvider.toggleDhuhr(false);
@@ -247,8 +255,12 @@ class _DrawerPageState extends State<DrawerPage> {
 
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Failed to schedule notification'),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.notificationScheduleFailed,
+                        ),
                       ),
                     );
                     drawerProvider.toggleAsr(false);
@@ -270,8 +282,12 @@ class _DrawerPageState extends State<DrawerPage> {
 
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Failed to schedule notification'),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.notificationScheduleFailed,
+                        ),
                       ),
                     );
                     drawerProvider.toggleMaghrib(false);
@@ -293,8 +309,12 @@ class _DrawerPageState extends State<DrawerPage> {
 
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Failed to schedule notification'),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.notificationScheduleFailed,
+                        ),
                       ),
                     );
                     drawerProvider.toggleIsha(false);
@@ -341,8 +361,12 @@ class _DrawerPageState extends State<DrawerPage> {
                           );
                           if (!success && context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Could not enable reminder'),
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.reminderEnableFailed,
+                                ),
                               ),
                             );
                           }

@@ -463,6 +463,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Location permission denied forever, please enable it in settings'**
   String get locationPermissionDeniedForever;
+
+  /// No description provided for @assalamuAlaikum.
+  ///
+  /// In en, this message translates to:
+  /// **'Assalamu Alaikum,'**
+  String get assalamuAlaikum;
+
+  /// No description provided for @noMosqueFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No mosques found within 2 km.'**
+  String get noMosqueFound;
+
+  /// No description provided for @couldNotOpenMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open Google Maps.'**
+  String get couldNotOpenMaps;
+
+  /// No description provided for @notificationScheduleFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to schedule notification'**
+  String get notificationScheduleFailed;
+
+  /// No description provided for @reminderEnableFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not enable reminder'**
+  String get reminderEnableFailed;
 }
 
 class _AppLocalizationsDelegate

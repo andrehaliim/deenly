@@ -81,5 +81,10 @@
     "useCity": "Gunakan",
     "cancel": "Batal",
     "locationPermissionDenied": "Izin lokasi ditolak",
-    "locationPermissionDeniedForever": "Izin lokasi ditolak permanen, silakan aktifkan di pengaturan"
+    "locationPermissionDeniedForever": "Izin lokasi ditolak permanen, silakan aktifkan di pengaturan",
+    "assalamuAlaikum": "Assalamu'alaikum,",
+    "noMosqueFound": "Tidak ada masjid dalam radius 2 km.",
+    "couldNotOpenMaps": "Tidak dapat membuka Google Maps.",
+    "notificationScheduleFailed": "Gagal menjadwalkan notifikasi",
+    "reminderEnableFailed": "Tidak dapat mengaktifkan pengingat"
 }

@@ -71,7 +71,7 @@ class _MosquePageState extends State<MosquePage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open Google Maps.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.couldNotOpenMaps)),
       );
     }
   }
@@ -96,7 +96,7 @@ class _MosquePageState extends State<MosquePage> {
     if (mosques.isEmpty) {
       return _buildCenteredMessage(
         icon: Icons.mosque_outlined,
-        message: 'No mosques found within 2km.',
+        message: AppLocalizations.of(context)!.noMosqueFound,
       );
     }
 

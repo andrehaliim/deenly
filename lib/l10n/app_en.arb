@@ -120,5 +120,10 @@
     "useCity": "Use",
     "cancel": "Cancel",
     "locationPermissionDenied": "Location permission denied",
-    "locationPermissionDeniedForever": "Location permission denied forever, please enable it in settings"
+    "locationPermissionDeniedForever": "Location permission denied forever, please enable it in settings",
+    "assalamuAlaikum": "Assalamu Alaikum,",
+    "noMosqueFound": "No mosques found within 2 km.",
+    "couldNotOpenMaps": "Could not open Google Maps.",
+    "notificationScheduleFailed": "Failed to schedule notification",
+    "reminderEnableFailed": "Could not enable reminder"
 }

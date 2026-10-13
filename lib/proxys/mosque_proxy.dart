@@ -11,7 +11,9 @@ class MosqueProxy {
   static const String _baseUrl = 'https://nominatim.openstreetmap.org/search';
   static const int _radiusMeters = 2000;
   static const int _maxRetries = 3;
-  static const String _userAgent = 'DeenlyApp/1.0';
+  static const String _userAgent =
+      'DeenlyApp/1.0 (+https://play.google.com/store/apps/details'
+      '?id=com.andrehaliim.deenly)';
 
   Future<List<MosqueModel>> fetchMosques() async {
     final currentPosition = await LocationProxy().getLocation();
@@ -22,8 +24,7 @@ class MosqueProxy {
 
     final uri = Uri.parse(_baseUrl).replace(
       queryParameters: {
-        'amenity':
-            'place_of_worship',
+        'amenity': 'place_of_worship',
         'format': 'json',
         'limit': '20',
         'addressdetails': '1',

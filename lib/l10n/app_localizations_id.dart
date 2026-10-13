@@ -204,4 +204,19 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get locationPermissionDeniedForever =>
       'Izin lokasi ditolak permanen, silakan aktifkan di pengaturan';
+
+  @override
+  String get assalamuAlaikum => 'Assalamu\'alaikum,';
+
+  @override
+  String get noMosqueFound => 'Tidak ada masjid dalam radius 2 km.';
+
+  @override
+  String get couldNotOpenMaps => 'Tidak dapat membuka Google Maps.';
+
+  @override
+  String get notificationScheduleFailed => 'Gagal menjadwalkan notifikasi';
+
+  @override
+  String get reminderEnableFailed => 'Tidak dapat mengaktifkan pengingat';
 }
