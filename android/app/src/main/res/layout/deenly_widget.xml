@@ -1,15 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/prayer_widget_root"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="16dp"
     android:background="@color/lightPrimary"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="6dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -56,27 +56,50 @@
                 android:text="@string/gregorian_default"
                 android:textColor="@color/lightSurface"
                 android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/location_default"
-                android:textColor="@color/lightSurface"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
         </LinearLayout>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="6dp">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="4dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_place"
+            android:tint="@color/lightSurface"/>
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/location_default"
+            android:textColor="@color/lightSurface"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fajr_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
         android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="4dp">
+        android:layout_marginVertical="3dp">
 
         <TextView
             android:id="@+id/fajr_name"
@@ -115,10 +138,13 @@
         android:id="@+id/dhuhr_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
         android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="4dp">
+        android:layout_marginVertical="3dp">
 
         <TextView
             android:id="@+id/dhuhr_name"
@@ -157,10 +183,13 @@
         android:id="@+id/asr_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
         android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="4dp">
+        android:layout_marginVertical="3dp">
 
         <TextView
             android:id="@+id/asr_name"
@@ -199,10 +228,13 @@
         android:id="@+id/maghrib_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
         android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="4dp">
+        android:layout_marginVertical="3dp">
 
         <TextView
             android:id="@+id/maghrib_name"
@@ -241,10 +273,13 @@
         android:id="@+id/isha_row"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
         android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="4dp">
+        android:layout_marginVertical="3dp">
 
         <TextView
             android:id="@+id/isha_name"
