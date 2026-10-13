@@ -36,6 +36,7 @@ dependencies:
   package_info_plus: ^10.2.0
   country_flags: ^4.1.2
   just_audio: ^0.10.6
+  flutter_timezone: ^5.1.1
 
 flutter_launcher_icons:
   android: "launcher_icon"

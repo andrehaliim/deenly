@@ -6,6 +6,7 @@ import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/components/workmanager_helper.dart';
@@ -15,6 +16,7 @@ import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/splash_page.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +25,18 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 const String dailyTaskName = "daily_refresh_prayer";
+const String _fallbackTimezone = 'Asia/Jakarta';
+
+Future<void> initTimezone() async {
+  tz.initializeTimeZones();
+  try {
+    final timezone = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timezone.identifier));
+  } catch (e) {
+    debugPrint('Timezone detection failed, using fallback: $e');
+    tz.setLocalLocation(tz.getLocation(_fallbackTimezone));
+  }
+}
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -31,14 +45,18 @@ void callbackDispatcher() {
       WidgetsFlutterBinding.ensureInitialized();
       DartPluginRegistrant.ensureInitialized();
 
-      tz.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
+      await initTimezone();
 
       final notificationHelper = NotificationHelper();
 
       await notificationHelper.init();
 
       if (task == dailyTaskName) {
+        try {
+          await PrayerSyncHelper().sync(useGps: false);
+        } catch (e) {
+          debugPrint('Background prayer sync failed: $e');
+        }
         final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
         if (prayerModel != null) {
           await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
@@ -54,16 +72,8 @@ void callbackDispatcher() {
         }
       }
       return true;
-    } catch (e) {
-      try {
-        final n = NotificationHelper();
-        await n.init();
-        await n.showNotification(
-          id: 99,
-          title: '[$task] Failed',
-          body: e.toString(),
-        );
-      } catch (_) {}
+    } catch (e, st) {
+      debugPrint('Background task [$task] failed: $e\n$st');
       return false;
     }
   });
@@ -73,8 +83,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Init timezone
-  tz.initializeTimeZones();
-  tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
+  await initTimezone();
 
   // Init database
   await DatabaseHelper.instance.database;
@@ -87,7 +96,7 @@ void main() async {
   await Workmanager().cancelAll();
   await WorkmanagerHelper.scheduleDailyNotification();
   await WorkmanagerHelper.scheduleNextPrayerUpdate();
-  
+
   // Load preferences
   final prefs = await SharedPreferences.getInstance();
   final isDark = prefs.getBool('isDarkMode') ?? false;

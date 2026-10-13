@@ -41,10 +41,11 @@ class QuranPageState extends State<QuranPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SurahProvider>().getSurahList();
-      context.read<SurahProvider>().getJuzList();
-      context.read<SurahProvider>().getContinueList();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = context.read<SurahProvider>();
+      await provider.getSurahList();
+      provider.getJuzList();
+      provider.getContinueList();
     });
   }
 
@@ -229,7 +230,9 @@ class QuranPageState extends State<QuranPage> {
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      AppLocalizations.of(context)!.ayahCount(ayahNum.toString()),
+                      AppLocalizations.of(
+                        context,
+                      )!.ayahCount(ayahNum.toString()),
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: Theme.of(
                           context,
@@ -252,9 +255,7 @@ class QuranPageState extends State<QuranPage> {
     final maxHeight = size.height;
 
     if (provider.surahList.isEmpty) {
-      return Center(
-        child: Text(AppLocalizations.of(context)!.noSurahFound),
-      );
+      return Center(child: Text(AppLocalizations.of(context)!.noSurahFound));
     }
 
     final surahList = provider.surahList;
@@ -271,8 +272,11 @@ class QuranPageState extends State<QuranPage> {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    QuranDetailPage(surah: data, juzFrom: 0, code: code ?? 'en'),
+                builder: (context) => QuranDetailPage(
+                  surah: data,
+                  juzFrom: 0,
+                  code: code ?? 'en',
+                ),
               ),
             );
             if (context.mounted) {
@@ -395,9 +399,7 @@ class QuranPageState extends State<QuranPage> {
     final maxHeight = size.height;
 
     if (provider.surahJuzList.isEmpty) {
-      return Center(
-        child: Text(AppLocalizations.of(context)!.noJuzFound),
-      );
+      return Center(child: Text(AppLocalizations.of(context)!.noJuzFound));
     }
 
     final juzList = provider.surahJuzList;
@@ -416,7 +418,9 @@ class QuranPageState extends State<QuranPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  AppLocalizations.of(context)!.juzNumber(juz.juzNumber.toString()),
+                  AppLocalizations.of(
+                    context,
+                  )!.juzNumber(juz.juzNumber.toString()),
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onTertiary,

@@ -58,10 +58,14 @@ class SurahProvider extends ChangeNotifier {
     try {
       final db = await DatabaseHelper.instance.database;
       final result = await db.query('juz');
+      final List<JuzModel> tempList = [];
       for (final data in result) {
         final surah = await getSurahById(data['surah_id'] as int);
-        _surahJuzList.add(JuzModel.fromDatabase(data, surah));
+        tempList.add(JuzModel.fromDatabase(data, surah));
       }
+      _surahJuzList
+        ..clear()
+        ..addAll(tempList);
     } catch (e) {
       debugPrint('Error loading juz list: $e');
     } finally {
@@ -71,7 +75,18 @@ class SurahProvider extends ChangeNotifier {
   }
 
   Future<SurahModel> getSurahById(int id) async {
-    return _surahList.firstWhere((s) => s.id == id);
+    final cached = _surahList.where((s) => s.id == id).firstOrNull;
+    if (cached != null) return cached;
+
+    final db = await DatabaseHelper.instance.database;
+    final result = await db.query(
+      DatabaseHelper.tableSurah,
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (result.isEmpty) throw StateError('Surah $id not found');
+    return SurahModel.fromDatabase(result.first);
   }
 
   Future<List<SurahDetailModel>> getSurahDetail(int chapterNo) async {

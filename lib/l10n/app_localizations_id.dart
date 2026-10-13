@@ -169,4 +169,39 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get continueScrollNextSurah =>
       'Lanjutkan gulir ke bawah untuk berpindah ke surat berikutnya';
+
+  @override
+  String get prayerLoadFailed =>
+      'Gagal memuat jadwal sholat. Periksa koneksi internet dan lokasi Anda, lalu coba lagi.';
+
+  @override
+  String get retry => 'Coba Lagi';
+
+  @override
+  String approximateLocationNotice(String city) {
+    return 'Waktu perkiraan berdasarkan zona waktu ($city). Nyalakan GPS untuk waktu yang akurat.';
+  }
+
+  @override
+  String get chooseCity => 'Pilih kota';
+
+  @override
+  String get cityNameHint => 'Nama kota';
+
+  @override
+  String get cityNotFound =>
+      'Kota tidak ditemukan atau tidak ada koneksi internet.';
+
+  @override
+  String get useCity => 'Gunakan';
+
+  @override
+  String get cancel => 'Batal';
+
+  @override
+  String get locationPermissionDenied => 'Izin lokasi ditolak';
+
+  @override
+  String get locationPermissionDeniedForever =>
+      'Izin lokasi ditolak permanen, silakan aktifkan di pengaturan';
 }

@@ -102,5 +102,23 @@
         }
     },
     "failedFetchSurahDetail": "Failed to fetch surah detail",
-    "continueScrollNextSurah": "Continue scrolling down to move to the next surah"
+    "continueScrollNextSurah": "Continue scrolling down to move to the next surah",
+    "prayerLoadFailed": "Failed to load prayer times. Check your internet connection and location, then try again.",
+    "retry": "Retry",
+    "approximateLocationNotice": "Approximate times based on your time zone ({city}). Turn on GPS for accurate times.",
+    "@approximateLocationNotice": {
+        "placeholders": {
+            "city": {
+                "type": "String",
+                "example": "Jakarta"
+            }
+        }
+    },
+    "chooseCity": "Choose city",
+    "cityNameHint": "City name",
+    "cityNotFound": "City not found or no internet connection.",
+    "useCity": "Use",
+    "cancel": "Cancel",
+    "locationPermissionDenied": "Location permission denied",
+    "locationPermissionDeniedForever": "Location permission denied forever, please enable it in settings"
 }

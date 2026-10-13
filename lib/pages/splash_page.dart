@@ -41,6 +41,8 @@ class _SplashPageState extends State<SplashPage> {
     await DatabaseHelper.instance.seedJuzIfNeeded();
     debugPrint('✅ [6/6] Juz seeded');
 
+    if (!mounted) return;
+
     if (permission == true) {
       Navigator.pushReplacement(
         context,

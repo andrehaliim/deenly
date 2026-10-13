@@ -33,7 +33,6 @@ class PrayerProxy {
     final db = await DatabaseHelper.instance.database;
     final now = DateTime.now();
     final deviceTimezone = tz.local.name;
-    await db.delete('prayer');
 
     final uri = Uri.parse('$_baseUrl/calendar/${now.year}').replace(
       queryParameters: {
@@ -45,7 +44,7 @@ class PrayerProxy {
       },
     );
 
-    final response = await http.get(uri);
+    final response = await http.get(uri).timeout(const Duration(seconds: 30));
 
     if (response.statusCode == 200) {
       final decodedResponse = json.decode(response.body);
@@ -58,6 +57,7 @@ class PrayerProxy {
           .toList();
 
       final batch = db.batch();
+      batch.delete('prayer');
 
       for (var prayer in prayers) {
         batch.insert(

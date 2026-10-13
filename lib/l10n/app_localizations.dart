@@ -403,6 +403,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue scrolling down to move to the next surah'**
   String get continueScrollNextSurah;
+
+  /// No description provided for @prayerLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load prayer times. Check your internet connection and location, then try again.'**
+  String get prayerLoadFailed;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @approximateLocationNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Approximate times based on your time zone ({city}). Turn on GPS for accurate times.'**
+  String approximateLocationNotice(String city);
+
+  /// No description provided for @chooseCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose city'**
+  String get chooseCity;
+
+  /// No description provided for @cityNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'City name'**
+  String get cityNameHint;
+
+  /// No description provided for @cityNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'City not found or no internet connection.'**
+  String get cityNotFound;
+
+  /// No description provided for @useCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Use'**
+  String get useCity;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @locationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission denied'**
+  String get locationPermissionDenied;
+
+  /// No description provided for @locationPermissionDeniedForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission denied forever, please enable it in settings'**
+  String get locationPermissionDeniedForever;
 }
 
 class _AppLocalizationsDelegate

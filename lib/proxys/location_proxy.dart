@@ -1,18 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProxy {
+  static const Duration _timeLimit = Duration(seconds: 15);
+
   Future<bool?> requestPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return false;
-    }
-
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -31,27 +26,39 @@ class LocationProxy {
   }
 
   Future<Position> getLocation() async {
-    Position position = await Geolocator.getCurrentPosition();
+    Position position = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(timeLimit: _timeLimit),
+    );
     return position;
   }
 
-  Future<String> getLocationName(Position position) async {
+  Future<String?> getLocationName(Position position) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
-      );
+      ).timeout(_timeLimit);
 
-      Placemark place = placemarks[0];
+      if (placemarks.isEmpty) return null;
 
-      String city = place.subLocality ?? '';
+      String city = placemarks.first.subLocality ?? '';
 
-      if (city.isEmpty) return 'Error';
+      if (city.isEmpty) return null;
 
       return city;
     } catch (e) {
-      return 'Error';
+      debugPrint('getLocationName failed: $e');
+      return null;
     }
+  }
+
+  Future<({double latitude, double longitude})?> getCoordinatesFromName(
+    String name,
+  ) async {
+    final locations = await locationFromAddress(name).timeout(_timeLimit);
+    if (locations.isEmpty) return null;
+    final location = locations.first;
+    return (latitude: location.latitude, longitude: location.longitude);
   }
 
   Future<bool?> isLocationChanged(Position newPosition) async {

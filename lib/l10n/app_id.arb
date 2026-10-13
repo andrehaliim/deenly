@@ -71,5 +71,15 @@
     "juzNumber": "Juz {number}",
     "ayahRange": "Ayat {from} - {to}",
     "failedFetchSurahDetail": "Gagal memuat detail surat",
-    "continueScrollNextSurah": "Lanjutkan gulir ke bawah untuk berpindah ke surat berikutnya"
+    "continueScrollNextSurah": "Lanjutkan gulir ke bawah untuk berpindah ke surat berikutnya",
+    "prayerLoadFailed": "Gagal memuat jadwal sholat. Periksa koneksi internet dan lokasi Anda, lalu coba lagi.",
+    "retry": "Coba Lagi",
+    "approximateLocationNotice": "Waktu perkiraan berdasarkan zona waktu ({city}). Nyalakan GPS untuk waktu yang akurat.",
+    "chooseCity": "Pilih kota",
+    "cityNameHint": "Nama kota",
+    "cityNotFound": "Kota tidak ditemukan atau tidak ada koneksi internet.",
+    "useCity": "Gunakan",
+    "cancel": "Batal",
+    "locationPermissionDenied": "Izin lokasi ditolak",
+    "locationPermissionDeniedForever": "Izin lokasi ditolak permanen, silakan aktifkan di pengaturan"
 }

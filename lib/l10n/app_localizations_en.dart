@@ -170,4 +170,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get continueScrollNextSurah =>
       'Continue scrolling down to move to the next surah';
+
+  @override
+  String get prayerLoadFailed =>
+      'Failed to load prayer times. Check your internet connection and location, then try again.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String approximateLocationNotice(String city) {
+    return 'Approximate times based on your time zone ($city). Turn on GPS for accurate times.';
+  }
+
+  @override
+  String get chooseCity => 'Choose city';
+
+  @override
+  String get cityNameHint => 'City name';
+
+  @override
+  String get cityNotFound => 'City not found or no internet connection.';
+
+  @override
+  String get useCity => 'Use';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get locationPermissionDenied => 'Location permission denied';
+
+  @override
+  String get locationPermissionDeniedForever =>
+      'Location permission denied forever, please enable it in settings';
 }

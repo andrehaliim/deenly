@@ -1,14 +1,18 @@
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/components/widget_helper.dart';
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/hadith_model.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/pages/home/home_approximate_notice.dart';
+import 'package:deenly/pages/home/home_city_picker_dialog.dart';
 import 'package:deenly/pages/home/home_hadith_skeleton.dart';
 import 'package:deenly/pages/home/home_hadith_widget.dart';
+import 'package:deenly/pages/home/home_prayer_error.dart';
 import 'package:deenly/pages/home/home_prayer_info.dart';
 import 'package:deenly/pages/home/home_prayer_progress.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
-import 'package:deenly/proxys/location_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +30,7 @@ class HomePageState extends State<HomePage> {
   bool _isGettingPrayerData = true;
   bool _isGettingHadithData = true;
   String? _location;
+  bool _isApproximate = false;
   PrayerModel? _prayerModel;
   HadithModel? _hadithModel;
 
@@ -40,40 +45,29 @@ class HomePageState extends State<HomePage> {
     setState(() => _isGettingPrayerData = true);
 
     try {
+      await PrayerSyncHelper().sync();
+    } catch (e, st) {
+      debugPrint('Prayer sync failed, using cache: $e\n$st');
+    }
+
+    await _loadCachedPrayerData();
+  }
+
+  Future<void> _loadCachedPrayerData() async {
+    try {
       final prefs = await SharedPreferences.getInstance();
-      final locationName = prefs.getString('locationName') ?? '';
+      _location = prefs.getString(PrayerSyncHelper.keyLocationName);
+      _isApproximate = prefs.getBool(PrayerSyncHelper.keyApproximate) ?? false;
 
-      final currentPosition = await LocationProxy().getLocation();
-      final checkLocationName = await LocationProxy().getLocationName(
-        currentPosition,
-      );
+      final prayerModel = await _prayerProxy.getTodayPrayer();
+      _prayerModel = prayerModel;
 
-      final locationChanged =
-          locationName.isEmpty || checkLocationName != locationName;
-
-      if (locationChanged) {
-        _location = checkLocationName;
-        await Future.wait([
-          prefs.setDouble('lat', currentPosition.latitude),
-          prefs.setDouble('long', currentPosition.longitude),
-          prefs.setString('locationName', _location!),
-        ]);
-        await _prayerProxy.fetchYearlyPrayer(
-          currentPosition.latitude,
-          currentPosition.longitude,
-        );
-      } else {
-        _location = locationName;
-      }
-
-      _prayerModel = await _prayerProxy.getTodayPrayer();
-
-      if (_prayerModel != null) {
+      if (prayerModel != null) {
         await Future.wait([
           WidgetHelper().updateWidgetLocation(),
-          WidgetHelper().updateWidgetPrayer(_prayerModel!),
-          NotificationHelper().scheduleAllPrayerNotifications(_prayerModel!),
-          NotificationHelper().scheduleReminderNotifications(_prayerModel!),
+          WidgetHelper().updateWidgetPrayer(prayerModel),
+          NotificationHelper().scheduleAllPrayerNotifications(prayerModel),
+          NotificationHelper().scheduleReminderNotifications(prayerModel),
         ]);
       }
     } catch (e, st) {
@@ -81,6 +75,27 @@ class HomePageState extends State<HomePage> {
     } finally {
       if (mounted) setState(() => _isGettingPrayerData = false);
     }
+  }
+
+  Future<void> _chooseCity() async {
+    final cityName = await showDialog<String>(
+      context: context,
+      builder: (_) => const HomeCityPickerDialog(),
+    );
+    if (cityName == null || !mounted) return;
+
+    setState(() => _isGettingPrayerData = true);
+    final success = await PrayerSyncHelper().setManualLocation(cityName);
+    if (!mounted) return;
+
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)?.cityNotFound ?? ''),
+        ),
+      );
+    }
+    await _loadCachedPrayerData();
   }
 
   Future<void> _loadHadithData() async {
@@ -93,6 +108,8 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final prayerModel = _prayerModel;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,13 +126,24 @@ class HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 10),
 
-          _isGettingPrayerData
-              ? HomePrayerSkeleton()
-              : HomePrayerInfo(
-                  location: _location!,
-                  prayerModel: _prayerModel!,
-                  onRefreshLocation: () => loadPrayerData(false),
-                ),
+          if (_isGettingPrayerData)
+            const HomePrayerSkeleton()
+          else if (prayerModel != null) ...[
+            HomePrayerInfo(
+              location: _location ?? '',
+              prayerModel: prayerModel,
+              onRefreshLocation: () => loadPrayerData(false),
+            ),
+            if (_isApproximate)
+              HomeApproximateNotice(
+                cityName: _location ?? '',
+                onChooseCity: _chooseCity,
+              ),
+          ] else
+            HomePrayerError(
+              onRetry: () => loadPrayerData(false),
+              onChooseCity: _chooseCity,
+            ),
 
           const SizedBox(height: 10),
 
