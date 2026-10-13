@@ -60,6 +60,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hadithNarrated => 'Narrated by: ';
 
   @override
+  String get showMore => 'Show more';
+
+  @override
+  String get showLess => 'Show less';
+
+  @override
   String get continueRead => 'Continue Reading';
 
   @override

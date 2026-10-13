@@ -200,6 +200,18 @@ abstract class AppLocalizations {
   /// **'Narrated by: '**
   String get hadithNarrated;
 
+  /// No description provided for @showMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get showMore;
+
+  /// No description provided for @showLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLess;
+
   /// No description provided for @continueRead.
   ///
   /// In en, this message translates to:

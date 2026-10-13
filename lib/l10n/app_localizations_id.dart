@@ -60,6 +60,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get hadithNarrated => 'Diriwayatkan oleh: ';
 
   @override
+  String get showMore => 'Selengkapnya';
+
+  @override
+  String get showLess => 'Lebih sedikit';
+
+  @override
   String get continueRead => 'Lanjutkan Membaca';
 
   @override
