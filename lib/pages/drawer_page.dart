@@ -7,6 +7,9 @@ import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/pages/drawer/drawer_section_title.dart';
+import 'package:deenly/pages/drawer/drawer_setting_tile.dart';
+import 'package:deenly/pages/drawer/prayer_adjustment_tile.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +17,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:url_launcher/url_launcher.dart';
+
+const String _privacyPolicyUrl =
+    'https://andrehaliim.vercel.app/projects/deenly/privacy';
 
 class DrawerPage extends StatefulWidget {
   const DrawerPage({super.key, this.onSaved});
@@ -26,11 +33,7 @@ class DrawerPage extends StatefulWidget {
 
 class _DrawerPageState extends State<DrawerPage> {
   bool _isSaving = false;
-  int savedFajrAdjustment = 0;
-  int savedDhuhrAdjustment = 0;
-  int savedAsrAdjustment = 0;
-  int savedMaghribAdjustment = 0;
-  int savedIshaAdjustment = 0;
+  final Map<String, int> _savedAdjustments = {};
   String _version = '';
 
   @override
@@ -42,6 +45,7 @@ class _DrawerPageState extends State<DrawerPage> {
 
   Future<void> _loadVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    if (!mounted) return;
     setState(() {
       _version = packageInfo.version;
     });
@@ -49,11 +53,9 @@ class _DrawerPageState extends State<DrawerPage> {
 
   void _loadSettings() {
     final prefs = Provider.of<DrawerProvider>(context, listen: false);
-    savedFajrAdjustment = prefs.fajradjustment;
-    savedDhuhrAdjustment = prefs.dhuhradjustment;
-    savedAsrAdjustment = prefs.asradjustment;
-    savedMaghribAdjustment = prefs.maghribadjustment;
-    savedIshaAdjustment = prefs.ishadjustment;
+    for (final prayer in DrawerProvider.prayers) {
+      _savedAdjustments[prayer] = prefs.adjustmentOf(prayer);
+    }
   }
 
   @override
@@ -62,6 +64,7 @@ class _DrawerPageState extends State<DrawerPage> {
     final width = size.width;
     final provider = Provider.of<ThemeProvider>(context);
     final drawerProvider = Provider.of<DrawerProvider>(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Drawer(
       width: width * 0.75,
@@ -74,7 +77,7 @@ class _DrawerPageState extends State<DrawerPage> {
               const SizedBox(height: 40),
               Center(
                 child: Text(
-                  AppLocalizations.of(context)!.menuSetting,
+                  l10n.menuSetting,
                   style: GoogleFonts.notoSerif(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 24,
@@ -84,309 +87,77 @@ class _DrawerPageState extends State<DrawerPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              _buildTitle(AppLocalizations.of(context)!.settingLanguageTitle),
+              DrawerSectionTitle(l10n.settingLanguageTitle),
               const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.language,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Indonesia',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: Theme.of(
-                          context,
-                        ).textTheme.bodyLarge?.fontSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    CountryFlag.fromLanguageCode(
+              Consumer<LocaleProvider>(
+                builder: (context, localeProvider, _) {
+                  final isIndonesian =
+                      (localeProvider.locale ?? const Locale('en'))
+                          .languageCode ==
+                      'id';
+
+                  return DrawerSettingTile(
+                    icon: Icons.language,
+                    title: 'Indonesia',
+                    titleSuffix: CountryFlag.fromLanguageCode(
                       'id',
                       theme: ImageTheme(width: 30, height: 20),
                     ),
-                    const Spacer(),
-                    Consumer<LocaleProvider>(
-                      builder: (context, provider, _) {
-                        final isIndonesian =
-                            (provider.locale ?? const Locale('en'))
-                                .languageCode ==
-                            'id';
-
-                        return Transform.scale(
-                          scale: 1,
-                          child: Switch(
-                            padding: EdgeInsets.zero,
-                            value: isIndonesian,
-                            onChanged: (value) {
-                              provider.setLocale(Locale(value ? 'id' : 'en'));
-                            },
-                          ),
-                        );
+                    trailing: DrawerSwitch(
+                      scale: 1,
+                      value: isIndonesian,
+                      onChanged: (value) {
+                        localeProvider.setLocale(Locale(value ? 'id' : 'en'));
                       },
                     ),
-                  ],
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+              DrawerSectionTitle(l10n.settingAppearanceTitle),
+              const SizedBox(height: 12),
+              DrawerSettingTile(
+                icon: Icons.dark_mode_outlined,
+                title: l10n.settingTheme,
+                trailing: DrawerSwitch(
+                  value: provider.isDarkMode,
+                  onChanged: provider.toggleTheme,
                 ),
               ),
               const SizedBox(height: 12),
-
-              _buildTitle(AppLocalizations.of(context)!.settingAppearanceTitle),
+              DrawerSectionTitle(l10n.settingNotificationTitle),
               const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.dark_mode_outlined,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      AppLocalizations.of(context)!.settingTheme,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: Theme.of(
-                          context,
-                        ).textTheme.bodyLarge?.fontSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    Transform.scale(
-                      scale: 0.8,
-                      child: Switch(
-                        padding: EdgeInsets.zero,
-                        value: provider.isDarkMode,
-                        onChanged: (value) {
-                          provider.toggleTheme(value);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildTitle(
-                AppLocalizations.of(context)!.settingNotificationTitle,
-              ),
-              const SizedBox(height: 12),
-              _buildPrayerNotificationSetting(
-                prayerName: PrayerProxy().getPrayerLabel(context, 'Fajr'),
-                notifId: 1,
-                isEnabled: drawerProvider.isFajrEnabled,
-                onChanged: (value) async {
-                  drawerProvider.toggleFajr(value);
-                  bool success = await _schedulePrayerNotification(
-                    prayerName: 'Fajr',
-                    notifId: 1,
-                    isEnabled: value,
-                  );
-
-                  if (!success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.notificationScheduleFailed,
-                        ),
-                      ),
-                    );
-                    drawerProvider.toggleFajr(false);
-                  }
-                },
-              ),
+              for (final prayer in DrawerProvider.prayers) ...[
+                _buildPrayerNotificationTile(prayer, drawerProvider),
+                const SizedBox(height: 6),
+              ],
               const SizedBox(height: 6),
-              _buildPrayerNotificationSetting(
-                prayerName: PrayerProxy().getPrayerLabel(context, 'Dhuhr'),
-                notifId: 2,
-                isEnabled: drawerProvider.isDhuhrEnabled,
-                onChanged: (value) async {
-                  drawerProvider.toggleDhuhr(value);
-                  bool success = await _schedulePrayerNotification(
-                    prayerName: 'Dhuhr',
-                    notifId: 2,
-                    isEnabled: value,
-                  );
-
-                  if (!success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.notificationScheduleFailed,
-                        ),
-                      ),
-                    );
-                    drawerProvider.toggleDhuhr(false);
-                  }
-                },
-              ),
-              const SizedBox(height: 6),
-              _buildPrayerNotificationSetting(
-                prayerName: PrayerProxy().getPrayerLabel(context, 'Asr'),
-                notifId: 3,
-                isEnabled: drawerProvider.isAsrEnabled,
-                onChanged: (value) async {
-                  drawerProvider.toggleAsr(value);
-                  bool success = await _schedulePrayerNotification(
-                    prayerName: 'Asr',
-                    notifId: 3,
-                    isEnabled: value,
-                  );
-
-                  if (!success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.notificationScheduleFailed,
-                        ),
-                      ),
-                    );
-                    drawerProvider.toggleAsr(false);
-                  }
-                },
-              ),
-              const SizedBox(height: 6),
-              _buildPrayerNotificationSetting(
-                prayerName: PrayerProxy().getPrayerLabel(context, 'Maghrib'),
-                notifId: 4,
-                isEnabled: drawerProvider.isMaghribEnabled,
-                onChanged: (value) async {
-                  drawerProvider.toggleMaghrib(value);
-                  bool success = await _schedulePrayerNotification(
-                    prayerName: 'Maghrib',
-                    notifId: 4,
-                    isEnabled: value,
-                  );
-
-                  if (!success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.notificationScheduleFailed,
-                        ),
-                      ),
-                    );
-                    drawerProvider.toggleMaghrib(false);
-                  }
-                },
-              ),
-              const SizedBox(height: 6),
-              _buildPrayerNotificationSetting(
-                prayerName: PrayerProxy().getPrayerLabel(context, 'Isha'),
-                notifId: 5,
-                isEnabled: drawerProvider.isIshaEnabled,
-                onChanged: (value) async {
-                  drawerProvider.toggleIsha(value);
-                  bool success = await _schedulePrayerNotification(
-                    prayerName: 'Isha',
-                    notifId: 5,
-                    isEnabled: value,
-                  );
-
-                  if (!success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.notificationScheduleFailed,
-                        ),
-                      ),
-                    );
-                    drawerProvider.toggleIsha(false);
-                  }
-                },
-              ),
+              DrawerSectionTitle(l10n.settingBeforeTitle),
               const SizedBox(height: 12),
-              _buildTitle(AppLocalizations.of(context)!.settingBeforeTitle),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      AppLocalizations.of(context)!.settingBeforeValue,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: Theme.of(
-                          context,
-                        ).textTheme.bodyLarge?.fontSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    Transform.scale(
-                      scale: 0.8,
-                      child: Switch(
-                        padding: EdgeInsets.zero,
-                        value: drawerProvider.isReminderEnabled,
-                        onChanged: (value) async {
-                          final success = await drawerProvider.toggleReminder(
-                            value,
-                          );
-                          if (!success && context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.reminderEnableFailed,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  ],
+              DrawerSettingTile(
+                icon: Icons.access_time,
+                title: l10n.settingBeforeValue,
+                trailing: DrawerSwitch(
+                  value: drawerProvider.isReminderEnabled,
+                  onChanged: (value) async {
+                    final success = await drawerProvider.toggleReminder(value);
+                    if (!success && context.mounted) {
+                      _showSnackBar(
+                        AppLocalizations.of(context)!.reminderEnableFailed,
+                      );
+                    }
+                  },
                 ),
               ),
               Row(
                 children: [
-                  _buildTitle(AppLocalizations.of(context)!.settingTimeTitle),
+                  DrawerSectionTitle(l10n.settingTimeTitle),
                   const Spacer(),
                   IconButton(
                     icon: drawerProvider.isAdjustmentExpanded
                         ? const Icon(Icons.arrow_drop_up)
                         : const Icon(Icons.arrow_drop_down),
-                    onPressed: () {
-                      drawerProvider.toggleAdjustmentExpansion();
-                    },
+                    onPressed: drawerProvider.toggleAdjustmentExpansion,
                   ),
                 ],
               ),
@@ -404,217 +175,58 @@ class _DrawerPageState extends State<DrawerPage> {
                         : 0.0,
                     child: Column(
                       children: [
-                        _buildPrayerTimeAdjustment(
-                          PrayerProxy().getPrayerLabel(context, 'Fajr'),
-                          drawerProvider.fajradjustment,
-                          (value) {
-                            drawerProvider.setFajrAdjustment(value);
-                          },
-                        ),
-
-                        const SizedBox(height: 6),
-                        _buildPrayerTimeAdjustment(
-                          PrayerProxy().getPrayerLabel(context, 'Dhuhr'),
-                          drawerProvider.dhuhradjustment,
-                          (value) {
-                            drawerProvider.setDhuhrAdjustment(value);
-                          },
-                        ),
-                        const SizedBox(height: 6),
-                        _buildPrayerTimeAdjustment(
-                          PrayerProxy().getPrayerLabel(context, 'Asr'),
-                          drawerProvider.asradjustment,
-                          (value) {
-                            drawerProvider.setAsrAdjustment(value);
-                          },
-                        ),
-                        const SizedBox(height: 6),
-                        _buildPrayerTimeAdjustment(
-                          PrayerProxy().getPrayerLabel(context, 'Maghrib'),
-                          drawerProvider.maghribadjustment,
-                          (value) {
-                            drawerProvider.setMaghribAdjustment(value);
-                          },
-                        ),
-                        const SizedBox(height: 6),
-                        _buildPrayerTimeAdjustment(
-                          PrayerProxy().getPrayerLabel(context, 'Isha'),
-                          drawerProvider.ishadjustment,
-                          (value) {
-                            drawerProvider.setIshaAdjustment(value);
-                          },
-                        ),
-                        const SizedBox(height: 6),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.primary,
-                              foregroundColor: Theme.of(
-                                context,
-                              ).colorScheme.onPrimary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                        for (final prayer in DrawerProvider.prayers) ...[
+                          PrayerAdjustmentTile(
+                            prayerName: PrayerProxy().getPrayerLabel(
+                              context,
+                              prayer,
                             ),
-                            onPressed: () async {
-                              setState(() {
-                                _isSaving = true;
-                              });
-                              final adjustments = {
-                                'fajr':
-                                    drawerProvider.fajradjustment -
-                                    savedFajrAdjustment,
-                                'dhuhr':
-                                    drawerProvider.dhuhradjustment -
-                                    savedDhuhrAdjustment,
-                                'asr':
-                                    drawerProvider.asradjustment -
-                                    savedAsrAdjustment,
-                                'maghrib':
-                                    drawerProvider.maghribadjustment -
-                                    savedMaghribAdjustment,
-                                'isha':
-                                    drawerProvider.ishadjustment -
-                                    savedIshaAdjustment,
-                              };
-
-                              await PrayerProxy().updatePrayerTimesInDB(
-                                adjustments,
-                              );
-                              final PrayerModel? prayerModel =
-                                  await PrayerProxy().getTodayPrayer();
-                              if (prayerModel != null) {
-                                await WidgetHelper().updateWidgetPrayer(
-                                  prayerModel,
-                                );
-                              }
-                              debugPrint(
-                                'Fajr adjustment: ${drawerProvider.fajradjustment} - $savedFajrAdjustment = ${drawerProvider.fajradjustment - savedFajrAdjustment}',
-                              );
-                              debugPrint(
-                                'Dhuhr adjustment: ${drawerProvider.dhuhradjustment} - $savedDhuhrAdjustment = ${drawerProvider.dhuhradjustment - savedDhuhrAdjustment}',
-                              );
-                              debugPrint(
-                                'Asr adjustment: ${drawerProvider.asradjustment} - $savedAsrAdjustment = ${drawerProvider.asradjustment - savedAsrAdjustment}',
-                              );
-                              debugPrint(
-                                'Maghrib adjustment: ${drawerProvider.maghribadjustment} - $savedMaghribAdjustment = ${drawerProvider.maghribadjustment - savedMaghribAdjustment}',
-                              );
-                              debugPrint(
-                                'Isha adjustment: ${drawerProvider.ishadjustment} - $savedIshaAdjustment = ${drawerProvider.ishadjustment - savedIshaAdjustment}',
-                              );
-                              setState(() {
-                                savedFajrAdjustment =
-                                    drawerProvider.fajradjustment;
-                                savedDhuhrAdjustment =
-                                    drawerProvider.dhuhradjustment;
-                                savedAsrAdjustment =
-                                    drawerProvider.asradjustment;
-                                savedMaghribAdjustment =
-                                    drawerProvider.maghribadjustment;
-                                savedIshaAdjustment =
-                                    drawerProvider.ishadjustment;
-                                _isSaving = false;
-                              });
-                              widget.onSaved?.call();
+                            adjustment: drawerProvider.adjustmentOf(prayer),
+                            onChanged: (value) {
+                              drawerProvider.setAdjustment(prayer, value);
                             },
-                            child: _isSaving
-                                ? const CircularProgressIndicator()
-                                : Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.settingSaveButton,
-                                    style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimary,
-                                      fontSize: Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium?.fontSize,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
                           ),
-                        ),
+                          const SizedBox(height: 6),
+                        ],
+                        _buildSaveButton(drawerProvider),
                       ],
                     ),
                   ),
                 ),
               ),
-
-              Visibility(
-                visible: kDebugMode,
-                child: Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                    onPressed: () {
-                      DatabaseHelper.instance.exportDB();
-                    },
-                    child: Text(
-                      'Export DB',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.fontSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              const SizedBox(height: 12),
+              DrawerSectionTitle(l10n.settingAboutTitle),
+              const SizedBox(height: 12),
+              DrawerSettingTile(
+                icon: Icons.privacy_tip_outlined,
+                title: l10n.settingPrivacyPolicy,
+                onTap: _openPrivacyPolicy,
+                trailing: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Icon(
+                    Icons.open_in_new,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
+              const SizedBox(height: 12),
               Visibility(
                 visible: kDebugMode,
-                child: Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                    onPressed: () async {
-                      await NotificationHelper().getPendingNotifications();
-                    },
-                    child: Text(
-                      'List Pending Notification',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.fontSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
+                child: _buildDebugButton('Export DB', () {
+                  DatabaseHelper.instance.exportDB();
+                }),
+              ),
+              Visibility(
+                visible: kDebugMode,
+                child: _buildDebugButton('List Pending Notification', () {
+                  NotificationHelper().getPendingNotifications();
+                }),
               ),
               const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  'Deenly © 2026 @andrehaliim',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              _buildFooterText('Deenly © 2026 @andrehaliim'),
               const SizedBox(height: 5),
-              Center(
-                child: Text(
-                  'v$_version',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              _buildFooterText('v$_version'),
               const SizedBox(height: 20),
             ],
           ),
@@ -623,132 +235,152 @@ class _DrawerPageState extends State<DrawerPage> {
     );
   }
 
-  Widget _buildTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  Widget _buildPrayerNotificationTile(
+    String prayer,
+    DrawerProvider drawerProvider,
+  ) {
+    final isEnabled = drawerProvider.isPrayerEnabled(prayer);
+
+    return DrawerSettingTile(
+      icon: isEnabled
+          ? Icons.notifications_active_outlined
+          : Icons.notifications_off_outlined,
+      title: PrayerProxy().getPrayerLabel(context, prayer),
+      trailing: DrawerSwitch(
+        value: isEnabled,
+        onChanged: (value) async {
+          drawerProvider.togglePrayer(prayer, value);
+          final success = await _schedulePrayerNotification(
+            prayerName: prayer,
+            notifId: DrawerProvider.notificationIdOf(prayer),
+            isEnabled: value,
+          );
+
+          if (!success) {
+            drawerProvider.togglePrayer(prayer, false);
+            if (!mounted) return;
+            _showSnackBar(
+              AppLocalizations.of(context)!.notificationScheduleFailed,
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildSaveButton(DrawerProvider drawerProvider) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed: () => _saveAdjustments(drawerProvider),
+        child: _isSaving
+            ? const CircularProgressIndicator()
+            : Text(
+                AppLocalizations.of(context)!.settingSaveButton,
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildDebugButton(String label, VoidCallback onPressed) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+        ),
+        onPressed: onPressed,
+        child: Text(
+          label,
+          style: TextStyle(
+            color: colorScheme.onPrimary,
+            fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooterText(String text) {
+    return Center(
       child: Text(
-        title,
+        text,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-          fontSize: Theme.of(context).textTheme.labelMedium?.fontSize,
+          color: Theme.of(context).colorScheme.primary,
+          fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Widget _buildPrayerNotificationSetting({
-    required String prayerName,
-    required int notifId,
-    required bool isEnabled,
-    required Function(bool) onChanged,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            isEnabled
-                ? Icons.notifications_active_outlined
-                : Icons.notifications_off_outlined,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          const SizedBox(width: 12),
-          Text(
-            prayerName,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          Transform.scale(
-            scale: 0.8,
-            child: Switch(
-              padding: EdgeInsets.zero,
-              value: isEnabled,
-              onChanged: onChanged,
-            ),
-          ),
-        ],
-      ),
-    );
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Widget _buildPrayerTimeAdjustment(
-    String prayerName,
-    int adjustment,
-    Function(int) onChanged,
-  ) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: 12.0,
-        right: 12.0,
-        top: 6.0,
-        bottom: 6.0,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Text(
-            prayerName,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          GestureDetector(
-            child: Icon(
-              Icons.remove,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onTap: () {
-              onChanged(adjustment - 1);
-            },
-          ),
-          const SizedBox(width: 12),
-          Container(
-            width: 50,
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Theme.of(context).colorScheme.primary),
-            ),
-            child: Center(
-              child: Text(
-                adjustment > 0 ? '+$adjustment' : adjustment.toString(),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            child: Icon(
-              Icons.add,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onTap: () {
-              onChanged(adjustment + 1);
-            },
-          ),
-        ],
-      ),
-    );
+  Future<void> _saveAdjustments(DrawerProvider drawerProvider) async {
+    setState(() {
+      _isSaving = true;
+    });
+
+    // Prayer table columns are lowercase ('fajr', 'dhuhr', ...).
+    final adjustments = {
+      for (final prayer in DrawerProvider.prayers)
+        prayer.toLowerCase():
+            drawerProvider.adjustmentOf(prayer) -
+            (_savedAdjustments[prayer] ?? 0),
+    };
+    debugPrint('Prayer adjustment deltas: $adjustments');
+
+    await PrayerProxy().updatePrayerTimesInDB(adjustments);
+    final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+    if (prayerModel != null) {
+      await WidgetHelper().updateWidgetPrayer(prayerModel);
+    }
+
+    if (!mounted) return;
+    setState(() {
+      for (final prayer in DrawerProvider.prayers) {
+        _savedAdjustments[prayer] = drawerProvider.adjustmentOf(prayer);
+      }
+      _isSaving = false;
+    });
+    widget.onSaved?.call();
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    bool opened;
+    try {
+      opened = await launchUrl(
+        Uri.parse(_privacyPolicyUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      opened = false;
+    }
+
+    if (!opened && mounted) {
+      _showSnackBar(AppLocalizations.of(context)!.couldNotOpenLink);
+    }
   }
 
   Future<bool> _schedulePrayerNotification({
@@ -756,67 +388,49 @@ class _DrawerPageState extends State<DrawerPage> {
     required int notifId,
     required bool isEnabled,
   }) async {
-    if (isEnabled) {
-      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
-      if (prayerModel == null) {
-        return false;
-      }
-
-      String prayerTime = '';
-
-      switch (prayerName) {
-        case 'Fajr':
-          prayerTime = prayerModel.fajr;
-          break;
-        case 'Dhuhr':
-          prayerTime = prayerModel.dhuhr;
-          break;
-        case 'Asr':
-          prayerTime = prayerModel.asr;
-          break;
-        case 'Maghrib':
-          prayerTime = prayerModel.maghrib;
-          break;
-        case 'Isha':
-          prayerTime = prayerModel.isha;
-          break;
-      }
-
-      final parts = prayerTime.split(':');
-      final hour = int.parse(parts[0]);
-      final minute = int.parse(parts[1]);
-
-      final now = DateTime.now();
-
-      DateTime prayerDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        hour,
-        minute,
-      );
-
-      if (prayerDateTime.isBefore(now)) {
-        prayerDateTime = prayerDateTime.add(const Duration(days: 1));
-      }
-
-      final scheduledTime = tz.TZDateTime.from(prayerDateTime, tz.local);
-
-      bool isScheduled = await NotificationHelper().schedulePrayerNotification(
-        notifId: notifId,
-        prayerName: prayerName,
-        scheduledTime: scheduledTime,
-      );
-
-      if (!isScheduled) {
-        debugPrint("Notification failed to schedule for $prayerName");
-        return false;
-      }
-
-      return true;
-    } else {
+    if (!isEnabled) {
       await NotificationHelper().cancelNotification(notifId);
       return true;
     }
+
+    final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+    if (prayerModel == null) {
+      return false;
+    }
+
+    // toJson() keys match the prayer names ('Fajr', 'Dhuhr', ...).
+    final prayerTime = prayerModel.toJson()[prayerName] as String;
+    final parts = prayerTime.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+
+    final now = DateTime.now();
+
+    DateTime prayerDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
+    if (prayerDateTime.isBefore(now)) {
+      prayerDateTime = prayerDateTime.add(const Duration(days: 1));
+    }
+
+    final scheduledTime = tz.TZDateTime.from(prayerDateTime, tz.local);
+
+    bool isScheduled = await NotificationHelper().schedulePrayerNotification(
+      notifId: notifId,
+      prayerName: prayerName,
+      scheduledTime: scheduledTime,
+    );
+
+    if (!isScheduled) {
+      debugPrint('Notification failed to schedule for $prayerName');
+      return false;
+    }
+
+    return true;
   }
 }

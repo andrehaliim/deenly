@@ -6,31 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerProvider extends ChangeNotifier {
+  /// Prayers shown in the drawer, in order. The notification id of each
+  /// prayer is its index + 1.
+  static const List<String> prayers = [
+    'Fajr',
+    'Dhuhr',
+    'Asr',
+    'Maghrib',
+    'Isha',
+  ];
+
   final SharedPreferences prefs;
 
-  bool _isFajrEnabled = false;
-  bool _isDhuhrEnabled = false;
-  bool _isAsrEnabled = false;
-  bool _isMaghribEnabled = false;
-  bool _isIshaEnabled = false;
-
-  int _fajradjustment = 0;
-  int _dhuhradjustment = 0;
-  int _asradjustment = 0;
-  int _maghribadjustment = 0;
-  int _ishadjustment = 0;
-
-  bool get isFajrEnabled => _isFajrEnabled;
-  bool get isDhuhrEnabled => _isDhuhrEnabled;
-  bool get isAsrEnabled => _isAsrEnabled;
-  bool get isMaghribEnabled => _isMaghribEnabled;
-  bool get isIshaEnabled => _isIshaEnabled;
-
-  int get fajradjustment => _fajradjustment;
-  int get dhuhradjustment => _dhuhradjustment;
-  int get asradjustment => _asradjustment;
-  int get maghribadjustment => _maghribadjustment;
-  int get ishadjustment => _ishadjustment;
+  final Map<String, bool> _enabled = {};
+  final Map<String, int> _adjustments = {};
 
   bool _isAdjustmentExpanded = false;
   bool get isAdjustmentExpanded => _isAdjustmentExpanded;
@@ -42,84 +31,37 @@ class DrawerProvider extends ChangeNotifier {
     _loadSettings();
   }
 
-  void _loadSettings() {
-    _isFajrEnabled = prefs.getBool('isFajrEnabled') ?? false;
-    _isDhuhrEnabled = prefs.getBool('isDhuhrEnabled') ?? false;
-    _isAsrEnabled = prefs.getBool('isAsrEnabled') ?? false;
-    _isMaghribEnabled = prefs.getBool('isMaghribEnabled') ?? false;
-    _isIshaEnabled = prefs.getBool('isIshaEnabled') ?? false;
+  static int notificationIdOf(String prayer) => prayers.indexOf(prayer) + 1;
 
-    _fajradjustment = prefs.getInt('fajrAdjustment') ?? 0;
-    _dhuhradjustment = prefs.getInt('dhuhrAdjustment') ?? 0;
-    _asradjustment = prefs.getInt('asrAdjustment') ?? 0;
-    _maghribadjustment = prefs.getInt('maghribAdjustment') ?? 0;
-    _ishadjustment = prefs.getInt('ishAdjustment') ?? 0;
+  static String _enabledKey(String prayer) => 'is${prayer}Enabled';
+
+  // Isha uses the legacy 'ishAdjustment' key already saved on devices.
+  static String _adjustmentKey(String prayer) =>
+      prayer == 'Isha' ? 'ishAdjustment' : '${prayer.toLowerCase()}Adjustment';
+
+  bool isPrayerEnabled(String prayer) => _enabled[prayer] ?? false;
+
+  int adjustmentOf(String prayer) => _adjustments[prayer] ?? 0;
+
+  void _loadSettings() {
+    for (final prayer in prayers) {
+      _enabled[prayer] = prefs.getBool(_enabledKey(prayer)) ?? false;
+      _adjustments[prayer] = prefs.getInt(_adjustmentKey(prayer)) ?? 0;
+    }
 
     _isReminderEnabled = prefs.getBool('isReminderEnabled') ?? false;
   }
 
-  Future<void> toggleFajr(bool value) async {
-    _isFajrEnabled = value;
-    await prefs.setBool('isFajrEnabled', value);
-    WidgetHelper().updateWidgetNotification('fajr', value);
+  Future<void> togglePrayer(String prayer, bool value) async {
+    _enabled[prayer] = value;
+    await prefs.setBool(_enabledKey(prayer), value);
+    WidgetHelper().updateWidgetNotification(prayer.toLowerCase(), value);
     notifyListeners();
   }
 
-  Future<void> toggleDhuhr(bool value) async {
-    _isDhuhrEnabled = value;
-    await prefs.setBool('isDhuhrEnabled', value);
-    WidgetHelper().updateWidgetNotification('dhuhr', value);
-    notifyListeners();
-  }
-
-  Future<void> toggleAsr(bool value) async {
-    _isAsrEnabled = value;
-    await prefs.setBool('isAsrEnabled', value);
-    WidgetHelper().updateWidgetNotification('asr', value);
-    notifyListeners();
-  }
-
-  Future<void> toggleMaghrib(bool value) async {
-    _isMaghribEnabled = value;
-    await prefs.setBool('isMaghribEnabled', value);
-    WidgetHelper().updateWidgetNotification('maghrib', value);
-    notifyListeners();
-  }
-
-  Future<void> toggleIsha(bool value) async {
-    _isIshaEnabled = value;
-    await prefs.setBool('isIshaEnabled', value);
-    WidgetHelper().updateWidgetNotification('isha', value);
-    notifyListeners();
-  }
-
-  Future<void> setFajrAdjustment(int value) async {
-    _fajradjustment = value;
-    await prefs.setInt('fajrAdjustment', value);
-    notifyListeners();
-  }
-
-  Future<void> setDhuhrAdjustment(int value) async {
-    _dhuhradjustment = value;
-    await prefs.setInt('dhuhrAdjustment', value);
-    notifyListeners();
-  }
-
-  Future<void> setAsrAdjustment(int value) async {
-    _asradjustment = value;
-    await prefs.setInt('asrAdjustment', value);
-    notifyListeners();
-  }
-
-  Future<void> setMaghribAdjustment(int value) async {
-    _maghribadjustment = value;
-    await prefs.setInt('maghribAdjustment', value);
-    notifyListeners();
-  }
-
-  Future<void> setIshaAdjustment(int value) async {
-    _ishadjustment = value;
-    await prefs.setInt('ishAdjustment', value);
+  Future<void> setAdjustment(String prayer, int value) async {
+    _adjustments[prayer] = value;
+    await prefs.setInt(_adjustmentKey(prayer), value);
     notifyListeners();
   }
 

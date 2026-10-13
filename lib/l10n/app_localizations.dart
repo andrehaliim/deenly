@@ -350,6 +350,18 @@ abstract class AppLocalizations {
   /// **'Turn on'**
   String get settingBeforeValue;
 
+  /// No description provided for @settingAboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingAboutTitle;
+
+  /// No description provided for @settingPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get settingPrivacyPolicy;
+
   /// No description provided for @searchSurahHint.
   ///
   /// In en, this message translates to:
@@ -493,6 +505,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open Google Maps.'**
   String get couldNotOpenMaps;
+
+  /// No description provided for @couldNotOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link.'**
+  String get couldNotOpenLink;
 
   /// No description provided for @notificationScheduleFailed.
   ///

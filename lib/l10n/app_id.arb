@@ -62,6 +62,8 @@
     "settingSaveButton": "Simpan",
     "settingBeforeTitle": "Notifikasi sebelum adzan",
     "settingBeforeValue": "Nyalakan",
+    "settingAboutTitle": "Tentang",
+    "settingPrivacyPolicy": "Kebijakan Privasi",
 
     "searchSurahHint": "Nama atau nomor surat...",
     "surahList": "Daftar Surat",
@@ -87,6 +89,7 @@
     "assalamuAlaikum": "Assalamu'alaikum,",
     "noMosqueFound": "Tidak ada masjid dalam radius 2 km.",
     "couldNotOpenMaps": "Tidak dapat membuka Google Maps.",
+    "couldNotOpenLink": "Tidak dapat membuka tautan.",
     "notificationScheduleFailed": "Gagal menjadwalkan notifikasi",
     "reminderEnableFailed": "Tidak dapat mengaktifkan pengingat",
 

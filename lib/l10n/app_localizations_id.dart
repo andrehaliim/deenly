@@ -137,6 +137,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingBeforeValue => 'Nyalakan';
 
   @override
+  String get settingAboutTitle => 'Tentang';
+
+  @override
+  String get settingPrivacyPolicy => 'Kebijakan Privasi';
+
+  @override
   String get searchSurahHint => 'Nama atau nomor surat...';
 
   @override
@@ -219,6 +225,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get couldNotOpenMaps => 'Tidak dapat membuka Google Maps.';
+
+  @override
+  String get couldNotOpenLink => 'Tidak dapat membuka tautan.';
 
   @override
   String get notificationScheduleFailed => 'Gagal menjadwalkan notifikasi';

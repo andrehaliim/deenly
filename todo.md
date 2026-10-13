@@ -94,10 +94,10 @@
       `pubspec.yaml`
 
 ## 🔴 Larger structural refactors
-- [ ] Replace the 5 copy-pasted `_buildPrayerNotificationSetting(...)` calls
+- [x] Replace the 5 copy-pasted `_buildPrayerNotificationSetting(...)` calls
       in `drawer_page.dart` (lines ~190-282) with a list-driven widget
-- [ ] Same for the 5 `_buildPrayerTimeAdjustment(...)` calls (lines ~383-416)
-- [ ] Extract `_buildTitle`, `_buildPrayerNotificationSetting` and
+- [x] Same for the 5 `_buildPrayerTimeAdjustment(...)` calls (lines ~383-416)
+- [x] Extract `_buildTitle`, `_buildPrayerNotificationSetting` and
       `_buildPrayerTimeAdjustment` from `drawer_page.dart` into their own
       widget files
 - [ ] Move `SurahDetailList` and `SurahOptionsPanel` out of
@@ -107,5 +107,8 @@
       hardcoded strings/colors, lines > 80 chars)
 
 ## 📋 Pre-publish checklist (not code)
-- [ ] Write and host a privacy policy (required for location permission)
+- [x] Write a privacy policy (required for location permission) —
+      page added in `newporto` repo at `/projects/deenly/privacy`,
+      linked from the drawer
+- [ ] Deploy the `newporto` privacy page (commit + push to Vercel)
 - [ ] Add privacy policy URL to Play Console listing

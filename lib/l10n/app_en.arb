@@ -62,6 +62,8 @@
     "settingSaveButton": "Save",
     "settingBeforeTitle": "Notification before adhan",
     "settingBeforeValue": "Turn on",
+    "settingAboutTitle": "About",
+    "settingPrivacyPolicy": "Privacy Policy",
 
     "searchSurahHint": "Surah name or number...",
     "surahList": "Surah List",
@@ -126,6 +128,7 @@
     "assalamuAlaikum": "Assalamu Alaikum,",
     "noMosqueFound": "No mosques found within 2 km.",
     "couldNotOpenMaps": "Could not open Google Maps.",
+    "couldNotOpenLink": "Could not open the link.",
     "notificationScheduleFailed": "Failed to schedule notification",
     "reminderEnableFailed": "Could not enable reminder",
 

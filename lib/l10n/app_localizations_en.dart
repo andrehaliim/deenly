@@ -138,6 +138,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingBeforeValue => 'Turn on';
 
   @override
+  String get settingAboutTitle => 'About';
+
+  @override
+  String get settingPrivacyPolicy => 'Privacy Policy';
+
+  @override
   String get searchSurahHint => 'Surah name or number...';
 
   @override
@@ -219,6 +225,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couldNotOpenMaps => 'Could not open Google Maps.';
+
+  @override
+  String get couldNotOpenLink => 'Could not open the link.';
 
   @override
   String get notificationScheduleFailed => 'Failed to schedule notification';
