@@ -493,6 +493,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not enable reminder'**
   String get reminderEnableFailed;
+
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deenly'**
+  String get appTitle;
+
+  /// No description provided for @splashTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'A companion for the modern Muslim'**
+  String get splashTagline;
 }
 
 class _AppLocalizationsDelegate

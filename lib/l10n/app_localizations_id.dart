@@ -219,4 +219,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get reminderEnableFailed => 'Tidak dapat mengaktifkan pengingat';
+
+  @override
+  String get appTitle => 'Deenly';
+
+  @override
+  String get splashTagline => 'Teman ibadah Muslim modern';
 }

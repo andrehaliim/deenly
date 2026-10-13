@@ -2,7 +2,9 @@
 
 Deenly is a premium, feature-rich Islamic companion app built with Flutter. It's designed to help Muslims integrate their spiritual practice seamlessly into their modern lives with a stunning user interface and reliable functionality.
 
-![Deenly Header](assets/images/logo.png)
+<p align="center">
+  <img src="assets/icon/play_store_icon.png" alt="Deenly icon" width="160">
+</p>
 
 ## ✨ Features
 

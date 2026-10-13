@@ -125,5 +125,8 @@
     "noMosqueFound": "No mosques found within 2 km.",
     "couldNotOpenMaps": "Could not open Google Maps.",
     "notificationScheduleFailed": "Failed to schedule notification",
-    "reminderEnableFailed": "Could not enable reminder"
+    "reminderEnableFailed": "Could not enable reminder",
+
+    "appTitle": "Deenly",
+    "splashTagline": "A companion for the modern Muslim"
 }

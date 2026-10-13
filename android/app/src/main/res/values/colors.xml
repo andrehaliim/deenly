@@ -12,4 +12,5 @@
     <color name="lightOnSurface">#FF191C1B</color>
     <color name="lightOnSurfaceVariant">#FF3F4946</color>
     <color name="lightOutline">#FF707974</color>
+    <color name="ic_launcher_background">#004D40</color>
 </resources>

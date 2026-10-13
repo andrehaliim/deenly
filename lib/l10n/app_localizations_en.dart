@@ -219,4 +219,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderEnableFailed => 'Could not enable reminder';
+
+  @override
+  String get appTitle => 'Deenly';
+
+  @override
+  String get splashTagline => 'A companion for the modern Muslim';
 }

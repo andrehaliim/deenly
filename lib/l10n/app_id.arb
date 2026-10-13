@@ -86,5 +86,8 @@
     "noMosqueFound": "Tidak ada masjid dalam radius 2 km.",
     "couldNotOpenMaps": "Tidak dapat membuka Google Maps.",
     "notificationScheduleFailed": "Gagal menjadwalkan notifikasi",
-    "reminderEnableFailed": "Tidak dapat mengaktifkan pengingat"
+    "reminderEnableFailed": "Tidak dapat mengaktifkan pengingat",
+
+    "appTitle": "Deenly",
+    "splashTagline": "Teman ibadah Muslim modern"
 }
