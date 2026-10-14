@@ -76,23 +76,6 @@
       the `adhan` package (new package, ask first) or an own implementation,
       and compare the results against the current Aladhan output.
 
-## 🔵 Dio + Riverpod migration (do in order, not started)
-- [ ] Step 1: Add `dio`/`riverpod` deps (ask first), create `dio_client.dart`,
-      wrap `main.dart` in `ProviderScope`
-- [ ] Step 2: Convert `mosque_proxy.dart` http calls → Dio
-- [ ] Step 3: Convert `prayer_proxy.dart` http calls → Dio
-- [ ] Step 4: Convert `surah_provider.dart` http calls → Dio
-- [ ] Step 5: Convert `ThemeProvider` → Riverpod `@riverpod` notifier
-- [ ] Step 6: Convert `DrawerProvider` → Riverpod `@riverpod` notifier
-- [ ] Step 7: Convert `LocaleProvider` → Riverpod `@riverpod` notifier
-- [ ] Step 8: Convert `AudioProvider` → Riverpod `@riverpod` notifier
-- [ ] Step 9: Convert `SurahProvider` → Riverpod `@riverpod` notifier
-      (biggest one — network + DB + state)
-- [ ] Step 10: Update all widgets from `context.watch<X>()`/`Provider.of` →
-      `ConsumerWidget` + `ref.watch()`
-- [ ] Step 11: Remove `MultiProvider` wrapper and `provider` package from
-      `pubspec.yaml`
-
 ## 🔴 Larger structural refactors
 - [x] Replace the 5 copy-pasted `_buildPrayerNotificationSetting(...)` calls
       in `drawer_page.dart` (lines ~190-282) with a list-driven widget
@@ -100,7 +83,7 @@
 - [x] Extract `_buildTitle`, `_buildPrayerNotificationSetting` and
       `_buildPrayerTimeAdjustment` from `drawer_page.dart` into their own
       widget files
-- [ ] Move `SurahDetailList` and `SurahOptionsPanel` out of
+- [x] Move `SurahDetailList` and `SurahOptionsPanel` out of
       `quran_detail_page.dart` into their own files (classes already
       separated, just still in one file)
 - [ ] Gradually align legacy code with `CLAUDE.md` style rules (remove `!`,
@@ -110,5 +93,6 @@
 - [x] Write a privacy policy (required for location permission) —
       page added in `newporto` repo at `/projects/deenly/privacy`,
       linked from the drawer
-- [ ] Deploy the `newporto` privacy page (commit + push to Vercel)
-- [ ] Add privacy policy URL to Play Console listing
+- [x] Deploy the `newporto` privacy page (commit + push to Vercel)
+- [ ] Add privacy policy URL to Play Console listing (when the app is
+      first released on the Play Store)
