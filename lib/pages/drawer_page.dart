@@ -33,7 +33,10 @@ class DrawerPage extends StatefulWidget {
 
 class _DrawerPageState extends State<DrawerPage> {
   bool _isSaving = false;
-  final Map<String, int> _savedAdjustments = {};
+
+  // Unsaved edits. Rebuilt from the saved values every time the drawer
+  // opens, so changes that were never saved are discarded.
+  final Map<String, int> _pendingAdjustments = {};
   String _version = '';
 
   @override
@@ -52,9 +55,9 @@ class _DrawerPageState extends State<DrawerPage> {
   }
 
   void _loadSettings() {
-    final prefs = Provider.of<DrawerProvider>(context, listen: false);
+    final drawerProvider = context.read<DrawerProvider>();
     for (final prayer in DrawerProvider.prayers) {
-      _savedAdjustments[prayer] = prefs.adjustmentOf(prayer);
+      _pendingAdjustments[prayer] = drawerProvider.adjustmentOf(prayer);
     }
   }
 
@@ -181,9 +184,11 @@ class _DrawerPageState extends State<DrawerPage> {
                               context,
                               prayer,
                             ),
-                            adjustment: drawerProvider.adjustmentOf(prayer),
+                            adjustment: _pendingAdjustments[prayer] ?? 0,
                             onChanged: (value) {
-                              drawerProvider.setAdjustment(prayer, value);
+                              setState(() {
+                                _pendingAdjustments[prayer] = value;
+                              });
                             },
                           ),
                           const SizedBox(height: 6),
@@ -281,7 +286,7 @@ class _DrawerPageState extends State<DrawerPage> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        onPressed: () => _saveAdjustments(drawerProvider),
+        onPressed: _isSaving ? null : () => _saveAdjustments(drawerProvider),
         child: _isSaving
             ? const CircularProgressIndicator()
             : Text(
@@ -338,33 +343,27 @@ class _DrawerPageState extends State<DrawerPage> {
   }
 
   Future<void> _saveAdjustments(DrawerProvider drawerProvider) async {
+    if (_isSaving) return;
     setState(() {
       _isSaving = true;
     });
 
-    // Prayer table columns are lowercase ('fajr', 'dhuhr', ...).
-    final adjustments = {
-      for (final prayer in DrawerProvider.prayers)
-        prayer.toLowerCase():
-            drawerProvider.adjustmentOf(prayer) -
-            (_savedAdjustments[prayer] ?? 0),
-    };
-    debugPrint('Prayer adjustment deltas: $adjustments');
-
-    await PrayerProxy().updatePrayerTimesInDB(adjustments);
-    final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
-    if (prayerModel != null) {
-      await WidgetHelper().updateWidgetPrayer(prayerModel);
-    }
-
-    if (!mounted) return;
-    setState(() {
-      for (final prayer in DrawerProvider.prayers) {
-        _savedAdjustments[prayer] = drawerProvider.adjustmentOf(prayer);
+    try {
+      await drawerProvider.saveAdjustments(Map.of(_pendingAdjustments));
+      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+      if (prayerModel != null) {
+        await WidgetHelper().updateWidgetPrayer(prayerModel);
       }
-      _isSaving = false;
-    });
-    widget.onSaved?.call();
+      widget.onSaved?.call();
+    } catch (e) {
+      debugPrint('Saving prayer adjustments failed: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
   }
 
   Future<void> _openPrivacyPolicy() async {

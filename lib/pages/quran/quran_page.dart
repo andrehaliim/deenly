@@ -437,7 +437,7 @@ class QuranPageState extends State<QuranPage> {
                     builder: (context) => QuranDetailPage(
                       surah: data,
                       juzFrom: juz.surahFrom > 1 ? juz.surahFrom : 0,
-                      code: code!,
+                      code: code ?? 'en',
                     ),
                   ),
                 );

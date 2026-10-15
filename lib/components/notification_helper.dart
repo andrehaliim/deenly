@@ -186,18 +186,23 @@ class NotificationHelper {
       android: androidNotificationDetails,
     );
 
+    // zonedSchedule throws for past dates. When the prayer is less than
+    // 10 minutes away, roll the reminder over to the next day instead.
+    var reminderTime = scheduledTime.subtract(const Duration(minutes: 10));
+    if (reminderTime.isBefore(tz.TZDateTime.now(tz.local))) {
+      reminderTime = reminderTime.add(const Duration(days: 1));
+    }
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id: notifId,
       title: 'Prayer Reminder',
       body: '10 minutes again for $prayerName prayer',
       notificationDetails: notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      scheduledDate: scheduledTime.subtract(const Duration(minutes: 10)),
+      scheduledDate: reminderTime,
     );
 
-    debugPrint(
-      "Reminder scheduled for $prayerName at ${scheduledTime.subtract(const Duration(minutes: 10))}",
-    );
+    debugPrint("Reminder scheduled for $prayerName at $reminderTime");
     return true;
   }
 

@@ -144,18 +144,20 @@ class _TasbihPageState extends State<TasbihPage>
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                _vibrate();
                 _controller.forward(from: 0.0);
-                if (selectedTarget != -1 && currentCount == selectedTarget) {
+                final hasTarget = selectedTarget != -1;
+                // A tap after a finished round starts the next round.
+                final nextCount = hasTarget && currentCount >= selectedTarget
+                    ? 1
+                    : currentCount + 1;
+                if (hasTarget && nextCount == selectedTarget) {
                   _vibrateLong();
-                  setState(() {
-                    currentCount = 0;
-                  });
                 } else {
-                  setState(() {
-                    currentCount++;
-                  });
+                  _vibrate();
                 }
+                setState(() {
+                  currentCount = nextCount;
+                });
               },
               child: ScaleTransition(
                 scale: _scaleAnimation,
@@ -337,6 +339,7 @@ class _TasbihPageState extends State<TasbihPage>
   void selectTarget(int target) {
     setState(() {
       selectedTarget = target;
+      currentCount = 0;
     });
   }
 }

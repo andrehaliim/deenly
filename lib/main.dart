@@ -56,14 +56,21 @@ void callbackDispatcher() {
         } catch (e) {
           debugPrint('Background prayer sync failed: $e');
         }
-        final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
-        if (prayerModel != null) {
-          await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
-          await notificationHelper.scheduleReminderNotifications(prayerModel);
-          await WidgetHelper().updateWidgetPrayer(prayerModel);
-          await WorkmanagerHelper.scheduleNextPrayerUpdate();
+        // Always re-arm the daily task, even if a step below fails,
+        // so the notification chain never stops.
+        try {
+          final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+          if (prayerModel != null) {
+            await notificationHelper.scheduleAllPrayerNotifications(
+              prayerModel,
+            );
+            await notificationHelper.scheduleReminderNotifications(prayerModel);
+            await WidgetHelper().updateWidgetPrayer(prayerModel);
+            await WorkmanagerHelper.scheduleNextPrayerUpdate();
+          }
+        } finally {
+          await WorkmanagerHelper.scheduleDailyNotification();
         }
-        await WorkmanagerHelper.scheduleDailyNotification();
       } else if (task == 'nextPrayerTaskUpdate') {
         final nextPrayerName = inputData?['nextPrayerName'] as String?;
         if (nextPrayerName != null) {

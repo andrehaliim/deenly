@@ -4,11 +4,24 @@ import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class PrayerProxy {
   static const String _baseUrl = 'https://api.aladhan.com/v1';
+
+  static const List<String> _prayerNames = [
+    'Fajr',
+    'Dhuhr',
+    'Asr',
+    'Maghrib',
+    'Isha',
+  ];
+
+  // Isha uses the legacy 'ishAdjustment' key already saved on devices.
+  static String adjustmentKey(String prayer) =>
+      prayer == 'Isha' ? 'ishAdjustment' : '${prayer.toLowerCase()}Adjustment';
 
   Future<PrayerModel?> getTodayPrayer() async {
     final db = await DatabaseHelper.instance.database;
@@ -56,13 +69,21 @@ class PrayerProxy {
           .map((e) => PrayerModel.fromJsonApi(e))
           .toList();
 
+      // Re-apply the user's saved adjustments, since the API returns
+      // unadjusted times and the table is rebuilt from scratch.
+      final adjustments = await _savedAdjustments();
+
       final batch = db.batch();
       batch.delete('prayer');
 
       for (var prayer in prayers) {
+        final row = prayer.toJson();
+        for (final entry in adjustments.entries) {
+          row[entry.key] = _adjustTime(row[entry.key] as String, entry.value);
+        }
         batch.insert(
           'prayer',
-          prayer.toJson(),
+          row,
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
@@ -98,6 +119,33 @@ class PrayerProxy {
       }
     }
     return {'nextPrayer': nextPrayer, 'nextTime': nextTime};
+  }
+
+  Future<Map<String, int>> _savedAdjustments() async {
+    final prefs = await SharedPreferences.getInstance();
+    return {
+      for (final prayer in _prayerNames)
+        prayer: prefs.getInt(adjustmentKey(prayer)) ?? 0,
+    };
+  }
+
+  /// Shifts the stored prayer times so they match [adjustments] (minutes
+  /// per prayer name, e.g. 'Fajr'), then persists them as the new baseline.
+  Future<void> saveAdjustments(Map<String, int> adjustments) async {
+    final saved = await _savedAdjustments();
+
+    // Prayer table columns are lowercase ('fajr', 'dhuhr', ...).
+    final deltas = {
+      for (final entry in adjustments.entries)
+        entry.key.toLowerCase(): entry.value - (saved[entry.key] ?? 0),
+    };
+    debugPrint('Prayer adjustment deltas: $deltas');
+    await updatePrayerTimesInDB(deltas);
+
+    final prefs = await SharedPreferences.getInstance();
+    for (final entry in adjustments.entries) {
+      await prefs.setInt(adjustmentKey(entry.key), entry.value);
+    }
   }
 
   Future<void> updatePrayerTimesInDB(Map<String, int> adjustments) async {

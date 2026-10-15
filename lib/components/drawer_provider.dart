@@ -35,18 +35,16 @@ class DrawerProvider extends ChangeNotifier {
 
   static String _enabledKey(String prayer) => 'is${prayer}Enabled';
 
-  // Isha uses the legacy 'ishAdjustment' key already saved on devices.
-  static String _adjustmentKey(String prayer) =>
-      prayer == 'Isha' ? 'ishAdjustment' : '${prayer.toLowerCase()}Adjustment';
-
   bool isPrayerEnabled(String prayer) => _enabled[prayer] ?? false;
 
+  /// Saved (already applied) adjustment of [prayer], in minutes.
   int adjustmentOf(String prayer) => _adjustments[prayer] ?? 0;
 
   void _loadSettings() {
     for (final prayer in prayers) {
       _enabled[prayer] = prefs.getBool(_enabledKey(prayer)) ?? false;
-      _adjustments[prayer] = prefs.getInt(_adjustmentKey(prayer)) ?? 0;
+      _adjustments[prayer] =
+          prefs.getInt(PrayerProxy.adjustmentKey(prayer)) ?? 0;
     }
 
     _isReminderEnabled = prefs.getBool('isReminderEnabled') ?? false;
@@ -59,9 +57,11 @@ class DrawerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setAdjustment(String prayer, int value) async {
-    _adjustments[prayer] = value;
-    await prefs.setInt(_adjustmentKey(prayer), value);
+  /// Applies [adjustments] (minutes per prayer) to the stored prayer
+  /// times. These become the saved values returned by [adjustmentOf].
+  Future<void> saveAdjustments(Map<String, int> adjustments) async {
+    await PrayerProxy().saveAdjustments(adjustments);
+    _adjustments.addAll(adjustments);
     notifyListeners();
   }
 
