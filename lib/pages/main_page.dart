@@ -71,7 +71,7 @@ class _MainPageState extends State<MainPage> {
         index: _selectedIndex,
         children: [
           QuranPage(key: _quranKey),
-          const MosquePage(),
+          MosquePage(isActive: _selectedIndex == 1),
           HomePage(key: _homeKey),
           QiblaPage(isActive: _selectedIndex == 3),
           const TasbihPage(),

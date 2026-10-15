@@ -1,6 +1,10 @@
 import 'dart:io';
+import 'dart:ui' show PlatformDispatcher;
 
+import 'package:deenly/components/locale_provider.dart';
+import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,10 +97,13 @@ class NotificationHelper {
       android: androidNotificationDetails,
     );
 
+    final l10n = await _loadL10n();
+    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayerName);
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id: notifId,
-      title: 'Adhan Reminder',
-      body: 'It is time for $prayerName prayer',
+      title: l10n.notificationAdhanTitle,
+      body: l10n.notificationAdhanBody(prayerLabel),
       notificationDetails: notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       scheduledDate: scheduledTime,
@@ -193,10 +200,13 @@ class NotificationHelper {
       reminderTime = reminderTime.add(const Duration(days: 1));
     }
 
+    final l10n = await _loadL10n();
+    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayerName);
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id: notifId,
-      title: 'Prayer Reminder',
-      body: '10 minutes again for $prayerName prayer',
+      title: l10n.notificationReminderTitle,
+      body: l10n.notificationReminderBody(prayerLabel),
       notificationDetails: notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       scheduledDate: reminderTime,
@@ -240,6 +250,20 @@ class NotificationHelper {
       await prefs.setBool('isReminderEnabled', false);
     }
     debugPrint("All reminder notifications disabled");
+  }
+
+  /// Loads the strings for the user's chosen app language, falling back to
+  /// the device language and then English. Works without a BuildContext,
+  /// so it can be used from the background isolate.
+  Future<AppLocalizations> _loadL10n() async {
+    final prefs = await SharedPreferences.getInstance();
+    final code =
+        prefs.getString(LocaleProvider.localeKey) ??
+        PlatformDispatcher.instance.locale.languageCode;
+    final isSupported = AppLocalizations.supportedLocales.any(
+      (locale) => locale.languageCode == code,
+    );
+    return lookupAppLocalizations(Locale(isSupported ? code : 'en'));
   }
 
   TZDateTime convertToTZ(String prayerTime) {

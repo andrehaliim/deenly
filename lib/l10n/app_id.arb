@@ -92,6 +92,13 @@
     "couldNotOpenLink": "Tidak dapat membuka tautan.",
     "notificationScheduleFailed": "Gagal menjadwalkan notifikasi",
     "reminderEnableFailed": "Tidak dapat mengaktifkan pengingat",
+    "notificationAdhanTitle": "Pengingat Adzan",
+    "notificationAdhanBody": "Sudah masuk waktu shalat {prayer}",
+    "notificationReminderTitle": "Pengingat Shalat",
+    "notificationReminderBody": "10 menit lagi menuju waktu shalat {prayer}",
+    "qiblaNoLocation": "Lokasi belum tersedia. Aktifkan GPS atau pilih kota di halaman Beranda.",
+    "mosqueLocationUnavailable": "Tidak dapat mengambil lokasimu. Pastikan GPS aktif dan izin lokasi sudah diberikan.",
+    "mosqueLoadFailed": "Gagal memuat masjid terdekat.",
 
     "appTitle": "Deenly",
     "splashTagline": "Teman ibadah Muslim modern"

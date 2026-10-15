@@ -99,9 +99,16 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadHadithData() async {
-    _hadithModel = await _hadithProxy.getDailyHadith();
+    HadithModel? hadithModel;
+    try {
+      hadithModel = await _hadithProxy.getDailyHadith();
+    } catch (e, st) {
+      debugPrint('Loading daily hadith failed: $e\n$st');
+    }
 
+    if (!mounted) return;
     setState(() {
+      _hadithModel = hadithModel;
       _isGettingHadithData = false;
     });
   }
@@ -109,6 +116,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final prayerModel = _prayerModel;
+    final hadithModel = _hadithModel;
 
     return SingleChildScrollView(
       child: Column(
@@ -151,9 +159,11 @@ class HomePageState extends State<HomePage> {
 
           const SizedBox(height: 10),
 
-          _isGettingHadithData
-              ? HomeHadithSkeleton()
-              : HomeHadithWidget(hadithModel: _hadithModel!),
+          // The hadith card is optional: hide it if loading failed.
+          if (_isGettingHadithData)
+            HomeHadithSkeleton()
+          else if (hadithModel != null)
+            HomeHadithWidget(hadithModel: hadithModel),
 
           const SizedBox(height: 12),
         ],

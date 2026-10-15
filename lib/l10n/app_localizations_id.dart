@@ -236,6 +236,33 @@ class AppLocalizationsId extends AppLocalizations {
   String get reminderEnableFailed => 'Tidak dapat mengaktifkan pengingat';
 
   @override
+  String get notificationAdhanTitle => 'Pengingat Adzan';
+
+  @override
+  String notificationAdhanBody(String prayer) {
+    return 'Sudah masuk waktu shalat $prayer';
+  }
+
+  @override
+  String get notificationReminderTitle => 'Pengingat Shalat';
+
+  @override
+  String notificationReminderBody(String prayer) {
+    return '10 menit lagi menuju waktu shalat $prayer';
+  }
+
+  @override
+  String get qiblaNoLocation =>
+      'Lokasi belum tersedia. Aktifkan GPS atau pilih kota di halaman Beranda.';
+
+  @override
+  String get mosqueLocationUnavailable =>
+      'Tidak dapat mengambil lokasimu. Pastikan GPS aktif dan izin lokasi sudah diberikan.';
+
+  @override
+  String get mosqueLoadFailed => 'Gagal memuat masjid terdekat.';
+
+  @override
   String get appTitle => 'Deenly';
 
   @override

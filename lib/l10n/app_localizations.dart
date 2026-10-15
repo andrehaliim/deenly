@@ -524,6 +524,48 @@ abstract class AppLocalizations {
   /// **'Could not enable reminder'**
   String get reminderEnableFailed;
 
+  /// No description provided for @notificationAdhanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhan Reminder'**
+  String get notificationAdhanTitle;
+
+  /// No description provided for @notificationAdhanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It is time for {prayer} prayer'**
+  String notificationAdhanBody(String prayer);
+
+  /// No description provided for @notificationReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Reminder'**
+  String get notificationReminderTitle;
+
+  /// No description provided for @notificationReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'10 minutes until {prayer} prayer'**
+  String notificationReminderBody(String prayer);
+
+  /// No description provided for @qiblaNoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is not available yet. Turn on GPS or choose a city on the Home page.'**
+  String get qiblaNoLocation;
+
+  /// No description provided for @mosqueLocationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get your location. Make sure GPS is on and location permission is granted.'**
+  String get mosqueLocationUnavailable;
+
+  /// No description provided for @mosqueLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load nearby mosques.'**
+  String get mosqueLoadFailed;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

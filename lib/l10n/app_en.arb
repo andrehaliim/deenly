@@ -131,6 +131,29 @@
     "couldNotOpenLink": "Could not open the link.",
     "notificationScheduleFailed": "Failed to schedule notification",
     "reminderEnableFailed": "Could not enable reminder",
+    "notificationAdhanTitle": "Adhan Reminder",
+    "notificationAdhanBody": "It is time for {prayer} prayer",
+    "@notificationAdhanBody": {
+        "placeholders": {
+            "prayer": {
+                "type": "String",
+                "example": "Fajr"
+            }
+        }
+    },
+    "notificationReminderTitle": "Prayer Reminder",
+    "notificationReminderBody": "10 minutes until {prayer} prayer",
+    "@notificationReminderBody": {
+        "placeholders": {
+            "prayer": {
+                "type": "String",
+                "example": "Fajr"
+            }
+        }
+    },
+    "qiblaNoLocation": "Location is not available yet. Turn on GPS or choose a city on the Home page.",
+    "mosqueLocationUnavailable": "Could not get your location. Make sure GPS is on and location permission is granted.",
+    "mosqueLoadFailed": "Failed to load nearby mosques.",
 
     "appTitle": "Deenly",
     "splashTagline": "A companion for the modern Muslim"

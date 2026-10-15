@@ -176,7 +176,14 @@ class PrayerProxy {
   }
 
   String getPrayerLabel(BuildContext context, String prayer) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return prayer;
+    return prayerLabelOf(l10n, prayer);
+  }
+
+  /// Localized name of [prayer] ('Fajr', 'Dhuhr', ...) without a
+  /// [BuildContext], e.g. for notifications built in the background.
+  static String prayerLabelOf(AppLocalizations l10n, String prayer) {
     switch (prayer.toLowerCase()) {
       case 'fajr':
         return l10n.fajr;

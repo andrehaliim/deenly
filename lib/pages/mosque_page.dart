@@ -1,11 +1,18 @@
+import 'dart:async';
+
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/mosque_model.dart';
 import 'package:deenly/proxys/mosque_proxy.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MosquePage extends StatefulWidget {
-  const MosquePage({super.key});
+  /// Whether the tab is visible. Mosques are only fetched (GPS + network)
+  /// once the user actually opens the tab.
+  final bool isActive;
+
+  const MosquePage({super.key, this.isActive = false});
 
   @override
   State<MosquePage> createState() => _MosquePageState();
@@ -14,25 +21,29 @@ class MosquePage extends StatefulWidget {
 class _MosquePageState extends State<MosquePage> {
   List<MosqueModel> mosques = [];
   bool isLoading = true;
-  String? errorMessage;
+  bool _hasFetched = false;
+  _MosqueError? _error;
 
   @override
   void initState() {
     super.initState();
-    _fetchMosques();
+    if (widget.isActive) _fetchMosques();
+  }
+
+  @override
+  void didUpdateWidget(MosquePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Fetch on first open, and retry on reopen after a failure.
+    final becameActive = widget.isActive && !oldWidget.isActive;
+    if (becameActive && (!_hasFetched || _error != null)) _fetchMosques();
   }
 
   Future<void> _fetchMosques({bool showLocalLoading = true}) async {
-    if (showLocalLoading) {
-      setState(() {
-        isLoading = true;
-        errorMessage = null;
-      });
-    } else {
-      setState(() {
-        errorMessage = null;
-      });
-    }
+    _hasFetched = true;
+    setState(() {
+      if (showLocalLoading) isLoading = true;
+      _error = null;
+    });
 
     try {
       final fetchedMosques = await MosqueProxy().fetchMosques();
@@ -41,9 +52,12 @@ class _MosquePageState extends State<MosquePage> {
         mosques = fetchedMosques;
       });
     } catch (e) {
+      debugPrint('Fetching mosques failed: $e');
       if (!mounted) return;
       setState(() {
-        errorMessage = e.toString();
+        _error = _isLocationError(e)
+            ? _MosqueError.location
+            : _MosqueError.other;
       });
     } finally {
       if (mounted && showLocalLoading) {
@@ -86,10 +100,15 @@ class _MosquePageState extends State<MosquePage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (errorMessage != null) {
+    final error = _error;
+    if (error != null) {
+      final l10n = AppLocalizations.of(context)!;
       return _buildCenteredMessage(
         icon: Icons.error_outline,
-        message: errorMessage!,
+        message: switch (error) {
+          _MosqueError.location => l10n.mosqueLocationUnavailable,
+          _MosqueError.other => l10n.mosqueLoadFailed,
+        },
       );
     }
 
@@ -261,3 +280,12 @@ class _MosquePageState extends State<MosquePage> {
     );
   }
 }
+
+enum _MosqueError { location, other }
+
+/// GPS is off, permission is missing, or no fix came in time.
+bool _isLocationError(Object error) =>
+    error is LocationServiceDisabledException ||
+    error is PermissionDeniedException ||
+    error is PermissionRequestInProgressException ||
+    error is TimeoutException;

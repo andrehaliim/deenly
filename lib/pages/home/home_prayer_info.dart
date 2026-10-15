@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
@@ -30,17 +32,48 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
   final prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
   bool _showPrayerTimes = false;
 
+  static const Duration _refreshInterval = Duration(seconds: 30);
+
+  Timer? _refreshTimer;
+
   @override
   void initState() {
     super.initState();
-    _loadNextPrayer();
+    _next = _computeNextPrayer();
+    _syncWidgetNextPrayer();
+    // Keep the next prayer current while the app stays open.
+    _refreshTimer = Timer.periodic(_refreshInterval, (_) => _refresh());
   }
 
-  void _loadNextPrayer() async {
-    _next = PrayerProxy().getNextPrayer(widget.prayerModel.toJson());
-    await WidgetHelper().updateWidgetNextPrayer(
-      _next['nextPrayer']!.toLowerCase(),
-    );
+  @override
+  void didUpdateWidget(HomePrayerInfo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.prayerModel != widget.prayerModel) _refresh();
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  Map<String, String> _computeNextPrayer() =>
+      PrayerProxy().getNextPrayer(widget.prayerModel.toJson());
+
+  void _refresh() {
+    final next = _computeNextPrayer();
+    if (next['nextPrayer'] == _next['nextPrayer'] &&
+        next['nextTime'] == _next['nextTime']) {
+      return;
+    }
+    setState(() => _next = next);
+    _syncWidgetNextPrayer();
+  }
+
+  Future<void> _syncWidgetNextPrayer() async {
+    final nextPrayer = _next['nextPrayer'];
+    if (nextPrayer == null) return;
+    await WidgetHelper().updateWidgetNextPrayer(nextPrayer.toLowerCase());
   }
 
   @override

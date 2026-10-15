@@ -236,6 +236,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderEnableFailed => 'Could not enable reminder';
 
   @override
+  String get notificationAdhanTitle => 'Adhan Reminder';
+
+  @override
+  String notificationAdhanBody(String prayer) {
+    return 'It is time for $prayer prayer';
+  }
+
+  @override
+  String get notificationReminderTitle => 'Prayer Reminder';
+
+  @override
+  String notificationReminderBody(String prayer) {
+    return '10 minutes until $prayer prayer';
+  }
+
+  @override
+  String get qiblaNoLocation =>
+      'Location is not available yet. Turn on GPS or choose a city on the Home page.';
+
+  @override
+  String get mosqueLocationUnavailable =>
+      'Could not get your location. Make sure GPS is on and location permission is granted.';
+
+  @override
+  String get mosqueLoadFailed => 'Failed to load nearby mosques.';
+
+  @override
   String get appTitle => 'Deenly';
 
   @override

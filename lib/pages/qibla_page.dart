@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
@@ -21,7 +22,7 @@ class _QiblaPageState extends State<QiblaPage>
   @override
   void initState() {
     super.initState();
-    init();
+    if (widget.isActive) init();
   }
 
   @override
@@ -38,14 +39,18 @@ class _QiblaPageState extends State<QiblaPage>
 
   Future<void> _loadLocation() async {
     final prefs = await SharedPreferences.getInstance();
-    final prefLocation = prefs.getString('locationName') ?? '';
-    final lat = prefs.getDouble('lat') ?? 0;
-    final lng = prefs.getDouble('long') ?? 0;
-    
-    _qiblaDirection = _calculateQiblaDirection(lat, lng);
+    final prefLocation = prefs.getString(PrayerSyncHelper.keyLocationName);
+    final lat = prefs.getDouble(PrayerSyncHelper.keyLatitude);
+    final lng = prefs.getDouble(PrayerSyncHelper.keyLongitude);
 
+    if (!mounted) return;
     setState(() {
-      _location = prefLocation;
+      // Without a saved location the direction would be computed from
+      // 0,0, so show a message instead of a wrong Qibla.
+      _qiblaDirection = lat != null && lng != null
+          ? _calculateQiblaDirection(lat, lng)
+          : null;
+      _location = prefLocation ?? '';
       _isLoading = false;
     });
   }
@@ -79,8 +84,29 @@ class _QiblaPageState extends State<QiblaPage>
   }
 
   Widget _buildBody() {
+    // The page lives in an IndexedStack; only listen to the compass while
+    // the tab is visible so the sensor does not run in the background.
+    if (!widget.isActive) return const SizedBox.shrink();
+
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    final qiblaDirection = _qiblaDirection;
+    if (qiblaDirection == null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text(
+            AppLocalizations.of(context)!.qiblaNoLocation,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
     }
 
     return StreamBuilder<CompassEvent>(
@@ -118,7 +144,7 @@ class _QiblaPageState extends State<QiblaPage>
           );
         }
 
-        final qiblaAngle = (_qiblaDirection ?? 0) - heading;
+        final qiblaAngle = qiblaDirection - heading;
 
         double diff = qiblaAngle;
         diff = (diff + 180) % 360 - 180;
@@ -130,10 +156,16 @@ class _QiblaPageState extends State<QiblaPage>
           turnText = AppLocalizations.of(context)!.qiblaFacing;
           textColor = Colors.green;
         } else if (diff > 0) {
-          turnText = AppLocalizations.of(context)!.qiblaRotate(diff.toStringAsFixed(0), AppLocalizations.of(context)!.right);
+          turnText = AppLocalizations.of(context)!.qiblaRotate(
+            diff.toStringAsFixed(0),
+            AppLocalizations.of(context)!.right,
+          );
           textColor = Theme.of(context).colorScheme.onTertiary;
         } else {
-          turnText = AppLocalizations.of(context)!.qiblaRotate(math.min(diff.abs(), 359).toStringAsFixed(0), AppLocalizations.of(context)!.left);
+          turnText = AppLocalizations.of(context)!.qiblaRotate(
+            math.min(diff.abs(), 359).toStringAsFixed(0),
+            AppLocalizations.of(context)!.left,
+          );
           textColor = Theme.of(context).colorScheme.onTertiary;
         }
 
