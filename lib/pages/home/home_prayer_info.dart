@@ -79,7 +79,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
         decoration: BoxDecoration(
           image: DecorationImage(
             colorFilter: ColorFilter.mode(
-              Colors.black.withValues(alpha: 0.5),
+              Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
               BlendMode.darken,
             ),
             image: AssetImage('assets/images/background.jpg'),
@@ -88,7 +88,9 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
+              color: Theme.of(
+                context,
+              ).colorScheme.shadow.withValues(alpha: 0.25),
               blurRadius: 20,
               offset: const Offset(0, 4),
             ),

@@ -313,7 +313,9 @@ class _SurahDetailListState extends State<SurahDetailList> {
                                   isPlayingz
                                       ? Icons.stop_circle_outlined
                                       : Icons.play_circle_outline_rounded,
-                                  color: Colors.white,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                 ),
                               ),
                             ),

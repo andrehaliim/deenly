@@ -96,7 +96,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                   _showOptions
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 Spacer(),
                 Consumer<AudioProvider>(
@@ -116,7 +116,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                           isPlaying
                               ? Icons.stop_circle_outlined
                               : Icons.play_circle_outline_rounded,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ),
                     );

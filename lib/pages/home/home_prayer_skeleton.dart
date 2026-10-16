@@ -18,7 +18,7 @@ class HomePrayerSkeleton extends StatelessWidget {
         decoration: BoxDecoration(
           image: DecorationImage(
             colorFilter: ColorFilter.mode(
-              Colors.black.withValues(alpha: 0.5),
+              Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
               BlendMode.darken,
             ),
             image: AssetImage('assets/images/background.jpg'),
@@ -27,7 +27,7 @@ class HomePrayerSkeleton extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(10),
+              color: Theme.of(context).colorScheme.shadow.withAlpha(10),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

@@ -29,7 +29,7 @@ class _HomeHadithSkeletonState extends State<HomeHadithSkeleton> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(10),
+            color: Theme.of(context).colorScheme.shadow.withAlpha(10),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -77,7 +77,7 @@ class _HomeHadithSkeletonState extends State<HomeHadithSkeleton> {
       height: 12,
       width: width,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(8),
       ),
     );

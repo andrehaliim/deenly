@@ -61,7 +61,9 @@ class CustomBottomNav extends StatelessWidget {
                   children: [
                     FaIcon(
                       items[index]['icon'] as FaIconData,
-                      color: isSelected ? Colors.white : Colors.grey,
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                       size: 22,
                     ),
                     const SizedBox(height: 4),
@@ -70,7 +72,9 @@ class CustomBottomNav extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.white : Colors.grey,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

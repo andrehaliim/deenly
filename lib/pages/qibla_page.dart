@@ -125,8 +125,10 @@ class _QiblaPageState extends State<QiblaPage>
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+          return Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           );
         }
 
@@ -154,7 +156,7 @@ class _QiblaPageState extends State<QiblaPage>
 
         if (diff.abs() < 2) {
           turnText = AppLocalizations.of(context)!.qiblaFacing;
-          textColor = Colors.green;
+          textColor = Theme.of(context).colorScheme.primary;
         } else if (diff > 0) {
           turnText = AppLocalizations.of(context)!.qiblaRotate(
             diff.toStringAsFixed(0),
@@ -218,14 +220,20 @@ class _QiblaPageState extends State<QiblaPage>
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                           border: Border.all(
-                            color: const Color(0xFF2C2C3A),
+                            color: Theme.of(context).colorScheme.outlineVariant,
                             width: 2,
                           ),
                         ),
                         child: CustomPaint(
-                          painter: CompassDialPainter(),
+                          painter: CompassDialPainter(
+                            tickColor: Theme.of(context).colorScheme.onPrimary,
+                            northColor: Theme.of(context).colorScheme.secondary,
+                            labelColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.7),
+                          ),
                           size: const Size(320, 320),
                         ),
                       ),
@@ -244,12 +252,13 @@ class _QiblaPageState extends State<QiblaPage>
                             child: Container(
                               width: 3,
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
+                                gradient: LinearGradient(
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    Color(0xFFD4AF37),
-                                    Color(0x00D4AF37),
+                                    Theme.of(context).colorScheme.secondary,
+                                    Theme.of(context).colorScheme.secondary
+                                        .withValues(alpha: 0),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(2),
@@ -265,16 +274,16 @@ class _QiblaPageState extends State<QiblaPage>
                       height: 16,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFFD4AF37),
+                        color: Theme.of(context).colorScheme.secondary,
                         border: Border.all(
-                          color: const Color(0xFF15151D),
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
                           width: 3,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(
-                              0xFFD4AF37,
-                            ).withValues(alpha: 0.5),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.secondary.withValues(alpha: 0.5),
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
@@ -301,16 +310,18 @@ class _QiblaPageState extends State<QiblaPage>
   }
 
   Widget _buildKaabaIcon() {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: 44,
       height: 44,
       decoration: BoxDecoration(
-        color: const Color(0xFF111111),
+        color: colorScheme.onPrimaryFixed,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Colors.white24, width: 1),
+        border: Border.all(color: colorScheme.outlineVariant, width: 1),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
+            color: colorScheme.secondary.withValues(alpha: 0.3),
             blurRadius: 16,
             spreadRadius: 4,
           ),
@@ -324,12 +335,12 @@ class _QiblaPageState extends State<QiblaPage>
             right: 0,
             child: Container(
               height: 8,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Color(0xFFB8860B),
-                    Color(0xFFFFDF00),
-                    Color(0xFFB8860B),
+                    colorScheme.secondary,
+                    colorScheme.secondaryFixed,
+                    colorScheme.secondary,
                   ],
                 ),
               ),
@@ -342,7 +353,7 @@ class _QiblaPageState extends State<QiblaPage>
               width: 6,
               height: 10,
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFD4AF37), width: 1.5),
+                border: Border.all(color: colorScheme.secondary, width: 1.5),
               ),
             ),
           ),
@@ -353,18 +364,28 @@ class _QiblaPageState extends State<QiblaPage>
 }
 
 class CompassDialPainter extends CustomPainter {
+  CompassDialPainter({
+    required this.tickColor,
+    required this.northColor,
+    required this.labelColor,
+  });
+
+  final Color tickColor;
+  final Color northColor;
+  final Color labelColor;
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
     final tickPaint = Paint()
-      ..color = Color(0xFFE8E8E8)
+      ..color = tickColor
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
     final activeTickPaint = Paint()
-      ..color = Color(0xFFE8E8E8)
+      ..color = tickColor
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
 
@@ -397,7 +418,7 @@ class CompassDialPainter extends CustomPainter {
       textPainter.text = TextSpan(
         text: text,
         style: TextStyle(
-          color: text == 'N' ? const Color(0xFFD4AF37) : Colors.white70,
+          color: text == 'N' ? northColor : labelColor,
           fontWeight: text == 'N' ? FontWeight.bold : FontWeight.w500,
           fontSize: text == 'N' ? 24 : 18,
         ),
@@ -429,5 +450,8 @@ class CompassDialPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CompassDialPainter oldDelegate) =>
+      oldDelegate.tickColor != tickColor ||
+      oldDelegate.northColor != northColor ||
+      oldDelegate.labelColor != labelColor;
 }

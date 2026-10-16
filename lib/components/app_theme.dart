@@ -56,12 +56,28 @@ class AppTheme {
   static const _lightSurfaceLowest = Color(0xFFFFFFFF);
   static const _lightSurfaceHighest = Color(0xFFE1E4E1);
 
+  static const _lightSurfaceContainer = Color(0xFFE9EBE9);
+  static const _lightSurfaceHigh = Color(0xFFE5E8E5);
+  static const _lightSurfaceDim = Color(0xFFD8DBD8);
+
   static const _lightOnSurface = Color(0xFF191C1B);
   static const _lightOnSurfaceVariant = Color(0xFF3F4946);
   static const _lightOutline = Color(0xFF707974);
+  static const _lightOutlineVariant = Color(0xFFBFC9C4);
+
+  /// ---------- FIXED COLORS (same in light and dark) ----------
+  static const _primaryFixed = Color(0xFFE0F2F1);
+  static const _primaryFixedDim = Color(0xFF80CBC4);
+  static const _onPrimaryFixed = Color(0xFF00201B);
+  static const _secondaryFixed = Color(0xFFFFE7B8);
+  static const _secondaryFixedDim = Color(0xFFD4B16A);
+  static const _tertiaryFixed = Color(0xFFE6D5B8);
+  static const _tertiaryFixedDim = Color(0xFFCDBDA0);
+  static const _onAccentFixed = Color(0xFF261900);
+  static const _onAccentFixedVariant = Color(0xFF4D4639);
 
   /// ---------- DARK COLORS ----------
-  static const _darkPrimary = Color(0xFF004D40);
+  static const _darkPrimary = Color(0xFF00756A);
   static const _darkSecondary = Color(0xFFD4B16A);
   static const _darkTertiary = Color(0xFF4D4639);
 
@@ -70,9 +86,14 @@ class AppTheme {
   static const _darkSurfaceLowest = Color(0xFF0A0C0C);
   static const _darkSurfaceHighest = Color(0xFF222524);
 
+  static const _darkSurfaceContainer = Color(0xFF1A1D1C);
+  static const _darkSurfaceHigh = Color(0xFF1E2120);
+  static const _darkSurfaceBright = Color(0xFF343736);
+
   static const _darkOnSurface = Color(0xFFE1E3E1);
   static const _darkOnSurfaceVariant = Color(0xFFBFC9C4);
   static const _darkOutline = Color(0xFF89938E);
+  static const _darkOutlineVariant = Color(0xFF3F4946);
 
   /// ========================================
   /// 🌞 LIGHT THEME
@@ -94,12 +115,42 @@ class AppTheme {
       onSecondaryContainer: Color(0xFF261900),
       tertiary: _lightTertiary,
       onTertiary: Color(0xFF261900),
+      tertiaryContainer: Color(0xFFF3EADB),
+      onTertiaryContainer: Color(0xFF261900),
+      primaryFixed: _primaryFixed,
+      primaryFixedDim: _primaryFixedDim,
+      onPrimaryFixed: _onPrimaryFixed,
+      onPrimaryFixedVariant: _lightPrimary,
+      secondaryFixed: _secondaryFixed,
+      secondaryFixedDim: _secondaryFixedDim,
+      onSecondaryFixed: _onAccentFixed,
+      onSecondaryFixedVariant: _onAccentFixedVariant,
+      tertiaryFixed: _tertiaryFixed,
+      tertiaryFixedDim: _tertiaryFixedDim,
+      onTertiaryFixed: _onAccentFixed,
+      onTertiaryFixedVariant: _onAccentFixedVariant,
       surface: _lightSurface,
       onSurface: _lightOnSurface,
+      surfaceDim: _lightSurfaceDim,
+      surfaceBright: _lightSurface,
+      surfaceContainerLowest: _lightSurfaceLowest,
+      surfaceContainerLow: _lightSurfaceLow,
+      surfaceContainer: _lightSurfaceContainer,
+      surfaceContainerHigh: _lightSurfaceHigh,
+      surfaceContainerHighest: _lightSurfaceHighest,
       error: Colors.red,
       onError: Colors.white,
+      errorContainer: Color(0xFFFFDAD6),
+      onErrorContainer: Color(0xFF410002),
       outline: _lightOutline,
+      outlineVariant: _lightOutlineVariant,
       onSurfaceVariant: _lightOnSurfaceVariant,
+      inverseSurface: Color(0xFF2E3130),
+      onInverseSurface: Color(0xFFEFF1EF),
+      inversePrimary: _primaryFixedDim,
+      shadow: Colors.black,
+      scrim: Colors.black,
+      surfaceTint: _lightPrimary,
     ),
 
     scaffoldBackgroundColor: _lightSurface,
@@ -163,12 +214,42 @@ class AppTheme {
       onSecondaryContainer: Color(0xFFFFE7B8),
       tertiary: _darkTertiary,
       onTertiary: Colors.white,
+      tertiaryContainer: Color(0xFF3A342A),
+      onTertiaryContainer: Color(0xFFF3EADB),
+      primaryFixed: _primaryFixed,
+      primaryFixedDim: _primaryFixedDim,
+      onPrimaryFixed: _onPrimaryFixed,
+      onPrimaryFixedVariant: _lightPrimary,
+      secondaryFixed: _secondaryFixed,
+      secondaryFixedDim: _secondaryFixedDim,
+      onSecondaryFixed: _onAccentFixed,
+      onSecondaryFixedVariant: _onAccentFixedVariant,
+      tertiaryFixed: _tertiaryFixed,
+      tertiaryFixedDim: _tertiaryFixedDim,
+      onTertiaryFixed: _onAccentFixed,
+      onTertiaryFixedVariant: _onAccentFixedVariant,
       surface: _darkSurface,
       onSurface: _darkOnSurface,
+      surfaceDim: _darkSurface,
+      surfaceBright: _darkSurfaceBright,
+      surfaceContainerLowest: _darkSurfaceLowest,
+      surfaceContainerLow: _darkSurfaceLow,
+      surfaceContainer: _darkSurfaceContainer,
+      surfaceContainerHigh: _darkSurfaceHigh,
+      surfaceContainerHighest: _darkSurfaceHighest,
       error: Colors.red,
       onError: Colors.white,
+      errorContainer: Color(0xFF93000A),
+      onErrorContainer: Color(0xFFFFDAD6),
       outline: _darkOutline,
+      outlineVariant: _darkOutlineVariant,
       onSurfaceVariant: _darkOnSurfaceVariant,
+      inverseSurface: _darkOnSurface,
+      onInverseSurface: Color(0xFF2E3130),
+      inversePrimary: _lightPrimary,
+      shadow: Colors.black,
+      scrim: Colors.black,
+      surfaceTint: _darkPrimary,
     ),
 
     scaffoldBackgroundColor: _darkSurface,

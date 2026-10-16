@@ -207,7 +207,7 @@ class _MosquePageState extends State<MosquePage> {
                 'assets/images/mosque.png',
                 height: 120,
                 fit: BoxFit.contain,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 colorBlendMode: BlendMode.modulate,
               ),
             ),
@@ -252,13 +252,20 @@ class _MosquePageState extends State<MosquePage> {
                           width: 12,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.teal.shade100,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.5),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           AppLocalizations.of(context)!.mosqueLoadAddress,
-                          style: TextStyle(fontSize: 14, color: Colors.white54),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.5),
+                          ),
                         ),
                       ],
                     )
