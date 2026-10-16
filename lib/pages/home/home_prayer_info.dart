@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:deenly/components/locale_provider.dart';
-import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
@@ -40,7 +39,6 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
   void initState() {
     super.initState();
     _next = _computeNextPrayer();
-    _syncWidgetNextPrayer();
     // Keep the next prayer current while the app stays open.
     _refreshTimer = Timer.periodic(_refreshInterval, (_) => _refresh());
   }
@@ -67,13 +65,6 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
       return;
     }
     setState(() => _next = next);
-    _syncWidgetNextPrayer();
-  }
-
-  Future<void> _syncWidgetNextPrayer() async {
-    final nextPrayer = _next['nextPrayer'];
-    if (nextPrayer == null) return;
-    await WidgetHelper().updateWidgetNextPrayer(nextPrayer.toLowerCase());
   }
 
   @override

@@ -65,16 +65,11 @@ void callbackDispatcher() {
               prayerModel,
             );
             await notificationHelper.scheduleReminderNotifications(prayerModel);
+            // The widget recomputes the next prayer itself on update.
             await WidgetHelper().updateWidgetPrayer(prayerModel);
-            await WorkmanagerHelper.scheduleNextPrayerUpdate();
           }
         } finally {
           await WorkmanagerHelper.scheduleDailyNotification();
-        }
-      } else if (task == 'nextPrayerTaskUpdate') {
-        final nextPrayerName = inputData?['nextPrayerName'] as String?;
-        if (nextPrayerName != null) {
-          await WidgetHelper().updateWidgetNextPrayer(nextPrayerName);
         }
       }
       return true;
@@ -101,7 +96,6 @@ void main() async {
   await Workmanager().initialize(callbackDispatcher);
   await Workmanager().cancelAll();
   await WorkmanagerHelper.scheduleDailyNotification();
-  await WorkmanagerHelper.scheduleNextPrayerUpdate();
 
   // Load preferences
   final prefs = await SharedPreferences.getInstance();

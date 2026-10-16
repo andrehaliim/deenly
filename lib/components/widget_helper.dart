@@ -12,9 +12,9 @@ class WidgetHelper {
       'asr_time': prayerModel.asr,
       'maghrib_time': prayerModel.maghrib,
       'isha_time': prayerModel.isha,
-      'gregorian_date': DateFormat('dd MMM yyyy').format(
-        DateFormat('dd-MM-yyyy').parse(prayerModel.date),
-      ),
+      'gregorian_date': DateFormat(
+        'dd MMM yyyy',
+      ).format(DateFormat('dd-MM-yyyy').parse(prayerModel.date)),
       'hijri_date':
           '${prayerModel.hijriDate} '
           '${prayerModel.hijriMonth} '
@@ -43,11 +43,6 @@ class WidgetHelper {
       '${prayerName}_notification',
       isEnabled,
     );
-    await HomeWidget.updateWidget(name: 'DeenlyWidget');
-  }
-
-  Future<void> updateWidgetNextPrayer(String prayerName) async {
-    await HomeWidget.saveWidgetData<String>('next_prayer_name', prayerName);
     await HomeWidget.updateWidget(name: 'DeenlyWidget');
   }
 }
