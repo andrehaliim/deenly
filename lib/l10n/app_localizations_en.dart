@@ -270,4 +270,88 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splashTagline => 'A companion for the modern Muslim';
+
+  @override
+  String get permissionLocationTitle =>
+      'Enable location for accurate prayer times';
+
+  @override
+  String get permissionLocationSubtitle =>
+      'Deenly uses your location to calculate prayer times, find the Qibla and show mosques near you.';
+
+  @override
+  String get permissionReasonPrayerTitle => 'Accurate prayer times';
+
+  @override
+  String get permissionReasonPrayerBody =>
+      'Fajr to Isha times calculated for where you are.';
+
+  @override
+  String get permissionReasonQiblaTitle => 'Qibla direction';
+
+  @override
+  String get permissionReasonQiblaBody =>
+      'A compass pointing toward the Kaaba from your position.';
+
+  @override
+  String get permissionReasonMosqueTitle => 'Nearby mosques';
+
+  @override
+  String get permissionReasonMosqueBody =>
+      'Mosques within 2 km and how far they are from you.';
+
+  @override
+  String get permissionLocationPrivacy =>
+      'Your location is only used for prayer times, the Qibla and nearby mosques.';
+
+  @override
+  String get permissionAllowLocation => 'Allow location';
+
+  @override
+  String get permissionChooseCityManually => 'Choose city manually';
+
+  @override
+  String get permissionDeniedMessage =>
+      'Tap Allow location and choose Allow when asked, or choose your city manually.';
+
+  @override
+  String get permissionBlockedTitle => 'Location permission is blocked';
+
+  @override
+  String get permissionBlockedMessage =>
+      'Enable location for Deenly in your device settings, then return to the app.';
+
+  @override
+  String get permissionOpenSettings => 'Open settings';
+
+  @override
+  String get permissionNotificationTitle => 'Never miss a prayer';
+
+  @override
+  String get permissionNotificationSubtitle =>
+      'Allow notifications so Deenly can remind you when each prayer time begins.';
+
+  @override
+  String get permissionReasonAdhanTitle => 'Adhan notifications';
+
+  @override
+  String get permissionReasonAdhanBody =>
+      'A notification at the start of every prayer time.';
+
+  @override
+  String get permissionReasonReminderTitle => 'Prayer reminders';
+
+  @override
+  String get permissionReasonReminderBody =>
+      'An optional reminder 10 minutes before each prayer.';
+
+  @override
+  String get permissionNotificationHint =>
+      'You can change this anytime in Settings.';
+
+  @override
+  String get permissionAllowNotification => 'Allow notifications';
+
+  @override
+  String get permissionNotNow => 'Not now';
 }

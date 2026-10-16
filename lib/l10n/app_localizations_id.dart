@@ -270,4 +270,88 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get splashTagline => 'Teman ibadah Muslim modern';
+
+  @override
+  String get permissionLocationTitle =>
+      'Aktifkan lokasi untuk jadwal sholat yang akurat';
+
+  @override
+  String get permissionLocationSubtitle =>
+      'Deenly memakai lokasi Anda untuk menghitung jadwal sholat, menentukan arah kiblat, dan menampilkan masjid terdekat.';
+
+  @override
+  String get permissionReasonPrayerTitle => 'Jadwal sholat akurat';
+
+  @override
+  String get permissionReasonPrayerBody =>
+      'Waktu Subuh hingga Isya dihitung sesuai tempat Anda berada.';
+
+  @override
+  String get permissionReasonQiblaTitle => 'Arah kiblat';
+
+  @override
+  String get permissionReasonQiblaBody =>
+      'Kompas yang menunjuk ke arah Ka\'bah dari posisi Anda.';
+
+  @override
+  String get permissionReasonMosqueTitle => 'Masjid terdekat';
+
+  @override
+  String get permissionReasonMosqueBody =>
+      'Masjid dalam radius 2 km beserta jaraknya dari Anda.';
+
+  @override
+  String get permissionLocationPrivacy =>
+      'Lokasi Anda hanya dipakai untuk jadwal sholat, arah kiblat, dan masjid terdekat.';
+
+  @override
+  String get permissionAllowLocation => 'Izinkan lokasi';
+
+  @override
+  String get permissionChooseCityManually => 'Pilih kota secara manual';
+
+  @override
+  String get permissionDeniedMessage =>
+      'Ketuk Izinkan lokasi lalu pilih Izinkan saat diminta, atau pilih kota Anda secara manual.';
+
+  @override
+  String get permissionBlockedTitle => 'Izin lokasi diblokir';
+
+  @override
+  String get permissionBlockedMessage =>
+      'Aktifkan izin lokasi untuk Deenly di pengaturan perangkat, lalu kembali ke aplikasi.';
+
+  @override
+  String get permissionOpenSettings => 'Buka pengaturan';
+
+  @override
+  String get permissionNotificationTitle => 'Jangan lewatkan waktu sholat';
+
+  @override
+  String get permissionNotificationSubtitle =>
+      'Izinkan notifikasi agar Deenly dapat mengingatkan Anda saat waktu sholat tiba.';
+
+  @override
+  String get permissionReasonAdhanTitle => 'Notifikasi adzan';
+
+  @override
+  String get permissionReasonAdhanBody =>
+      'Notifikasi di awal setiap waktu sholat.';
+
+  @override
+  String get permissionReasonReminderTitle => 'Pengingat sholat';
+
+  @override
+  String get permissionReasonReminderBody =>
+      'Pengingat opsional 10 menit sebelum setiap waktu sholat.';
+
+  @override
+  String get permissionNotificationHint =>
+      'Anda bisa mengubahnya kapan saja di Pengaturan.';
+
+  @override
+  String get permissionAllowNotification => 'Izinkan notifikasi';
+
+  @override
+  String get permissionNotNow => 'Nanti saja';
 }

@@ -1,8 +1,9 @@
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/fade_page_route.dart';
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/pages/main_page.dart';
-import 'package:deenly/pages/no_location_page.dart';
+import 'package:deenly/pages/permission/permission_page.dart';
 import 'package:deenly/pages/splash/splash_loader_widget.dart';
 import 'package:deenly/pages/splash/splash_logo_widget.dart';
 import 'package:deenly/pages/splash/splash_text_widget.dart';
@@ -21,7 +22,7 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   static const _introDuration = Duration(milliseconds: 1600);
-  static const _totalSteps = 5;
+  static const _totalSteps = 4;
 
   final HadithProxy _hadithProxy = HadithProxy();
   final LocationProxy _locationProxy = LocationProxy();
@@ -49,7 +50,7 @@ class _SplashPageState extends State<SplashPage>
   Future<void> _start() async {
     // Keep the splash up until the intro animation has finished.
     final introDone = Future<void>.delayed(_introDuration);
-    final permission = await _loadData();
+    final nextPage = await _loadData();
     await introDone;
 
     // Let the progress bar finish filling up before leaving.
@@ -57,16 +58,9 @@ class _SplashPageState extends State<SplashPage>
 
     if (!mounted) return;
 
-    if (permission != true) {
-      debugPrint('🚫 Location permission denied, redirecting...');
-    }
-
     Navigator.pushReplacement(
       context,
-      FadePageRoute(
-        builder: (context) =>
-            permission == true ? const MainPage() : const NoLocationPage(),
-      ),
+      FadePageRoute(builder: (context) => nextPage),
     );
   }
 
@@ -75,30 +69,42 @@ class _SplashPageState extends State<SplashPage>
     setState(() => _completedSteps++);
   }
 
-  Future<bool?> _loadData() async {
-    debugPrint('🔄 [1/5] Starting _loadData...');
+  Future<Widget> _loadData() async {
+    debugPrint('🔄 [0/4] Starting _loadData...');
 
     await _hadithProxy.load();
     _completeStep();
-    debugPrint('✅ [2/5] Hadith loaded');
-
-    await NotificationHelper().requestPermission();
-    _completeStep();
-    debugPrint('✅ [3/5] Notification permission done');
-
-    bool? permission = await _locationProxy.requestPermission();
-    _completeStep();
-    debugPrint('✅ [4/5] Location permission result: $permission');
+    debugPrint('✅ [1/4] Hadith loaded');
 
     await DatabaseHelper.instance.seedSurahIfNeeded();
     _completeStep();
-    debugPrint('✅ [5/5] Surah seeded');
+    debugPrint('✅ [2/4] Surah seeded');
 
     await DatabaseHelper.instance.seedJuzIfNeeded();
     _completeStep();
-    debugPrint('✅ [6/6] Juz seeded');
+    debugPrint('✅ [3/4] Juz seeded');
 
-    return permission;
+    final nextPage = await _resolveNextPage();
+    _completeStep();
+    debugPrint('✅ [4/4] Permission status checked');
+
+    return nextPage;
+  }
+
+  /// Only checks the permission status; the system dialogs are shown on
+  /// [PermissionPage] together with an explanation.
+  Future<Widget> _resolveNextPage() async {
+    final hasLocation =
+        await _locationProxy.hasPermission() ||
+        await PrayerSyncHelper().hasSavedLocation();
+    final askNotification = await NotificationHelper().shouldAskPermission();
+
+    if (hasLocation && !askNotification) return const MainPage();
+
+    return PermissionPage(
+      askLocation: !hasLocation,
+      askNotification: askNotification,
+    );
   }
 
   @override

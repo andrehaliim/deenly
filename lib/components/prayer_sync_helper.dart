@@ -42,6 +42,12 @@ class PrayerSyncHelper {
     await _syncFromTimezone(prefs);
   }
 
+  Future<bool> hasSavedLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble(keyLatitude) != null &&
+        prefs.getDouble(keyLongitude) != null;
+  }
+
   Future<bool> setManualLocation(String cityName) async {
     final name = cityName.trim();
     if (name.isEmpty) return false;

@@ -21,6 +21,21 @@ class LocationProxy {
     return true;
   }
 
+  /// Checks the current status without showing the system dialog.
+  Future<LocationPermission> checkPermission() {
+    return Geolocator.checkPermission();
+  }
+
+  Future<bool> hasPermission() async {
+    final permission = await Geolocator.checkPermission();
+    return permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always;
+  }
+
+  Future<bool> openAppSettings() {
+    return Geolocator.openAppSettings();
+  }
+
   Future<bool> isLocationEnabled() async {
     return await Geolocator.isLocationServiceEnabled();
   }

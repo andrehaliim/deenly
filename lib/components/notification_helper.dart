@@ -50,6 +50,33 @@ class NotificationHelper {
     }
   }
 
+  static const String keyPermissionAsked = 'notificationPermissionAsked';
+
+  Future<bool> isPermissionGranted() async {
+    if (!Platform.isAndroid) return true;
+
+    final androidImplementation = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (androidImplementation == null) return true;
+
+    return await androidImplementation.areNotificationsEnabled() ?? false;
+  }
+
+  /// The onboarding prompt is shown only once; afterwards users manage
+  /// notifications from the settings page.
+  Future<bool> shouldAskPermission() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(keyPermissionAsked) ?? false) return false;
+    return !await isPermissionGranted();
+  }
+
+  Future<void> markPermissionAsked() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(keyPermissionAsked, true);
+  }
+
   Future<bool> requestPermission() async {
     if (Platform.isAndroid) {
       final androidImplementation = flutterLocalNotificationsPlugin

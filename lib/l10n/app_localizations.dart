@@ -583,6 +583,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A companion for the modern Muslim'**
   String get splashTagline;
+
+  /// No description provided for @permissionLocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable location for accurate prayer times'**
+  String get permissionLocationTitle;
+
+  /// No description provided for @permissionLocationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deenly uses your location to calculate prayer times, find the Qibla and show mosques near you.'**
+  String get permissionLocationSubtitle;
+
+  /// No description provided for @permissionReasonPrayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accurate prayer times'**
+  String get permissionReasonPrayerTitle;
+
+  /// No description provided for @permissionReasonPrayerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Fajr to Isha times calculated for where you are.'**
+  String get permissionReasonPrayerBody;
+
+  /// No description provided for @permissionReasonQiblaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Qibla direction'**
+  String get permissionReasonQiblaTitle;
+
+  /// No description provided for @permissionReasonQiblaBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A compass pointing toward the Kaaba from your position.'**
+  String get permissionReasonQiblaBody;
+
+  /// No description provided for @permissionReasonMosqueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby mosques'**
+  String get permissionReasonMosqueTitle;
+
+  /// No description provided for @permissionReasonMosqueBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mosques within 2 km and how far they are from you.'**
+  String get permissionReasonMosqueBody;
+
+  /// No description provided for @permissionLocationPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location is only used for prayer times, the Qibla and nearby mosques.'**
+  String get permissionLocationPrivacy;
+
+  /// No description provided for @permissionAllowLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location'**
+  String get permissionAllowLocation;
+
+  /// No description provided for @permissionChooseCityManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose city manually'**
+  String get permissionChooseCityManually;
+
+  /// No description provided for @permissionDeniedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Allow location and choose Allow when asked, or choose your city manually.'**
+  String get permissionDeniedMessage;
+
+  /// No description provided for @permissionBlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission is blocked'**
+  String get permissionBlockedTitle;
+
+  /// No description provided for @permissionBlockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable location for Deenly in your device settings, then return to the app.'**
+  String get permissionBlockedMessage;
+
+  /// No description provided for @permissionOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get permissionOpenSettings;
+
+  /// No description provided for @permissionNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Never miss a prayer'**
+  String get permissionNotificationTitle;
+
+  /// No description provided for @permissionNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications so Deenly can remind you when each prayer time begins.'**
+  String get permissionNotificationSubtitle;
+
+  /// No description provided for @permissionReasonAdhanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhan notifications'**
+  String get permissionReasonAdhanTitle;
+
+  /// No description provided for @permissionReasonAdhanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A notification at the start of every prayer time.'**
+  String get permissionReasonAdhanBody;
+
+  /// No description provided for @permissionReasonReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer reminders'**
+  String get permissionReasonReminderTitle;
+
+  /// No description provided for @permissionReasonReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'An optional reminder 10 minutes before each prayer.'**
+  String get permissionReasonReminderBody;
+
+  /// No description provided for @permissionNotificationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change this anytime in Settings.'**
+  String get permissionNotificationHint;
+
+  /// No description provided for @permissionAllowNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications'**
+  String get permissionAllowNotification;
+
+  /// No description provided for @permissionNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get permissionNotNow;
 }
 
 class _AppLocalizationsDelegate

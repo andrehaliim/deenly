@@ -157,5 +157,30 @@
     "mosqueLoadFailed": "Failed to load nearby mosques.",
 
     "appTitle": "Deenly",
-    "splashTagline": "A companion for the modern Muslim"
+    "splashTagline": "A companion for the modern Muslim",
+
+    "permissionLocationTitle": "Enable location for accurate prayer times",
+    "permissionLocationSubtitle": "Deenly uses your location to calculate prayer times, find the Qibla and show mosques near you.",
+    "permissionReasonPrayerTitle": "Accurate prayer times",
+    "permissionReasonPrayerBody": "Fajr to Isha times calculated for where you are.",
+    "permissionReasonQiblaTitle": "Qibla direction",
+    "permissionReasonQiblaBody": "A compass pointing toward the Kaaba from your position.",
+    "permissionReasonMosqueTitle": "Nearby mosques",
+    "permissionReasonMosqueBody": "Mosques within 2 km and how far they are from you.",
+    "permissionLocationPrivacy": "Your location is only used for prayer times, the Qibla and nearby mosques.",
+    "permissionAllowLocation": "Allow location",
+    "permissionChooseCityManually": "Choose city manually",
+    "permissionDeniedMessage": "Tap Allow location and choose Allow when asked, or choose your city manually.",
+    "permissionBlockedTitle": "Location permission is blocked",
+    "permissionBlockedMessage": "Enable location for Deenly in your device settings, then return to the app.",
+    "permissionOpenSettings": "Open settings",
+    "permissionNotificationTitle": "Never miss a prayer",
+    "permissionNotificationSubtitle": "Allow notifications so Deenly can remind you when each prayer time begins.",
+    "permissionReasonAdhanTitle": "Adhan notifications",
+    "permissionReasonAdhanBody": "A notification at the start of every prayer time.",
+    "permissionReasonReminderTitle": "Prayer reminders",
+    "permissionReasonReminderBody": "An optional reminder 10 minutes before each prayer.",
+    "permissionNotificationHint": "You can change this anytime in Settings.",
+    "permissionAllowNotification": "Allow notifications",
+    "permissionNotNow": "Not now"
 }

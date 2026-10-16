@@ -102,5 +102,30 @@
     "mosqueLoadFailed": "Gagal memuat masjid terdekat.",
 
     "appTitle": "Deenly",
-    "splashTagline": "Teman ibadah Muslim modern"
+    "splashTagline": "Teman ibadah Muslim modern",
+
+    "permissionLocationTitle": "Aktifkan lokasi untuk jadwal sholat yang akurat",
+    "permissionLocationSubtitle": "Deenly memakai lokasi Anda untuk menghitung jadwal sholat, menentukan arah kiblat, dan menampilkan masjid terdekat.",
+    "permissionReasonPrayerTitle": "Jadwal sholat akurat",
+    "permissionReasonPrayerBody": "Waktu Subuh hingga Isya dihitung sesuai tempat Anda berada.",
+    "permissionReasonQiblaTitle": "Arah kiblat",
+    "permissionReasonQiblaBody": "Kompas yang menunjuk ke arah Ka'bah dari posisi Anda.",
+    "permissionReasonMosqueTitle": "Masjid terdekat",
+    "permissionReasonMosqueBody": "Masjid dalam radius 2 km beserta jaraknya dari Anda.",
+    "permissionLocationPrivacy": "Lokasi Anda hanya dipakai untuk jadwal sholat, arah kiblat, dan masjid terdekat.",
+    "permissionAllowLocation": "Izinkan lokasi",
+    "permissionChooseCityManually": "Pilih kota secara manual",
+    "permissionDeniedMessage": "Ketuk Izinkan lokasi lalu pilih Izinkan saat diminta, atau pilih kota Anda secara manual.",
+    "permissionBlockedTitle": "Izin lokasi diblokir",
+    "permissionBlockedMessage": "Aktifkan izin lokasi untuk Deenly di pengaturan perangkat, lalu kembali ke aplikasi.",
+    "permissionOpenSettings": "Buka pengaturan",
+    "permissionNotificationTitle": "Jangan lewatkan waktu sholat",
+    "permissionNotificationSubtitle": "Izinkan notifikasi agar Deenly dapat mengingatkan Anda saat waktu sholat tiba.",
+    "permissionReasonAdhanTitle": "Notifikasi adzan",
+    "permissionReasonAdhanBody": "Notifikasi di awal setiap waktu sholat.",
+    "permissionReasonReminderTitle": "Pengingat sholat",
+    "permissionReasonReminderBody": "Pengingat opsional 10 menit sebelum setiap waktu sholat.",
+    "permissionNotificationHint": "Anda bisa mengubahnya kapan saja di Pengaturan.",
+    "permissionAllowNotification": "Izinkan notifikasi",
+    "permissionNotNow": "Nanti saja"
 }
