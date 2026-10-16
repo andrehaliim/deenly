@@ -42,7 +42,16 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<void> loadPrayerData(bool isInit) async {
-    setState(() => _isGettingPrayerData = true);
+    if (isInit) {
+      /// Show cached times right away; the sync below refreshes them in the
+      /// background. The skeleton stays only when there is no cache yet.
+      await _readCachedPrayerData();
+      if (mounted && _prayerModel != null) {
+        setState(() => _isGettingPrayerData = false);
+      }
+    } else {
+      setState(() => _isGettingPrayerData = true);
+    }
 
     try {
       await PrayerSyncHelper().sync();
@@ -55,26 +64,37 @@ class HomePageState extends State<HomePage> {
 
   Future<void> _loadCachedPrayerData() async {
     try {
+      await _readCachedPrayerData();
+    } finally {
+      if (mounted) setState(() => _isGettingPrayerData = false);
+    }
+
+    final prayerModel = _prayerModel;
+    if (prayerModel != null) await _updateWidgetAndNotifications(prayerModel);
+  }
+
+  Future<void> _readCachedPrayerData() async {
+    try {
       final prefs = await SharedPreferences.getInstance();
       _location = prefs.getString(PrayerSyncHelper.keyLocationName);
       _isApproximate = prefs.getBool(PrayerSyncHelper.keyApproximate) ?? false;
-
-      final prayerModel = await _prayerProxy.getTodayPrayer();
-      _prayerModel = prayerModel;
-
-      if (prayerModel != null) {
-        await Future.wait([
-          WidgetHelper().updateWidgetLocation(),
-          WidgetHelper().updateWidgetPrayer(prayerModel),
-        ]);
-        final notificationHelper = NotificationHelper();
-        await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
-        await notificationHelper.scheduleReminderNotifications(prayerModel);
-      }
+      _prayerModel = await _prayerProxy.getTodayPrayer();
     } catch (e, st) {
-      debugPrint('loadPrayerData failed: $e\n$st');
-    } finally {
-      if (mounted) setState(() => _isGettingPrayerData = false);
+      debugPrint('Reading cached prayer data failed: $e\n$st');
+    }
+  }
+
+  Future<void> _updateWidgetAndNotifications(PrayerModel prayerModel) async {
+    try {
+      await Future.wait([
+        WidgetHelper().updateWidgetLocation(),
+        WidgetHelper().updateWidgetPrayer(prayerModel),
+      ]);
+      final notificationHelper = NotificationHelper();
+      await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
+      await notificationHelper.scheduleReminderNotifications(prayerModel);
+    } catch (e, st) {
+      debugPrint('Updating widget/notifications failed: $e\n$st');
     }
   }
 
