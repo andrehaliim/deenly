@@ -1,4 +1,5 @@
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/components/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
 
@@ -118,18 +119,21 @@ class _TasbihPageState extends State<TasbihPage>
                       child: Center(
                         child: AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 200),
-                          style: Theme.of(context).textTheme.titleLarge!
-                              .copyWith(
-                                color: isSelected
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(
-                                        context,
-                                      ).hintColor.withValues(alpha: 0.3),
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                fontSize: isSelected ? 22 : 16,
-                              ),
+                          style:
+                              (isSelected
+                                      ? Theme.of(context).textTheme.titleLarge
+                                      : Theme.of(context).textTheme.titleMedium)
+                                  ?.copyWith(
+                                    color: isSelected
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(
+                                            context,
+                                          ).hintColor.withValues(alpha: 0.3),
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ) ??
+                              const TextStyle(),
                           child: Text(value, textAlign: TextAlign.center),
                         ),
                       ),
@@ -173,10 +177,10 @@ class _TasbihPageState extends State<TasbihPage>
                       children: [
                         Text(
                           currentCount.toString(),
-                          style: Theme.of(context).textTheme.displayLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 80,
+                          style: Theme.of(context)
+                              .extension<AppTextStyles>()
+                              ?.counter
+                              .copyWith(
                                 color: Theme.of(context).colorScheme.onPrimary,
                               ),
                         ),

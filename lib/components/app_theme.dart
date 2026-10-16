@@ -1,42 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// ========================================
-/// 🎨 CUSTOM COLOR EXTENSION (IMPORTANT)
-/// ========================================
+/// Text styles that fall outside the Material [TextTheme] roles.
 @immutable
-class AppColors extends ThemeExtension<AppColors> {
-  final Color surfaceLow;
-  final Color surfaceLowest;
-  final Color surfaceHighest;
+class AppTextStyles extends ThemeExtension<AppTextStyles> {
+  final TextStyle brandTitle;
+  final TextStyle counter;
 
-  const AppColors({
-    required this.surfaceLow,
-    required this.surfaceLowest,
-    required this.surfaceHighest,
-  });
+  const AppTextStyles({required this.brandTitle, required this.counter});
 
   @override
-  AppColors copyWith({
-    Color? surfaceLow,
-    Color? surfaceLowest,
-    Color? surfaceHighest,
-  }) {
-    return AppColors(
-      surfaceLow: surfaceLow ?? this.surfaceLow,
-      surfaceLowest: surfaceLowest ?? this.surfaceLowest,
-      surfaceHighest: surfaceHighest ?? this.surfaceHighest,
+  AppTextStyles copyWith({TextStyle? brandTitle, TextStyle? counter}) {
+    return AppTextStyles(
+      brandTitle: brandTitle ?? this.brandTitle,
+      counter: counter ?? this.counter,
     );
   }
 
   @override
-  AppColors lerp(ThemeExtension<AppColors>? other, double t) {
-    if (other is! AppColors) return this;
+  AppTextStyles lerp(ThemeExtension<AppTextStyles>? other, double t) {
+    if (other is! AppTextStyles) return this;
 
-    return AppColors(
-      surfaceLow: Color.lerp(surfaceLow, other.surfaceLow, t)!,
-      surfaceLowest: Color.lerp(surfaceLowest, other.surfaceLowest, t)!,
-      surfaceHighest: Color.lerp(surfaceHighest, other.surfaceHighest, t)!,
+    return AppTextStyles(
+      brandTitle: TextStyle.lerp(brandTitle, other.brandTitle, t) ?? brandTitle,
+      counter: TextStyle.lerp(counter, other.counter, t) ?? counter,
     );
   }
 }
@@ -45,6 +32,18 @@ class AppColors extends ThemeExtension<AppColors> {
 /// 🎨 APP THEME
 /// ========================================
 class AppTheme {
+  static AppTextStyles _brandTextStyles(Color color) {
+    return AppTextStyles(
+      brandTitle: GoogleFonts.notoSerif(
+        color: color,
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ),
+      counter: GoogleFonts.manrope(fontSize: 80, fontWeight: FontWeight.bold),
+    );
+  }
+
   /// ---------- LIGHT COLORS ----------
   static const _lightPrimary = Color(0xFF004D40);
   static const _lightSecondary = Color(0xFFC5A059);
@@ -64,6 +63,7 @@ class AppTheme {
   static const _lightOnSurfaceVariant = Color(0xFF3F4946);
   static const _lightOutline = Color(0xFF707974);
   static const _lightOutlineVariant = Color(0xFFBFC9C4);
+  static const _lightError = Color(0xFFBA1A1A);
 
   /// ---------- FIXED COLORS (same in light and dark) ----------
   static const _primaryFixed = Color(0xFFE0F2F1);
@@ -94,6 +94,7 @@ class AppTheme {
   static const _darkOnSurfaceVariant = Color(0xFFBFC9C4);
   static const _darkOutline = Color(0xFF89938E);
   static const _darkOutlineVariant = Color(0xFF3F4946);
+  static const _darkError = Color(0xFFFFB4AB);
 
   /// ========================================
   /// 🌞 LIGHT THEME
@@ -138,7 +139,7 @@ class AppTheme {
       surfaceContainer: _lightSurfaceContainer,
       surfaceContainerHigh: _lightSurfaceHigh,
       surfaceContainerHighest: _lightSurfaceHighest,
-      error: Colors.red,
+      error: _lightError,
       onError: Colors.white,
       errorContainer: Color(0xFFFFDAD6),
       onErrorContainer: Color(0xFF410002),
@@ -155,14 +156,7 @@ class AppTheme {
 
     scaffoldBackgroundColor: _lightSurface,
 
-    /// Extensions (YOUR DESIGN TOKENS)
-    extensions: const [
-      AppColors(
-        surfaceLow: _lightSurfaceLow,
-        surfaceLowest: _lightSurfaceLowest,
-        surfaceHighest: _lightSurfaceHighest,
-      ),
-    ],
+    extensions: [_brandTextStyles(_lightPrimary)],
 
     /// AppBar
     appBarTheme: const AppBarTheme(
@@ -188,8 +182,6 @@ class AppTheme {
     /// Buttons
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: _lightPrimary,
-        foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     ),
@@ -237,8 +229,8 @@ class AppTheme {
       surfaceContainer: _darkSurfaceContainer,
       surfaceContainerHigh: _darkSurfaceHigh,
       surfaceContainerHighest: _darkSurfaceHighest,
-      error: Colors.red,
-      onError: Colors.white,
+      error: _darkError,
+      onError: Color(0xFF690005),
       errorContainer: Color(0xFF93000A),
       onErrorContainer: Color(0xFFFFDAD6),
       outline: _darkOutline,
@@ -254,13 +246,7 @@ class AppTheme {
 
     scaffoldBackgroundColor: _darkSurface,
 
-    extensions: const [
-      AppColors(
-        surfaceLow: _darkSurfaceLow,
-        surfaceLowest: _darkSurfaceLowest,
-        surfaceHighest: _darkSurfaceHighest,
-      ),
-    ],
+    extensions: [_brandTextStyles(_darkPrimary)],
 
     appBarTheme: const AppBarTheme(
       backgroundColor: _darkSurface,
@@ -283,8 +269,6 @@ class AppTheme {
 
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: _darkPrimary,
-        foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     ),

@@ -6,7 +6,7 @@ import 'package:deenly/pages/qibla_page.dart';
 import 'package:deenly/pages/quran/quran_page.dart';
 import 'package:deenly/pages/tasbih_page.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:deenly/components/app_theme.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -28,12 +28,7 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: Text(
           'Deenly',
-          style: GoogleFonts.notoSerif(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            fontStyle: FontStyle.italic,
-          ),
+          style: Theme.of(context).extension<AppTextStyles>()?.brandTitle,
         ),
         surfaceTintColor: Colors.transparent,
         elevation: 0,

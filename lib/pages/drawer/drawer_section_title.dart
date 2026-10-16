@@ -13,9 +13,8 @@ class DrawerSectionTitle extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Text(
         title,
-        style: TextStyle(
+        style: theme.textTheme.labelMedium?.copyWith(
           color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-          fontSize: theme.textTheme.labelMedium?.fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),

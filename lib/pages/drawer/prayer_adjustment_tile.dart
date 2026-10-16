@@ -16,9 +16,8 @@ class PrayerAdjustmentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final textStyle = TextStyle(
+    final textStyle = theme.textTheme.bodyLarge?.copyWith(
       color: theme.colorScheme.onSurface,
-      fontSize: theme.textTheme.bodyLarge?.fontSize,
       fontWeight: FontWeight.bold,
     );
 

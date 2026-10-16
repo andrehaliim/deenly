@@ -69,8 +69,7 @@ class CustomBottomNav extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       items[index]['label'] as String,
-                      style: TextStyle(
-                        fontSize: 11,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
                             ? Theme.of(context).colorScheme.onPrimary

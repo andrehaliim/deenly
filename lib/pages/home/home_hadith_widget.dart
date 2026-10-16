@@ -162,7 +162,7 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
 
     final textStyle = DefaultTextStyle.of(context).style.merge(
       GoogleFonts.notoSerif(
-        fontSize: theme.textTheme.bodyMedium?.fontSize,
+        textStyle: theme.textTheme.bodyMedium,
         color: colorScheme.onPrimary,
         fontStyle: FontStyle.italic,
       ),

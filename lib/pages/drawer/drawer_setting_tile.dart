@@ -42,9 +42,8 @@ class DrawerSettingTile extends StatelessWidget {
                     Flexible(
                       child: Text(
                         title,
-                        style: TextStyle(
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSurface,
-                          fontSize: theme.textTheme.bodyLarge?.fontSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

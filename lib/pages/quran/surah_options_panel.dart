@@ -61,8 +61,7 @@ class SurahOptionsPanel extends StatelessWidget {
                         : Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: Text(
                       '${item.id}',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: isSelected
                             ? Theme.of(context).colorScheme.onPrimary
                             : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -80,7 +79,7 @@ class SurahOptionsPanel extends StatelessWidget {
                   trailing: Text(
                     item.nameArab,
                     style: GoogleFonts.notoNaskhArabic(
-                      fontSize: 16,
+                      textStyle: Theme.of(context).textTheme.titleMedium,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.primary,
                     ),

@@ -229,10 +229,21 @@ class _QiblaPageState extends State<QiblaPage>
                         child: CustomPaint(
                           painter: CompassDialPainter(
                             tickColor: Theme.of(context).colorScheme.onPrimary,
-                            northColor: Theme.of(context).colorScheme.secondary,
-                            labelColor: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary.withValues(alpha: 0.7),
+                            northStyle: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                ),
+                            labelStyle: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.onPrimary
+                                      .withValues(alpha: 0.7),
+                                ),
                           ),
                           size: const Size(320, 320),
                         ),
@@ -366,13 +377,13 @@ class _QiblaPageState extends State<QiblaPage>
 class CompassDialPainter extends CustomPainter {
   CompassDialPainter({
     required this.tickColor,
-    required this.northColor,
-    required this.labelColor,
+    required this.northStyle,
+    required this.labelStyle,
   });
 
   final Color tickColor;
-  final Color northColor;
-  final Color labelColor;
+  final TextStyle? northStyle;
+  final TextStyle? labelStyle;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -417,11 +428,7 @@ class CompassDialPainter extends CustomPainter {
     void drawText(String text, double angle) {
       textPainter.text = TextSpan(
         text: text,
-        style: TextStyle(
-          color: text == 'N' ? northColor : labelColor,
-          fontWeight: text == 'N' ? FontWeight.bold : FontWeight.w500,
-          fontSize: text == 'N' ? 24 : 18,
-        ),
+        style: text == 'N' ? northStyle : labelStyle,
       );
       textPainter.layout();
 
@@ -452,6 +459,6 @@ class CompassDialPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CompassDialPainter oldDelegate) =>
       oldDelegate.tickColor != tickColor ||
-      oldDelegate.northColor != northColor ||
-      oldDelegate.labelColor != labelColor;
+      oldDelegate.northStyle != northStyle ||
+      oldDelegate.labelStyle != labelStyle;
 }

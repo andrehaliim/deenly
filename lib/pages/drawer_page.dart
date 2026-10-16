@@ -12,7 +12,7 @@ import 'package:deenly/pages/drawer/prayer_adjustment_tile.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:deenly/components/app_theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -80,12 +80,9 @@ class _DrawerPageState extends State<DrawerPage> {
               Center(
                 child: Text(
                   l10n.menuSetting,
-                  style: GoogleFonts.notoSerif(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    fontStyle: FontStyle.italic,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).extension<AppTextStyles>()?.brandTitle,
                 ),
               ),
               const SizedBox(height: 20),
@@ -290,9 +287,8 @@ class _DrawerPageState extends State<DrawerPage> {
             ? const CircularProgressIndicator()
             : Text(
                 AppLocalizations.of(context)!.settingSaveButton,
-                style: TextStyle(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: colorScheme.onPrimary,
-                  fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -312,9 +308,8 @@ class _DrawerPageState extends State<DrawerPage> {
         onPressed: onPressed,
         child: Text(
           label,
-          style: TextStyle(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: colorScheme.onPrimary,
-            fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -326,9 +321,8 @@ class _DrawerPageState extends State<DrawerPage> {
     return Center(
       child: Text(
         text,
-        style: TextStyle(
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
           color: Theme.of(context).colorScheme.primary,
-          fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),

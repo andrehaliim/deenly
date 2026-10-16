@@ -218,8 +218,7 @@ class _MosquePageState extends State<MosquePage> {
                 children: [
                   Text(
                     mosque.name,
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
@@ -235,8 +234,7 @@ class _MosquePageState extends State<MosquePage> {
                       const SizedBox(width: 4),
                       Text(
                         _formatDistance(mosque.distance),
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: Theme.of(context).colorScheme.onPrimary,
                         ),
@@ -260,20 +258,19 @@ class _MosquePageState extends State<MosquePage> {
                         const SizedBox(width: 8),
                         Text(
                           AppLocalizations.of(context)!.mosqueLoadAddress,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary.withValues(alpha: 0.5),
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimary.withValues(alpha: 0.5),
+                              ),
                         ),
                       ],
                     )
                   else
                     Text(
                       mosque.address ?? 'error',
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                         height: 1.4,
                       ),

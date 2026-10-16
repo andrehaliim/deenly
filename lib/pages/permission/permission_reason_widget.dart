@@ -1,4 +1,3 @@
-import 'package:deenly/components/app_theme.dart';
 import 'package:flutter/material.dart';
 
 /// A single "why we need this" row explaining the value of a permission.
@@ -20,7 +19,6 @@ class PermissionReasonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final appColors = theme.extension<AppColors>();
 
     final iconBackground = highlight
         ? colorScheme.secondaryContainer
@@ -32,7 +30,7 @@ class PermissionReasonWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: appColors?.surfaceLow ?? colorScheme.surfaceContainerLow,
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(

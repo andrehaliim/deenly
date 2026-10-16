@@ -91,11 +91,15 @@ class _SurahDetailListState extends State<SurahDetailList> {
   Future<void> _saveLastAyah(int? index) async {
     if (index == null) return;
     final db = await DatabaseHelper.instance.database;
-    await db.insert(DatabaseHelper.tableContinueReading, {
-      'surah_id': widget.surah.id,
-      'ayah_number': index,
-      'updatedAt': DateTime.now().toIso8601String(),
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+      DatabaseHelper.tableContinueReading,
+      {
+        'surah_id': widget.surah.id,
+        'ayah_number': index,
+        'updatedAt': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   void _loadLastPosition() {
@@ -330,9 +334,9 @@ class _SurahDetailListState extends State<SurahDetailList> {
                               data.textAr,
                               textAlign: TextAlign.right,
                               style: GoogleFonts.notoNaskhArabic(
-                                fontSize: Theme.of(
+                                textStyle: Theme.of(
                                   context,
-                                ).textTheme.headlineMedium?.fontSize,
+                                ).textTheme.headlineMedium,
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).colorScheme.onTertiary,
                               ),
@@ -435,7 +439,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
           Text(
             'بِسْمِ ٱللّٰهِ الرَّحْمَٰنِ الرَّحِيمِ',
             style: GoogleFonts.notoNaskhArabic(
-              fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
+              textStyle: Theme.of(context).textTheme.headlineSmall,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onPrimary,
             ),

@@ -1,4 +1,3 @@
-import 'package:deenly/components/app_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Illustration at the top of a permission step: a main icon with a small
@@ -44,13 +43,12 @@ class _PermissionHeroWidgetState extends State<PermissionHeroWidget>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final appColors = theme.extension<AppColors>();
 
     return Container(
       height: 168,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: appColors?.surfaceLow ?? colorScheme.surfaceContainerLow,
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Stack(
@@ -104,7 +102,7 @@ class _PermissionHeroWidgetState extends State<PermissionHeroWidget>
                       shape: BoxShape.circle,
                       color: colorScheme.secondary,
                       border: Border.all(
-                        color: appColors?.surfaceLow ?? colorScheme.surface,
+                        color: colorScheme.surfaceContainerLow,
                         width: 3,
                       ),
                     ),
