@@ -13,6 +13,7 @@ import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import es.antonborri.home_widget.HomeWidgetPlugin
 import java.util.Calendar
+import java.util.Locale
 
 class DeenlyWidget : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -20,8 +21,7 @@ class DeenlyWidget : AppWidgetProvider() {
         when (intent.action) {
             ACTION_REFRESH_NEXT_PRAYER,
             Intent.ACTION_TIME_CHANGED,
-            Intent.ACTION_TIMEZONE_CHANGED,
-            Intent.ACTION_DATE_CHANGED -> refreshAll(context)
+            Intent.ACTION_TIMEZONE_CHANGED -> refreshAll(context)
         }
     }
 
@@ -37,22 +37,30 @@ class DeenlyWidget : AppWidgetProvider() {
             appWidgetIds: IntArray
     ) {
         val prefs = HomeWidgetPlugin.getData(context)
-        val nextPrayer = findNextPrayer(prefs, Calendar.getInstance())
+        val now = Calendar.getInstance()
+        val day = currentDayPrefix(prefs, now)
+        val nextPrayer = findNextPrayer(prefs, day, now)
 
         for (widgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.deenly_widget)
 
             // Prayer times
-            views.setTextViewText(R.id.fajr_time, prefs.getString("fajr_time", "--:--"))
-            views.setTextViewText(R.id.dhuhr_time, prefs.getString("dhuhr_time", "--:--"))
-            views.setTextViewText(R.id.asr_time, prefs.getString("asr_time", "--:--"))
-            views.setTextViewText(R.id.maghrib_time, prefs.getString("maghrib_time", "--:--"))
-            views.setTextViewText(R.id.isha_time, prefs.getString("isha_time", "--:--"))
+            views.setTextViewText(R.id.fajr_time, prefs.getString("${day}fajr_time", "--:--"))
+            views.setTextViewText(R.id.dhuhr_time, prefs.getString("${day}dhuhr_time", "--:--"))
+            views.setTextViewText(R.id.asr_time, prefs.getString("${day}asr_time", "--:--"))
+            views.setTextViewText(
+                    R.id.maghrib_time,
+                    prefs.getString("${day}maghrib_time", "--:--")
+            )
+            views.setTextViewText(R.id.isha_time, prefs.getString("${day}isha_time", "--:--"))
             views.setTextViewText(
                     R.id.gregorian_date,
-                    prefs.getString("gregorian_date", "Error gregorian")
+                    prefs.getString("${day}gregorian_date", "Error gregorian")
             )
-            views.setTextViewText(R.id.hijri_date, prefs.getString("hijri_date", "Error Hijri"))
+            views.setTextViewText(
+                    R.id.hijri_date,
+                    prefs.getString("${day}hijri_date", "Error Hijri")
+            )
             views.setTextViewText(R.id.location, prefs.getString("location", "Error location"))
 
             // 🔔 Notification icons
@@ -149,7 +157,8 @@ class DeenlyWidget : AppWidgetProvider() {
             appWidgetManager.updateAppWidget(widgetId, views)
         }
 
-        scheduleNextRefresh(context, nextPrayer)
+        val midnight = startOfDay(now, 1).timeInMillis
+        scheduleNextRefresh(context, minOf(nextPrayer?.triggerAtMillis ?: midnight, midnight))
     }
 
     private data class NextPrayer(val name: String, val triggerAtMillis: Long)
@@ -160,6 +169,10 @@ class DeenlyWidget : AppWidgetProvider() {
         private const val REFRESH_REQUEST_CODE = 1001
 
         private val PRAYER_NAMES = listOf("fajr", "dhuhr", "asr", "maghrib", "isha")
+
+        /** Key prefixes written by WidgetHelper.updateWidgetPrayer. */
+        private const val TODAY = ""
+        private const val TOMORROW = "tomorrow_"
 
         private fun refreshAll(context: Context) {
             val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -172,36 +185,58 @@ class DeenlyWidget : AppWidgetProvider() {
             }
         }
 
-        /**
-         * Returns the first prayer whose time is still ahead of [now], or
-         * tomorrow's Fajr once Isha has passed. Mirrors
-         * PrayerProxy.getNextPrayer on the Flutter side.
-         */
-        private fun findNextPrayer(prefs: SharedPreferences, now: Calendar): NextPrayer? {
+        private fun startOfDay(now: Calendar, daysFromNow: Int): Calendar =
+                (now.clone() as Calendar).apply {
+                    add(Calendar.DAY_OF_MONTH, daysFromNow)
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+
+        /** Same 'dd-MM-yyyy' format as PrayerModel.date. */
+        private fun dateKey(day: Calendar): String =
+                String.format(
+                        Locale.US,
+                        "%02d-%02d-%04d",
+                        day.get(Calendar.DAY_OF_MONTH),
+                        day.get(Calendar.MONTH) + 1,
+                        day.get(Calendar.YEAR)
+                )
+
+        /** Tomorrow's copy once the date rolled over before the app refreshed. */
+        private fun currentDayPrefix(prefs: SharedPreferences, now: Calendar): String =
+                if (prefs.getString("${TOMORROW}date", null) == dateKey(now)) TOMORROW else TODAY
+
+        /** Mirrors PrayerProxy.getNextPrayer on the Flutter side. */
+        private fun findNextPrayer(
+                prefs: SharedPreferences,
+                day: String,
+                now: Calendar
+        ): NextPrayer? {
+            val today = startOfDay(now, 0)
             for (name in PRAYER_NAMES) {
-                val time = prayerTimeToday(prefs, name, now) ?: continue
+                val time = prayerTimeOn(prefs, "$day${name}_time", today) ?: continue
                 if (time.after(now)) return NextPrayer(name, time.timeInMillis)
             }
-            val fajr = prayerTimeToday(prefs, "fajr", now) ?: return null
-            fajr.add(Calendar.DAY_OF_MONTH, 1)
+
+            val tomorrow = startOfDay(now, 1)
+            val hasTomorrow =
+                    day == TODAY && prefs.getString("${TOMORROW}date", null) == dateKey(tomorrow)
+            val fajrKey = if (hasTomorrow) "${TOMORROW}fajr_time" else "${day}fajr_time"
+            val fajr = prayerTimeOn(prefs, fajrKey, tomorrow) ?: return null
             return NextPrayer("fajr", fajr.timeInMillis)
         }
 
-        private fun prayerTimeToday(
-                prefs: SharedPreferences,
-                name: String,
-                now: Calendar
-        ): Calendar? {
-            val parts = prefs.getString("${name}_time", null)?.split(":") ?: return null
+        private fun prayerTimeOn(prefs: SharedPreferences, key: String, day: Calendar): Calendar? {
+            val parts = prefs.getString(key, null)?.split(":") ?: return null
             if (parts.size != 2) return null
             val hour = parts[0].trim().toIntOrNull() ?: return null
             val minute = parts[1].trim().toIntOrNull() ?: return null
 
-            return (now.clone() as Calendar).apply {
+            return (day.clone() as Calendar).apply {
                 set(Calendar.HOUR_OF_DAY, hour)
                 set(Calendar.MINUTE, minute)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
             }
         }
 
@@ -218,15 +253,10 @@ class DeenlyWidget : AppWidgetProvider() {
             )
         }
 
-        /** Wakes the widget up right when the next prayer time arrives. */
-        private fun scheduleNextRefresh(context: Context, nextPrayer: NextPrayer?) {
+        /** Called with the next prayer or midnight, whichever is first. */
+        private fun scheduleNextRefresh(context: Context, triggerAtMillis: Long) {
             val alarmManager = context.getSystemService(AlarmManager::class.java) ?: return
             val pendingIntent = refreshPendingIntent(context)
-
-            if (nextPrayer == null) {
-                alarmManager.cancel(pendingIntent)
-                return
-            }
 
             val canExact =
                     Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
@@ -235,13 +265,13 @@ class DeenlyWidget : AppWidgetProvider() {
             if (canExact) {
                 alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
-                        nextPrayer.triggerAtMillis,
+                        triggerAtMillis,
                         pendingIntent
                 )
             } else {
                 alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
-                        nextPrayer.triggerAtMillis,
+                        triggerAtMillis,
                         pendingIntent
                 )
             }

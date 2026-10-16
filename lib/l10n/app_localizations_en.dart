@@ -236,6 +236,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderEnableFailed => 'Could not enable reminder';
 
   @override
+  String get adjustmentSaveFailed => 'Failed to save prayer time adjustments';
+
+  @override
   String get notificationAdhanTitle => 'Adhan Reminder';
 
   @override

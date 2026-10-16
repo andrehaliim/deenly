@@ -131,6 +131,7 @@
     "couldNotOpenLink": "Could not open the link.",
     "notificationScheduleFailed": "Failed to schedule notification",
     "reminderEnableFailed": "Could not enable reminder",
+    "adjustmentSaveFailed": "Failed to save prayer time adjustments",
     "notificationAdhanTitle": "Adhan Reminder",
     "notificationAdhanBody": "It is time for {prayer} prayer",
     "@notificationAdhanBody": {

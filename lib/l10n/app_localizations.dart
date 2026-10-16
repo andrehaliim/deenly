@@ -524,6 +524,12 @@ abstract class AppLocalizations {
   /// **'Could not enable reminder'**
   String get reminderEnableFailed;
 
+  /// No description provided for @adjustmentSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save prayer time adjustments'**
+  String get adjustmentSaveFailed;
+
   /// No description provided for @notificationAdhanTitle.
   ///
   /// In en, this message translates to:

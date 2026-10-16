@@ -92,6 +92,7 @@
     "couldNotOpenLink": "Tidak dapat membuka tautan.",
     "notificationScheduleFailed": "Gagal menjadwalkan notifikasi",
     "reminderEnableFailed": "Tidak dapat mengaktifkan pengingat",
+    "adjustmentSaveFailed": "Gagal menyimpan penyesuaian waktu sholat",
     "notificationAdhanTitle": "Pengingat Adzan",
     "notificationAdhanBody": "Sudah masuk waktu shalat {prayer}",
     "notificationReminderTitle": "Pengingat Shalat",

@@ -41,7 +41,7 @@ class HadithProxy {
     try {
       WidgetsFlutterBinding.ensureInitialized();
       final raw = await rootBundle.loadString(_assetPath);
-      return compute(_parse, raw);
+      return await compute(_parse, raw);
     } catch (e) {
       throw HadithException('Failed to load asset "$_assetPath": $e');
     }
@@ -50,8 +50,7 @@ class HadithProxy {
   static List<HadithModel> _parse(String raw) {
     try {
       final decoded = json.decode(raw) as Map<String, dynamic>;
-      final data = (decoded['data'] as List)
-          .cast<Map<String, dynamic>>();
+      final data = (decoded['data'] as List).cast<Map<String, dynamic>>();
       return data.map(HadithModel.fromJson).toList();
     } catch (e) {
       throw HadithException('Failed to parse hadiths JSON: $e');

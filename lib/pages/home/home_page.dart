@@ -66,9 +66,10 @@ class HomePageState extends State<HomePage> {
         await Future.wait([
           WidgetHelper().updateWidgetLocation(),
           WidgetHelper().updateWidgetPrayer(prayerModel),
-          NotificationHelper().scheduleAllPrayerNotifications(prayerModel),
-          NotificationHelper().scheduleReminderNotifications(prayerModel),
         ]);
+        final notificationHelper = NotificationHelper();
+        await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
+        await notificationHelper.scheduleReminderNotifications(prayerModel);
       }
     } catch (e, st) {
       debugPrint('loadPrayerData failed: $e\n$st');

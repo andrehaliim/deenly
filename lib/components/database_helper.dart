@@ -5,11 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseHelper {
   static const String tableSurah = 'surah';
   static const String tableSurahDetail = 'surah_detail';
   static const String tablePrayer = 'prayer';
+  static const String tablePrayerAdjustment = 'prayer_adjustment';
   static const String tableHadith = 'hadith';
   static const String tableJuz = 'juz';
   static const String tableContinueReading = 'continue_reading';
@@ -31,7 +33,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -76,6 +78,8 @@ class DatabaseHelper {
         hijriYear TEXT
       )
     ''');
+
+    await _createPrayerAdjustmentTable(db);
 
     await db.execute('''
       CREATE TABLE $tableHadith(
@@ -183,16 +187,48 @@ class DatabaseHelper {
       }
 
       for (final row in uniqueRows.values) {
-        await db.insert(
-          tableContinueReading,
-          {
-            'surah_id': row['surah_id'],
-            'ayah_number': row['ayah_number'],
-            'updatedAt': row['updatedAt'],
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
+        await db.insert(tableContinueReading, {
+          'surah_id': row['surah_id'],
+          'ayah_number': row['ayah_number'],
+          'updatedAt': row['updatedAt'],
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
       }
+    }
+
+    if (oldVersion < 8) {
+      await _createPrayerAdjustmentTable(db);
+      await _migratePrayerAdjustmentsFromPrefs(db);
+    }
+  }
+
+  /// Kept in the database so it is updated in the same transaction as the
+  /// prayer times it was applied to.
+  Future<void> _createPrayerAdjustmentTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $tablePrayerAdjustment(
+        prayer TEXT PRIMARY KEY,
+        minutes INTEGER NOT NULL
+      )
+    ''');
+  }
+
+  Future<void> _migratePrayerAdjustmentsFromPrefs(Database db) async {
+    final prefs = await SharedPreferences.getInstance();
+    const legacyKeys = {
+      'Fajr': 'fajrAdjustment',
+      'Dhuhr': 'dhuhrAdjustment',
+      'Asr': 'asrAdjustment',
+      'Maghrib': 'maghribAdjustment',
+      'Isha': 'ishAdjustment',
+    };
+
+    for (final entry in legacyKeys.entries) {
+      final minutes = prefs.getInt(entry.value);
+      if (minutes == null) continue;
+      await db.insert(tablePrayerAdjustment, {
+        'prayer': entry.key,
+        'minutes': minutes,
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
 

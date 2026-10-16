@@ -27,7 +27,8 @@ class DrawerProvider extends ChangeNotifier {
   bool _isReminderEnabled = false;
   bool get isReminderEnabled => _isReminderEnabled;
 
-  DrawerProvider(this.prefs) {
+  DrawerProvider(this.prefs, Map<String, int> adjustments) {
+    _adjustments.addAll(adjustments);
     _loadSettings();
   }
 
@@ -43,8 +44,6 @@ class DrawerProvider extends ChangeNotifier {
   void _loadSettings() {
     for (final prayer in prayers) {
       _enabled[prayer] = prefs.getBool(_enabledKey(prayer)) ?? false;
-      _adjustments[prayer] =
-          prefs.getInt(PrayerProxy.adjustmentKey(prayer)) ?? 0;
     }
 
     _isReminderEnabled = prefs.getBool('isReminderEnabled') ?? false;

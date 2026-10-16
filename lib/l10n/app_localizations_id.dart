@@ -236,6 +236,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get reminderEnableFailed => 'Tidak dapat mengaktifkan pengingat';
 
   @override
+  String get adjustmentSaveFailed => 'Gagal menyimpan penyesuaian waktu sholat';
+
+  @override
   String get notificationAdhanTitle => 'Pengingat Adzan';
 
   @override

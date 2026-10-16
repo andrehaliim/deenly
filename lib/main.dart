@@ -100,12 +100,15 @@ void main() async {
   // Load preferences
   final prefs = await SharedPreferences.getInstance();
   final isDark = prefs.getBool('isDarkMode') ?? false;
+  final prayerAdjustments = await PrayerProxy().savedAdjustments();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider(isDark)),
-        ChangeNotifierProvider(create: (_) => DrawerProvider(prefs)),
+        ChangeNotifierProvider(
+          create: (_) => DrawerProvider(prefs, prayerAdjustments),
+        ),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProxyProvider<LocaleProvider, SurahProvider>(
           create: (_) => SurahProvider(),

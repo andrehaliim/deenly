@@ -4,7 +4,6 @@ import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
-import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/drawer/drawer_section_title.dart';
@@ -350,13 +349,11 @@ class _DrawerPageState extends State<DrawerPage> {
 
     try {
       await drawerProvider.saveAdjustments(Map.of(_pendingAdjustments));
-      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
-      if (prayerModel != null) {
-        await WidgetHelper().updateWidgetPrayer(prayerModel);
-      }
       widget.onSaved?.call();
     } catch (e) {
       debugPrint('Saving prayer adjustments failed: $e');
+      final l10n = mounted ? AppLocalizations.of(context) : null;
+      if (l10n != null) _showSnackBar(l10n.adjustmentSaveFailed);
     } finally {
       if (mounted) {
         setState(() {

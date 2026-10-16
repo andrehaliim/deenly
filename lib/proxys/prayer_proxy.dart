@@ -4,7 +4,6 @@ import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -19,16 +18,13 @@ class PrayerProxy {
     'Isha',
   ];
 
-  // Isha uses the legacy 'ishAdjustment' key already saved on devices.
-  static String adjustmentKey(String prayer) =>
-      prayer == 'Isha' ? 'ishAdjustment' : '${prayer.toLowerCase()}Adjustment';
+  Future<PrayerModel?> getTodayPrayer() => getPrayerForDate(DateTime.now());
 
-  Future<PrayerModel?> getTodayPrayer() async {
+  Future<PrayerModel?> getPrayerForDate(DateTime date) async {
     final db = await DatabaseHelper.instance.database;
-    final now = DateTime.now();
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final formattedDate =
-        "${twoDigits(now.day)}-${twoDigits(now.month)}-${now.year}";
+        "${twoDigits(date.day)}-${twoDigits(date.month)}-${date.year}";
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
       "SELECT * FROM prayer WHERE date = ?",
@@ -42,6 +38,8 @@ class PrayerProxy {
     }
   }
 
+  /// Re-applies the saved adjustments, since the API returns unadjusted
+  /// times.
   Future<void> fetchYearlyPrayer(double lat, double lon) async {
     final db = await DatabaseHelper.instance.database;
     final now = DateTime.now();
@@ -69,27 +67,27 @@ class PrayerProxy {
           .map((e) => PrayerModel.fromJsonApi(e))
           .toList();
 
-      // Re-apply the user's saved adjustments, since the API returns
-      // unadjusted times and the table is rebuilt from scratch.
-      final adjustments = await _savedAdjustments();
+      await db.transaction((txn) async {
+        final adjustments = await _readAdjustments(txn);
 
-      final batch = db.batch();
-      batch.delete('prayer');
+        final batch = txn.batch();
+        batch.delete('prayer');
 
-      for (var prayer in prayers) {
-        final row = prayer.toJson();
-        for (final entry in adjustments.entries) {
-          row[entry.key] = _adjustTime(row[entry.key] as String, entry.value);
+        for (var prayer in prayers) {
+          final row = prayer.toJson();
+          for (final entry in adjustments.entries) {
+            row[entry.key] = _adjustTime(row[entry.key] as String, entry.value);
+          }
+          batch.insert(
+            'prayer',
+            row,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
         }
-        batch.insert(
-          'prayer',
-          row,
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
 
+        await batch.commit(noResult: true);
+      });
       debugPrint('Prayer loaded from API (yearly: ${now.year})');
-      await batch.commit(noResult: true);
     } else {
       throw Exception('Failed to load yearly prayer time');
     }
@@ -121,35 +119,49 @@ class PrayerProxy {
     return {'nextPrayer': nextPrayer, 'nextTime': nextTime};
   }
 
-  Future<Map<String, int>> _savedAdjustments() async {
-    final prefs = await SharedPreferences.getInstance();
-    return {
-      for (final prayer in _prayerNames)
-        prayer: prefs.getInt(adjustmentKey(prayer)) ?? 0,
-    };
-  }
-
-  /// Shifts the stored prayer times so they match [adjustments] (minutes
-  /// per prayer name, e.g. 'Fajr'), then persists them as the new baseline.
-  Future<void> saveAdjustments(Map<String, int> adjustments) async {
-    final saved = await _savedAdjustments();
-
-    // Prayer table columns are lowercase ('fajr', 'dhuhr', ...).
-    final deltas = {
-      for (final entry in adjustments.entries)
-        entry.key.toLowerCase(): entry.value - (saved[entry.key] ?? 0),
-    };
-    debugPrint('Prayer adjustment deltas: $deltas');
-    await updatePrayerTimesInDB(deltas);
-
-    final prefs = await SharedPreferences.getInstance();
-    for (final entry in adjustments.entries) {
-      await prefs.setInt(adjustmentKey(entry.key), entry.value);
-    }
-  }
-
-  Future<void> updatePrayerTimesInDB(Map<String, int> adjustments) async {
+  Future<Map<String, int>> savedAdjustments() async {
     final db = await DatabaseHelper.instance.database;
+    return _readAdjustments(db);
+  }
+
+  static Future<Map<String, int>> _readAdjustments(DatabaseExecutor db) async {
+    final rows = await db.query(DatabaseHelper.tablePrayerAdjustment);
+    final stored = {
+      for (final row in rows) row['prayer'] as String: row['minutes'] as int,
+    };
+    return {for (final prayer in _prayerNames) prayer: stored[prayer] ?? 0};
+  }
+
+  /// Shifts the times and saves the new baseline in one transaction, so a
+  /// failure can never apply the same adjustment twice.
+  Future<void> saveAdjustments(Map<String, int> adjustments) async {
+    final db = await DatabaseHelper.instance.database;
+    await db.transaction((txn) async {
+      final saved = await _readAdjustments(txn);
+
+      final deltas = {
+        for (final entry in adjustments.entries)
+          entry.key.toLowerCase(): entry.value - (saved[entry.key] ?? 0),
+      };
+      debugPrint('Prayer adjustment deltas: $deltas');
+      await _shiftPrayerTimes(txn, deltas);
+
+      final batch = txn.batch();
+      for (final entry in adjustments.entries) {
+        batch.insert(
+          DatabaseHelper.tablePrayerAdjustment,
+          {'prayer': entry.key, 'minutes': entry.value},
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  Future<void> _shiftPrayerTimes(
+    DatabaseExecutor db,
+    Map<String, int> adjustments,
+  ) async {
     final maps = await db.query('prayer');
     final batch = db.batch();
 
