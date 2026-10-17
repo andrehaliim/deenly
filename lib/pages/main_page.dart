@@ -1,9 +1,9 @@
-import 'package:deenly/pages/drawer_page.dart';
 import 'package:deenly/pages/home/home_page.dart';
 import 'package:deenly/pages/mosque_page.dart';
 import 'package:deenly/components/custom_navigation_bar.dart';
 import 'package:deenly/pages/qibla_page.dart';
 import 'package:deenly/pages/quran/quran_page.dart';
+import 'package:deenly/pages/setting_page.dart';
 import 'package:deenly/pages/tasbih_page.dart';
 import 'package:flutter/material.dart';
 import 'package:deenly/components/app_theme.dart';
@@ -16,15 +16,24 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<HomePageState> _homeKey = GlobalKey<HomePageState>();
   final GlobalKey<QuranPageState> _quranKey = GlobalKey<QuranPageState>();
   int _selectedIndex = 2;
 
+  void _openSettings() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SettingPage(
+          onSaved: () => _homeKey.currentState?.loadPrayerData(false),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Deenly',
@@ -56,9 +65,7 @@ class _MainPageState extends State<MainPage> {
                     Icons.settings,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  onPressed: () {
-                    _scaffoldKey.currentState?.openEndDrawer();
-                  },
+                  onPressed: _openSettings,
                 ),
         ],
       ),
@@ -79,9 +86,6 @@ class _MainPageState extends State<MainPage> {
             _selectedIndex = index;
           });
         },
-      ),
-      endDrawer: DrawerPage(
-        onSaved: () => _homeKey.currentState?.loadPrayerData(false),
       ),
     );
   }

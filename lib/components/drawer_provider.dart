@@ -21,7 +21,10 @@ class DrawerProvider extends ChangeNotifier {
   final Map<String, bool> _enabled = {};
   final Map<String, int> _adjustments = {};
 
-  bool _isAdjustmentExpanded = false;
+  bool _isNotificationExpanded = true;
+  bool get isNotificationExpanded => _isNotificationExpanded;
+
+  bool _isAdjustmentExpanded = true;
   bool get isAdjustmentExpanded => _isAdjustmentExpanded;
 
   bool _isReminderEnabled = false;
@@ -61,6 +64,11 @@ class DrawerProvider extends ChangeNotifier {
   Future<void> saveAdjustments(Map<String, int> adjustments) async {
     await PrayerProxy().saveAdjustments(adjustments);
     _adjustments.addAll(adjustments);
+    notifyListeners();
+  }
+
+  void toggleNotificationExpansion() {
+    _isNotificationExpanded = !_isNotificationExpanded;
     notifyListeners();
   }
 
