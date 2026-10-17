@@ -370,4 +370,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get jumpToAyahGo => 'Buka';
+
+  @override
+  String get nearbyMosques => 'Masjid Terdekat';
 }

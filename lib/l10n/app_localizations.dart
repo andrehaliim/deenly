@@ -751,6 +751,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go'**
   String get jumpToAyahGo;
+
+  /// No description provided for @nearbyMosques.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby Mosques'**
+  String get nearbyMosques;
 }
 
 class _AppLocalizationsDelegate

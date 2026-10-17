@@ -200,5 +200,6 @@
             }
         }
     },
-    "jumpToAyahGo": "Go"
+    "jumpToAyahGo": "Go",
+    "nearbyMosques": "Nearby Mosques"
 }

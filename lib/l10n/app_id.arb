@@ -131,5 +131,6 @@
     "jumpToAyah": "Lompat ke Ayat",
     "jumpToAyahHint": "Nomor ayat (1–{total})",
     "jumpToAyahInvalid": "Masukkan angka antara 1 dan {total}",
-    "jumpToAyahGo": "Buka"
+    "jumpToAyahGo": "Buka",
+    "nearbyMosques": "Masjid Terdekat"
 }

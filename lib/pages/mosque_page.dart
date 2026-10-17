@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/mosque_model.dart';
+import 'package:deenly/pages/mosque/mosque_card_widget.dart';
+import 'package:deenly/pages/quran/eight_point_star_painter.dart';
+import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/proxys/mosque_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,11 +21,17 @@ class MosquePage extends StatefulWidget {
   State<MosquePage> createState() => _MosquePageState();
 }
 
-class _MosquePageState extends State<MosquePage> {
+class _MosquePageState extends State<MosquePage>
+    with SingleTickerProviderStateMixin {
   List<MosqueModel> mosques = [];
   bool isLoading = true;
   bool _hasFetched = false;
   _MosqueError? _error;
+
+  late final AnimationController _entranceController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
 
   @override
   void initState() {
@@ -38,6 +47,12 @@ class _MosquePageState extends State<MosquePage> {
     if (becameActive && (!_hasFetched || _error != null)) _fetchMosques();
   }
 
+  @override
+  void dispose() {
+    _entranceController.dispose();
+    super.dispose();
+  }
+
   Future<void> _fetchMosques({bool showLocalLoading = true}) async {
     _hasFetched = true;
     setState(() {
@@ -51,6 +66,7 @@ class _MosquePageState extends State<MosquePage> {
       setState(() {
         mosques = fetchedMosques;
       });
+      _entranceController.forward(from: 0);
     } catch (e) {
       debugPrint('Fetching mosques failed: $e');
       if (!mounted) return;
@@ -68,14 +84,6 @@ class _MosquePageState extends State<MosquePage> {
     }
   }
 
-  String _formatDistance(double meters) {
-    if (meters < 1000) {
-      return '${meters.toInt()} m';
-    } else {
-      return '${(meters / 1000).toStringAsFixed(1)} km';
-    }
-  }
-
   Future<void> _openDirections(double lat, double lng) async {
     final uri = Uri.parse(
       'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=walking',
@@ -84,199 +92,207 @@ class _MosquePageState extends State<MosquePage> {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.couldNotOpenMaps)),
-      );
+      final message = AppLocalizations.of(context)?.couldNotOpenMaps;
+      if (message == null) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _buildBody());
+    return Scaffold(body: _body());
   }
 
-  Widget _buildBody() {
+  Widget _body() {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final l10n = AppLocalizations.of(context);
     final error = _error;
     if (error != null) {
-      final l10n = AppLocalizations.of(context)!;
-      return _buildCenteredMessage(
-        icon: Icons.error_outline,
+      return _StatusMessage(
+        icon: Icons.location_off_rounded,
         message: switch (error) {
-          _MosqueError.location => l10n.mosqueLocationUnavailable,
-          _MosqueError.other => l10n.mosqueLoadFailed,
+          _MosqueError.location => l10n?.mosqueLocationUnavailable ?? '',
+          _MosqueError.other => l10n?.mosqueLoadFailed ?? '',
         },
+        onRetry: _fetchMosques,
       );
     }
 
     if (mosques.isEmpty) {
-      return _buildCenteredMessage(
+      return _StatusMessage(
         icon: Icons.mosque_outlined,
-        message: AppLocalizations.of(context)!.noMosqueFound,
+        message: l10n?.noMosqueFound ?? '',
+        onRetry: _fetchMosques,
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: () => _fetchMosques(showLocalLoading: false),
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: mosques.length,
-        itemBuilder: (context, index) => _buildMosqueCard(mosques[index]),
-      ),
-    );
-  }
-
-  Widget _buildCenteredMessage({
-    required IconData icon,
-    required String message,
-  }) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Theme.of(context).colorScheme.primary, size: 48),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _fetchMosques,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.mosqueTryAgain,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+    return Column(
+      children: [
+        _SectionTitle(
+          title: l10n?.nearbyMosques ?? '',
+          trailing: _CountBadge(count: mosques.length),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMosqueCard(MosqueModel mosque) {
-    final isPending = mosque.address == 'Address pending...';
-
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+        const SizedBox(height: 8),
+        Expanded(
+          child: RefreshIndicator(
+            color: Theme.of(context).colorScheme.primary,
+            onRefresh: () => _fetchMosques(showLocalLoading: false),
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 16),
+              itemCount: mosques.length,
+              itemBuilder: (context, index) {
+                final mosque = mosques[index];
+                return StaggeredEntrance(
+                  animation: _entranceController,
+                  index: index,
+                  child: MosqueCard(
+                    mosque: mosque,
+                    onTap: () => _openDirections(mosque.lat, mosque.lon),
+                  ),
+                );
+              },
+            ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String title;
+  final Widget? trailing;
+
+  const _SectionTitle({required this.title, this.trailing});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final trailing = this.trailing;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 18,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.secondary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onTertiary,
+              ),
+            ),
+          ),
+          ?trailing,
         ],
       ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => _openDirections(mosque.lat, mosque.lon),
-        child: Stack(
+    );
+  }
+}
+
+class _CountBadge extends StatelessWidget {
+  final int count;
+
+  const _CountBadge({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        count.toString(),
+        style: theme.textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onTertiaryContainer,
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusMessage extends StatelessWidget {
+  final IconData icon;
+  final String message;
+  final VoidCallback onRetry;
+
+  const _StatusMessage({
+    required this.icon,
+    required this.message,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Image.asset(
-                'assets/images/mosque.png',
-                height: 120,
-                fit: BoxFit.contain,
-                color: Theme.of(context).colorScheme.onPrimary,
-                colorBlendMode: BlendMode.modulate,
+            SizedBox.square(
+              dimension: 96,
+              child: CustomPaint(
+                painter: EightPointStarPainter(
+                  color: colorScheme.primary.withValues(alpha: 0.1),
+                  filled: true,
+                ),
+                foregroundPainter: EightPointStarPainter(
+                  color: colorScheme.primary.withValues(alpha: 0.6),
+                  strokeWidth: 2,
+                ),
+                child: Center(
+                  child: Icon(icon, size: 36, color: colorScheme.primary),
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    mosque.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        size: 14,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _formatDistance(mosque.distance),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  if (isPending)
-                    Row(
-                      children: [
-                        SizedBox(
-                          height: 12,
-                          width: 12,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary.withValues(alpha: 0.5),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          AppLocalizations.of(context)!.mosqueLoadAddress,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimary.withValues(alpha: 0.5),
-                              ),
-                        ),
-                      ],
-                    )
-                  else
-                    Text(
-                      mosque.address ?? 'error',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        height: 1.4,
-                      ),
-                    ),
-                ],
+            const SizedBox(height: 20),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurfaceVariant,
+                height: 1.4,
               ),
+            ),
+            const SizedBox(height: 20),
+            FilledButton.icon(
+              onPressed: onRetry,
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: Text(l10n?.mosqueTryAgain ?? ''),
             ),
           ],
         ),
