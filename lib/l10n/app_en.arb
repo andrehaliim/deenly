@@ -182,5 +182,23 @@
     "permissionReasonReminderBody": "An optional reminder 10 minutes before each prayer.",
     "permissionNotificationHint": "You can change this anytime in Settings.",
     "permissionAllowNotification": "Allow notifications",
-    "permissionNotNow": "Not now"
+    "permissionNotNow": "Not now",
+    "jumpToAyah": "Jump to Ayah",
+    "jumpToAyahHint": "Ayah number (1–{total})",
+    "@jumpToAyahHint": {
+        "placeholders": {
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "jumpToAyahInvalid": "Enter a number between 1 and {total}",
+    "@jumpToAyahInvalid": {
+        "placeholders": {
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "jumpToAyahGo": "Go"
 }

@@ -354,4 +354,20 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get permissionNotNow => 'Nanti saja';
+
+  @override
+  String get jumpToAyah => 'Lompat ke Ayat';
+
+  @override
+  String jumpToAyahHint(int total) {
+    return 'Nomor ayat (1–$total)';
+  }
+
+  @override
+  String jumpToAyahInvalid(int total) {
+    return 'Masukkan angka antara 1 dan $total';
+  }
+
+  @override
+  String get jumpToAyahGo => 'Buka';
 }

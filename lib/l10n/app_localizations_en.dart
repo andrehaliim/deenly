@@ -354,4 +354,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionNotNow => 'Not now';
+
+  @override
+  String get jumpToAyah => 'Jump to Ayah';
+
+  @override
+  String jumpToAyahHint(int total) {
+    return 'Ayah number (1–$total)';
+  }
+
+  @override
+  String jumpToAyahInvalid(int total) {
+    return 'Enter a number between 1 and $total';
+  }
+
+  @override
+  String get jumpToAyahGo => 'Go';
 }

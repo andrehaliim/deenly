@@ -727,6 +727,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get permissionNotNow;
+
+  /// No description provided for @jumpToAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to Ayah'**
+  String get jumpToAyah;
+
+  /// No description provided for @jumpToAyahHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah number (1–{total})'**
+  String jumpToAyahHint(int total);
+
+  /// No description provided for @jumpToAyahInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number between 1 and {total}'**
+  String jumpToAyahInvalid(int total);
+
+  /// No description provided for @jumpToAyahGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Go'**
+  String get jumpToAyahGo;
 }
 
 class _AppLocalizationsDelegate

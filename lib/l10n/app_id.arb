@@ -127,5 +127,9 @@
     "permissionReasonReminderBody": "Pengingat opsional 10 menit sebelum setiap waktu sholat.",
     "permissionNotificationHint": "Anda bisa mengubahnya kapan saja di Pengaturan.",
     "permissionAllowNotification": "Izinkan notifikasi",
-    "permissionNotNow": "Nanti saja"
+    "permissionNotNow": "Nanti saja",
+    "jumpToAyah": "Lompat ke Ayat",
+    "jumpToAyahHint": "Nomor ayat (1–{total})",
+    "jumpToAyahInvalid": "Masukkan angka antara 1 dan {total}",
+    "jumpToAyahGo": "Buka"
 }

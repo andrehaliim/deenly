@@ -6,6 +6,8 @@ import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_model.dart';
+import 'package:deenly/pages/quran/ayah_fast_scroller.dart';
+import 'package:deenly/pages/quran/surah_jump_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +22,7 @@ class SurahDetailList extends StatefulWidget {
   final bool isLoadingNextSurah;
   final VoidCallback onNextSurahTriggered;
   final int juzFrom;
+  final SurahJumpController? jumpController;
 
   const SurahDetailList({
     super.key,
@@ -30,6 +33,7 @@ class SurahDetailList extends StatefulWidget {
     required this.isLoadingNextSurah,
     required this.onNextSurahTriggered,
     required this.juzFrom,
+    this.jumpController,
   });
 
   @override
@@ -45,16 +49,22 @@ class _SurahDetailListState extends State<SurahDetailList> {
   double _overscrollAtBottom = 0;
   static const double _overscrollTriggerThreshold = 120.0;
   static const int _maxSurahId = 114;
+  static const int _fastScrollMinAyahs = 30;
+  static const Duration _highlightDuration = Duration(milliseconds: 1400);
   int? _pendingIndex;
   Timer? _debounceTimer;
   int _lastPlayedAyah = -1;
   late final AudioProvider _audio;
+  final ValueNotifier<int> _currentAyah = ValueNotifier(1);
+  final ValueNotifier<int?> _highlightedAyah = ValueNotifier(null);
+  Timer? _highlightTimer;
 
   @override
   void initState() {
     super.initState();
 
     _addScrollListener();
+    widget.jumpController?.attach(_jumpToAyah);
 
     /// Listened to here instead of in build, so audio updates only follow
     /// the playing ayah and do not rebuild the whole list.
@@ -70,6 +80,10 @@ class _SurahDetailListState extends State<SurahDetailList> {
   void dispose() {
     _audio.removeListener(_onAudioChanged);
     _debounceTimer?.cancel();
+    _highlightTimer?.cancel();
+    widget.jumpController?.detach(_jumpToAyah);
+    _currentAyah.dispose();
+    _highlightedAyah.dispose();
     _saveLastAyah(_pendingIndex);
     super.dispose();
   }
@@ -78,6 +92,8 @@ class _SurahDetailListState extends State<SurahDetailList> {
     _itemPositionsListener.itemPositions.addListener(() {
       final positions = _itemPositionsListener.itemPositions.value;
       if (positions.isEmpty) return;
+
+      _updateCurrentAyah(positions);
 
       final visibleItems = positions.where((item) => item.itemLeadingEdge >= 0);
       if (visibleItems.isEmpty) return;
@@ -92,6 +108,41 @@ class _SurahDetailListState extends State<SurahDetailList> {
       _debounceTimer = Timer(const Duration(milliseconds: 600), () {
         _saveLastAyah(_pendingIndex);
       });
+    });
+  }
+
+  /// Tracks the ayah at the top of the viewport. When the last ayah is fully
+  /// visible it counts as current, so the fast-scroll thumb reaches the end.
+  void _updateCurrentAyah(Iterable<ItemPosition> positions) {
+    final total = widget.details.length;
+    if (total == 0) return;
+
+    final onScreen = positions.where((item) => item.itemTrailingEdge > 0);
+    if (onScreen.isEmpty) return;
+
+    final top = onScreen.reduce(
+      (min, item) => item.itemLeadingEdge < min.itemLeadingEdge ? item : min,
+    );
+    final isLastAyahVisible = positions.any(
+      (item) => item.index == total && item.itemTrailingEdge <= 1.0,
+    );
+
+    _currentAyah.value = (isLastAyahVisible ? total : top.index).clamp(
+      1,
+      total,
+    );
+  }
+
+  void _jumpToAyah(int ayah, {bool highlight = true}) {
+    if (!_itemScrollController.isAttached) return;
+    final target = ayah.clamp(1, widget.details.length);
+    _itemScrollController.jumpTo(index: target);
+
+    if (!highlight) return;
+    _highlightTimer?.cancel();
+    _highlightedAyah.value = target;
+    _highlightTimer = Timer(_highlightDuration, () {
+      _highlightedAyah.value = null;
     });
   }
 
@@ -241,7 +292,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
       color: colorScheme.onTertiary.withValues(alpha: 0.5),
     );
 
-    return NotificationListener<ScrollNotification>(
+    final list = NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
       child: ScrollablePositionedList.builder(
         itemScrollController: _itemScrollController,
@@ -271,15 +322,29 @@ class _SurahDetailListState extends State<SurahDetailList> {
                     audio.playedAyah == data.verseNo &&
                     audio.playedSurah == widget.surah.id,
                 builder: (context, isPlayingz, _) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: isPlayingz
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.surface,
-                    ),
-                    margin: const EdgeInsets.all(8.0),
-                    padding: const EdgeInsets.all(16),
+                  return ValueListenableBuilder<int?>(
+                    valueListenable: _highlightedAyah,
+                    builder: (context, highlightedAyah, child) {
+                      final scheme = Theme.of(context).colorScheme;
+                      final Color background;
+                      if (isPlayingz) {
+                        background = scheme.onPrimary;
+                      } else if (highlightedAyah == data.verseNo) {
+                        background = scheme.primaryContainer;
+                      } else {
+                        background = scheme.surface;
+                      }
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: background,
+                        ),
+                        margin: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(16),
+                        child: child,
+                      );
+                    },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -374,6 +439,21 @@ class _SurahDetailListState extends State<SurahDetailList> {
           );
         },
       ),
+    );
+
+    if (widget.details.length < _fastScrollMinAyahs) return list;
+
+    return Stack(
+      children: [
+        list,
+        Positioned.fill(
+          child: AyahFastScroller(
+            totalAyahs: widget.details.length,
+            currentAyah: _currentAyah,
+            onAyahSelected: (ayah) => _jumpToAyah(ayah, highlight: false),
+          ),
+        ),
+      ],
     );
   }
 

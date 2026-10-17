@@ -2,7 +2,9 @@ import 'package:deenly/components/audio_provider.dart';
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_model.dart';
+import 'package:deenly/pages/quran/jump_to_ayah_panel.dart';
 import 'package:deenly/pages/quran/surah_detail_list.dart';
+import 'package:deenly/pages/quran/surah_jump_controller.dart';
 import 'package:deenly/pages/quran/surah_options_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +29,8 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
   bool _isLoadingNextSurah = false;
   bool _isInitialSurah = true;
   bool _showOptions = false;
+  bool _showJumpPanel = false;
+  final SurahJumpController _jumpController = SurahJumpController();
 
   @override
   void initState() {
@@ -65,6 +69,19 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
     });
   }
 
+  void _toggleJumpPanel() {
+    setState(() {
+      _showJumpPanel = !_showJumpPanel;
+      if (_showJumpPanel) _showOptions = false;
+    });
+  }
+
+  void _onAyahSubmitted(int ayah) {
+    FocusScope.of(context).unfocus();
+    setState(() => _showJumpPanel = false);
+    _jumpController.jumpTo(ayah);
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -80,6 +97,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
             onTap: () {
               setState(() {
                 _showOptions = !_showOptions;
+                if (_showOptions) _showJumpPanel = false;
               });
             },
             child: Row(
@@ -99,6 +117,15 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 Spacer(),
+                IconButton(
+                  onPressed: _toggleJumpPanel,
+                  tooltip: AppLocalizations.of(context)?.jumpToAyah,
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(
+                    Icons.format_list_numbered_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
                 Consumer<AudioProvider>(
                   builder: (context, audioProvider, child) {
                     final isPlaying =
@@ -185,8 +212,16 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                       isLoadingNextSurah: _isLoadingNextSurah,
                       onNextSurahTriggered: _goToNextSurah,
                       juzFrom: widget.juzFrom,
+                      jumpController: _jumpController,
                     ),
                   ),
+
+                  if (_showJumpPanel)
+                    JumpToAyahPanel(
+                      key: ValueKey(_activeSurah.id),
+                      totalAyahs: _activeSurah.surahTotal,
+                      onAyahSubmitted: _onAyahSubmitted,
+                    ),
 
                   if (_showOptions)
                     SurahOptionsPanel(
