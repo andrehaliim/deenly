@@ -82,8 +82,55 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
     _jumpController.jumpTo(ayah);
   }
 
+  void _toggleOptions() {
+    setState(() {
+      _showOptions = !_showOptions;
+      if (_showOptions) _showJumpPanel = false;
+    });
+  }
+
+  void _closePanels() {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _showOptions = false;
+      _showJumpPanel = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isPanelOpen = _showOptions || _showJumpPanel;
+
+    final Widget panel;
+    if (_showJumpPanel) {
+      panel = JumpToAyahPanel(
+        key: ValueKey('jump-${_activeSurah.id}'),
+        totalAyahs: _activeSurah.surahTotal,
+        onAyahSubmitted: _onAyahSubmitted,
+      );
+    } else if (_showOptions) {
+      panel = SurahOptionsPanel(
+        key: const ValueKey('options'),
+        surah: _activeSurah,
+        onSurahSelected: (surah) async {
+          if (surah.id == _activeSurah.id) {
+            setState(() => _showOptions = false);
+            return;
+          }
+          context.read<AudioProvider>().stopAll();
+          setState(() {
+            _activeSurah = surah;
+            _isInitialSurah = true;
+            _showOptions = false;
+          });
+          context.read<SurahProvider>().getSurahDetail(surah.id);
+        },
+      );
+    } else {
+      panel = const SizedBox(key: ValueKey('none'), width: double.infinity);
+    }
+
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         context.read<AudioProvider>().stopAll();
@@ -93,66 +140,61 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           automaticallyImplyLeading: false,
-          title: GestureDetector(
-            onTap: () {
-              setState(() {
-                _showOptions = !_showOptions;
-                if (_showOptions) _showJumpPanel = false;
-              });
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  _activeSurah.name(widget.code),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+          titleSpacing: 12,
+          title: Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: _SurahTitleButton(
+                    title: _activeSurah.name(widget.code),
+                    isOpen: _showOptions,
+                    onTap: _toggleOptions,
                   ),
                 ),
-                Icon(
-                  _showOptions
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                Spacer(),
-                IconButton(
-                  onPressed: _toggleJumpPanel,
-                  tooltip: AppLocalizations.of(context)?.jumpToAyah,
-                  visualDensity: VisualDensity.compact,
-                  icon: Icon(
-                    Icons.format_list_numbered_rounded,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                Consumer<AudioProvider>(
-                  builder: (context, audioProvider, child) {
-                    final isPlaying =
-                        audioProvider.playedSurah == widget.surah.id;
-                    return GestureDetector(
-                      onTap: () {
-                        audioProvider.playMultiple(_activeSurah, 1);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          isPlaying
-                              ? Icons.stop_circle_outlined
-                              : Icons.play_circle_outline_rounded,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
+              ),
+              const SizedBox(width: 8),
+              IconButton.filledTonal(
+                onPressed: _toggleJumpPanel,
+                tooltip: AppLocalizations.of(context)?.jumpToAyah,
+                isSelected: _showJumpPanel,
+                icon: const Icon(Icons.format_list_numbered_rounded),
+              ),
+              const SizedBox(width: 4),
+              Selector<AudioProvider, bool>(
+                selector: (_, audio) => audio.playedSurah == _activeSurah.id,
+                builder: (context, isPlaying, _) {
+                  return IconButton.filled(
+                    onPressed: () => context.read<AudioProvider>().playMultiple(
+                      _activeSurah,
+                      1,
+                    ),
+                    icon: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      transitionBuilder: (child, animation) =>
+                          RotationTransition(
+                            turns: Tween(
+                              begin: 0.75,
+                              end: 1.0,
+                            ).animate(animation),
+                            child: ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            ),
+                          ),
+                      child: Icon(
+                        isPlaying
+                            ? Icons.stop_rounded
+                            : Icons.play_arrow_rounded,
+                        key: ValueKey(isPlaying),
+                        color: colorScheme.onPrimary,
                       ),
-                    );
-                  },
-                ),
-              ],
-            ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-          centerTitle: true,
         ),
         body: SafeArea(
           child: Consumer<SurahProvider>(
@@ -215,34 +257,119 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                       jumpController: _jumpController,
                     ),
                   ),
-
-                  if (_showJumpPanel)
-                    JumpToAyahPanel(
-                      key: ValueKey(_activeSurah.id),
-                      totalAyahs: _activeSurah.surahTotal,
-                      onAyahSubmitted: _onAyahSubmitted,
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      ignoring: !isPanelOpen,
+                      child: AnimatedOpacity(
+                        opacity: isPanelOpen ? 1 : 0,
+                        duration: const Duration(milliseconds: 250),
+                        child: GestureDetector(
+                          onTap: _closePanels,
+                          child: ColoredBox(
+                            color: colorScheme.scrim.withValues(alpha: 0.3),
+                          ),
+                        ),
+                      ),
                     ),
-
-                  if (_showOptions)
-                    SurahOptionsPanel(
-                      surah: _activeSurah,
-                      onSurahSelected: (surah) async {
-                        if (surah.id == _activeSurah.id) {
-                          setState(() => _showOptions = false);
-                          return;
-                        }
-                        context.read<AudioProvider>().stopAll();
-                        setState(() {
-                          _activeSurah = surah;
-                          _isInitialSurah = true;
-                          _showOptions = false;
-                        });
-                        context.read<SurahProvider>().getSurahDetail(surah.id);
+                  ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 280),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: SizeTransition(
+                          sizeFactor: animation,
+                          alignment: Alignment.topCenter,
+                          child: child,
+                        ),
+                      ),
+                      layoutBuilder: (currentChild, previousChildren) {
+                        return Stack(
+                          alignment: Alignment.topCenter,
+                          children: [...previousChildren, ?currentChild],
+                        );
                       },
+                      child: panel,
                     ),
+                  ),
                 ],
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SurahTitleButton extends StatelessWidget {
+  final String title;
+  final bool isOpen;
+  final VoidCallback onTap;
+
+  const _SurahTitleButton({
+    required this.title,
+    required this.isOpen,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Material(
+      color: isOpen
+          ? colorScheme.primaryContainer
+          : colorScheme.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween(
+                        begin: const Offset(0, 0.4),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  ),
+                  child: Text(
+                    title,
+                    key: ValueKey(title),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              AnimatedRotation(
+                turns: isOpen ? 0.5 : 0,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                child: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ],
           ),
         ),
       ),

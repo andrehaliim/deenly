@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:deenly/components/audio_provider.dart';
 import 'package:deenly/components/database_helper.dart';
-import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_model.dart';
+import 'package:deenly/pages/quran/ayah_card_widget.dart';
 import 'package:deenly/pages/quran/ayah_fast_scroller.dart';
+import 'package:deenly/pages/quran/surah_detail_header_widget.dart';
 import 'package:deenly/pages/quran/surah_jump_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sqflite/sqflite.dart';
@@ -276,21 +276,6 @@ class _SurahDetailListState extends State<SurahDetailList> {
   @override
   Widget build(BuildContext context) {
     final code = widget.langCode;
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final arabicStyle = GoogleFonts.notoNaskhArabic(
-      textStyle: theme.textTheme.headlineMedium,
-      fontWeight: FontWeight.w600,
-      color: colorScheme.onTertiary,
-    );
-    final verseLabelStyle = theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-      color: colorScheme.onTertiary,
-    );
-    final translationStyle = theme.textTheme.bodySmall?.copyWith(
-      fontWeight: FontWeight.bold,
-      color: colorScheme.onTertiary.withValues(alpha: 0.5),
-    );
 
     final list = NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
@@ -303,11 +288,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
         itemCount: widget.details.length + 2,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return listHeader(
-              widget.surah.name(code),
-              widget.surah.desc(code),
-              widget.surah.surahTotal,
-            );
+            return SurahDetailHeader(surah: widget.surah, langCode: code);
           }
 
           if (index == widget.details.length + 1) {
@@ -315,127 +296,11 @@ class _SurahDetailListState extends State<SurahDetailList> {
           }
 
           final data = widget.details[index - 1];
-          return Column(
-            children: [
-              Selector<AudioProvider, bool>(
-                selector: (_, audio) =>
-                    audio.playedAyah == data.verseNo &&
-                    audio.playedSurah == widget.surah.id,
-                builder: (context, isPlayingz, _) {
-                  return ValueListenableBuilder<int?>(
-                    valueListenable: _highlightedAyah,
-                    builder: (context, highlightedAyah, child) {
-                      final scheme = Theme.of(context).colorScheme;
-                      final Color background;
-                      if (isPlayingz) {
-                        background = scheme.onPrimary;
-                      } else if (highlightedAyah == data.verseNo) {
-                        background = scheme.primaryContainer;
-                      } else {
-                        background = scheme.surface;
-                      }
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: background,
-                        ),
-                        margin: const EdgeInsets.all(8.0),
-                        padding: const EdgeInsets.all(16),
-                        child: child,
-                      );
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 75,
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Theme.of(context).colorScheme.tertiary,
-                                    Theme.of(context).colorScheme.tertiary
-                                        .withValues(alpha: 0.75),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .tertiary
-                                        .withValues(alpha: 0.5),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                '${data.chapterNo}:${data.verseNo}',
-                                style: verseLabelStyle,
-                              ),
-                            ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () async {
-                                SurahProvider surahProvider =
-                                    Provider.of<SurahProvider>(
-                                      context,
-                                      listen: false,
-                                    );
-                                final audio = context.read<AudioProvider>();
-                                SurahModel surah = await surahProvider
-                                    .getSurahById(data.chapterNo);
-                                audio.playMultiple(surah, data.verseNo);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  isPlayingz
-                                      ? Icons.stop_circle_outlined
-                                      : Icons.play_circle_outline_rounded,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: Text(
-                              data.textAr,
-                              textAlign: TextAlign.right,
-                              style: arabicStyle,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-                        Text(data.text(code), style: translationStyle),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              Divider(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onTertiary.withValues(alpha: 0.25),
-              ),
-            ],
+          return AyahCard(
+            data: data,
+            surahId: widget.surah.id,
+            langCode: code,
+            highlightedAyah: _highlightedAyah,
           );
         },
       ),
@@ -454,84 +319,6 @@ class _SurahDetailListState extends State<SurahDetailList> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget listHeader(String name, String text, int totalAyahs) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24.0),
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            name,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                text,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                width: 4,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onPrimary.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
-                ),
-              ),
-              Text(
-                '$totalAyahs ${AppLocalizations.of(context)!.ayah}',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'بِسْمِ ٱللّٰهِ الرَّحْمَٰنِ الرَّحِيمِ',
-            style: GoogleFonts.notoNaskhArabic(
-              textStyle: Theme.of(context).textTheme.headlineSmall,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-        ],
-      ),
     );
   }
 

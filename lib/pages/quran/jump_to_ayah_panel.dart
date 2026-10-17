@@ -47,11 +47,12 @@ class _JumpToAyahPanelState extends State<JumpToAyahPanel> {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       decoration: BoxDecoration(
         color: colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -73,7 +74,7 @@ class _JumpToAyahPanelState extends State<JumpToAyahPanel> {
                 errorText: _showError ? l10n?.jumpToAyahInvalid(total) : null,
                 prefixIcon: const Icon(Icons.format_list_numbered_rounded),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 isDense: true,
               ),
