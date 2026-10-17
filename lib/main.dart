@@ -18,6 +18,7 @@ import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -82,6 +83,10 @@ void callbackDispatcher() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  /// Fonts are bundled in assets/google_fonts, so text never waits on the
+  /// network or swaps font after the first frame.
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   // Init timezone
   await initTimezone();

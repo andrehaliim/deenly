@@ -33,7 +33,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 8,
+      version: 9,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -78,6 +78,8 @@ class DatabaseHelper {
         hijriYear TEXT
       )
     ''');
+
+    await _createSurahDetailIndex(db);
 
     await _createPrayerAdjustmentTable(db);
 
@@ -199,6 +201,19 @@ class DatabaseHelper {
       await _createPrayerAdjustmentTable(db);
       await _migratePrayerAdjustmentsFromPrefs(db);
     }
+
+    if (oldVersion < 9) {
+      await _createSurahDetailIndex(db);
+    }
+  }
+
+  /// Opening a surah filters by chapter and sorts by verse; without this
+  /// index every open scans the whole table.
+  Future<void> _createSurahDetailIndex(Database db) async {
+    await db.execute('''
+      CREATE INDEX IF NOT EXISTS idx_surah_detail_chapter_verse
+      ON $tableSurahDetail(chapter_no, verse_no)
+    ''');
   }
 
   /// Kept in the database so it is updated in the same transaction as the

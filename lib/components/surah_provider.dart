@@ -12,6 +12,10 @@ import 'package:sqflite/sqflite.dart';
 class SurahProvider extends ChangeNotifier {
   final baseUrl = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1';
 
+  /// Full list from the database; [_surahList] is the filtered view shown
+  /// by the search.
+  List<SurahModel> _allSurahs = [];
+  Map<int, SurahModel> _surahById = {};
   List<SurahModel> _surahList = [];
   final List<JuzModel> _surahJuzList = [];
   List<ContinueModel> _continueList = [];
@@ -28,21 +32,30 @@ class SurahProvider extends ChangeNotifier {
   List<SurahDetailModel>? get surahDetail => _surahDetail;
   bool get isDetailLoading => _isDetailLoading;
 
+  /// The surah data holds every language, so a language change only needs
+  /// a rebuild, not a reload.
   void updateLanguage(String? code) {
     if (_code != code) {
       _code = code;
-      Future.microtask(() => getSurahList());
+      Future.microtask(notifyListeners);
     }
   }
 
+  /// Shows the loading state only on the first load, so later refreshes do
+  /// not replace the list with a spinner.
   Future<void> getSurahList() async {
-    _isLoading = true;
-    notifyListeners();
+    final isFirstLoad = _allSurahs.isEmpty;
+    if (isFirstLoad) {
+      _isLoading = true;
+      notifyListeners();
+    }
 
     try {
       final db = await DatabaseHelper.instance.database;
-      final result = await db.query('surah');
-      _surahList = result.map((e) => SurahModel.fromDatabase(e)).toList();
+      final result = await db.query(DatabaseHelper.tableSurah);
+      _allSurahs = result.map((e) => SurahModel.fromDatabase(e)).toList();
+      _surahById = {for (final surah in _allSurahs) surah.id: surah};
+      _surahList = _allSurahs;
     } catch (e) {
       debugPrint('Error loading surah list: $e');
     } finally {
@@ -52,9 +65,6 @@ class SurahProvider extends ChangeNotifier {
   }
 
   Future<void> getJuzList() async {
-    _isLoading = true;
-    notifyListeners();
-
     try {
       final db = await DatabaseHelper.instance.database;
       final result = await db.query('juz');
@@ -69,13 +79,12 @@ class SurahProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error loading juz list: $e');
     } finally {
-      _isLoading = false;
       notifyListeners();
     }
   }
 
   Future<SurahModel> getSurahById(int id) async {
-    final cached = _surahList.where((s) => s.id == id).firstOrNull;
+    final cached = _surahById[id];
     if (cached != null) return cached;
 
     final db = await DatabaseHelper.instance.database;
@@ -194,9 +203,6 @@ class SurahProvider extends ChangeNotifier {
   }
 
   Future<void> getContinueList() async {
-    _isLoading = true;
-    notifyListeners();
-
     try {
       final db = await DatabaseHelper.instance.database;
       final result = await db.query(
@@ -215,45 +221,35 @@ class SurahProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error loading continue list: $e');
     } finally {
-      _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> searchSurah(String query) async {
+  void searchSurah(String query) {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      _surahList = _allSurahs;
+      notifyListeners();
+      return;
+    }
+
+    final normalizedQuery = _normalize(trimmed);
+    final numberQuery = int.tryParse(trimmed);
+
+    _surahList = _allSurahs
+        .where(
+          (surah) =>
+              _normalize(surah.nameIndo).contains(normalizedQuery) ||
+              _normalize(surah.nameEng).contains(normalizedQuery) ||
+              (numberQuery != null && surah.id == numberQuery),
+        )
+        .toList();
     notifyListeners();
-
-    try {
-      final db = await DatabaseHelper.instance.database;
-      final trimmed = query.trim();
-
-      if (trimmed.isEmpty) {
-        final result = await db.query(DatabaseHelper.tableSurah);
-        _surahList = result.map((e) => SurahModel.fromDatabase(e)).toList();
-        return;
-      }
-
-      final result = await db.query(DatabaseHelper.tableSurah);
-      final normalizedQuery = _normalize(trimmed);
-      final numberQuery = int.tryParse(trimmed);
-
-      _surahList = result
-          .map((e) => SurahModel.fromDatabase(e))
-          .where(
-            (surah) =>
-                _normalize(surah.nameIndo).contains(normalizedQuery) ||
-                _normalize(surah.nameEng).contains(normalizedQuery) ||
-                (numberQuery != null && surah.id == numberQuery),
-          )
-          .toList();
-    } catch (e) {
-      debugPrint('Error searching surah: $e');
-    } finally {
-      notifyListeners();
-    }
   }
+
+  static final RegExp _normalizePattern = RegExp(r"[-'\s]");
 
   String _normalize(String input) {
-    return input.toLowerCase().replaceAll(RegExp(r"[-'\s]"), '');
+    return input.toLowerCase().replaceAll(_normalizePattern, '');
   }
 }

@@ -48,12 +48,18 @@ class _SurahDetailListState extends State<SurahDetailList> {
   int? _pendingIndex;
   Timer? _debounceTimer;
   int _lastPlayedAyah = -1;
+  late final AudioProvider _audio;
 
   @override
   void initState() {
     super.initState();
 
     _addScrollListener();
+
+    /// Listened to here instead of in build, so audio updates only follow
+    /// the playing ayah and do not rebuild the whole list.
+    _audio = context.read<AudioProvider>();
+    _audio.addListener(_onAudioChanged);
 
     if (widget.restorePosition && widget.juzFrom > 0) {
       _loadLastPosition();
@@ -62,6 +68,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
 
   @override
   void dispose() {
+    _audio.removeListener(_onAudioChanged);
     _debounceTimer?.cancel();
     _saveLastAyah(_pendingIndex);
     super.dispose();
@@ -175,45 +182,64 @@ class _SurahDetailListState extends State<SurahDetailList> {
     return false;
   }
 
+  void _onAudioChanged() {
+    final audio = _audio;
+    if (audio.playedSurah != widget.surah.id) {
+      _lastPlayedAyah = -1;
+      return;
+    }
+    if (audio.playedAyah == _lastPlayedAyah) return;
+
+    final targetIndex = audio.playedAyah;
+    _lastPlayedAyah = targetIndex;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          !_itemScrollController.isAttached ||
+          targetIndex < 0 ||
+          targetIndex >= widget.details.length + 1) {
+        return;
+      }
+      final positions = _itemPositionsListener.itemPositions.value;
+      final lastItemIndex = widget.details.length + 1;
+      final isAtBottom = positions.any(
+        (pos) => pos.index == lastItemIndex && pos.itemTrailingEdge <= 1.05,
+      );
+
+      final isTargetFullyVisible = positions.any(
+        (pos) =>
+            pos.index == targetIndex &&
+            pos.itemLeadingEdge >= 0.0 &&
+            pos.itemTrailingEdge <= 1.0,
+      );
+
+      if (!isAtBottom && !isTargetFullyVisible) {
+        _itemScrollController.scrollTo(
+          index: targetIndex,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final code = widget.langCode;
-    final audio = context.watch<AudioProvider>();
-    if (audio.playedSurah == widget.surah.id) {
-      if (audio.playedAyah != _lastPlayedAyah) {
-        final targetIndex = audio.playedAyah;
-        _lastPlayedAyah = targetIndex;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_itemScrollController.isAttached &&
-              targetIndex >= 0 &&
-              targetIndex < widget.details.length + 1) {
-            final positions = _itemPositionsListener.itemPositions.value;
-            final lastItemIndex = widget.details.length + 1;
-            final isAtBottom = positions.any(
-              (pos) =>
-                  pos.index == lastItemIndex && pos.itemTrailingEdge <= 1.05,
-            );
-
-            final isTargetFullyVisible = positions.any(
-              (pos) =>
-                  pos.index == targetIndex &&
-                  pos.itemLeadingEdge >= 0.0 &&
-                  pos.itemTrailingEdge <= 1.0,
-            );
-
-            if (!isAtBottom && !isTargetFullyVisible) {
-              _itemScrollController.scrollTo(
-                index: targetIndex,
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeInOut,
-              );
-            }
-          }
-        });
-      }
-    } else {
-      _lastPlayedAyah = -1;
-    }
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final arabicStyle = GoogleFonts.notoNaskhArabic(
+      textStyle: theme.textTheme.headlineMedium,
+      fontWeight: FontWeight.w600,
+      color: colorScheme.onTertiary,
+    );
+    final verseLabelStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontWeight: FontWeight.bold,
+      color: colorScheme.onTertiary,
+    );
+    final translationStyle = theme.textTheme.bodySmall?.copyWith(
+      fontWeight: FontWeight.bold,
+      color: colorScheme.onTertiary.withValues(alpha: 0.5),
+    );
 
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
@@ -240,11 +266,11 @@ class _SurahDetailListState extends State<SurahDetailList> {
           final data = widget.details[index - 1];
           return Column(
             children: [
-              Consumer<AudioProvider>(
-                builder: (context, audio, _) {
-                  final isPlayingz =
-                      audio.playedAyah == data.verseNo &&
-                      audio.playedSurah == widget.surah.id;
+              Selector<AudioProvider, bool>(
+                selector: (_, audio) =>
+                    audio.playedAyah == data.verseNo &&
+                    audio.playedSurah == widget.surah.id,
+                builder: (context, isPlayingz, _) {
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
@@ -287,13 +313,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
                               ),
                               child: Text(
                                 '${data.chapterNo}:${data.verseNo}',
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onTertiary,
-                                    ),
+                                style: verseLabelStyle,
                               ),
                             ),
                             Spacer(),
@@ -304,6 +324,7 @@ class _SurahDetailListState extends State<SurahDetailList> {
                                       context,
                                       listen: false,
                                     );
+                                final audio = context.read<AudioProvider>();
                                 SurahModel surah = await surahProvider
                                     .getSurahById(data.chapterNo);
                                 audio.playMultiple(surah, data.verseNo);
@@ -333,27 +354,12 @@ class _SurahDetailListState extends State<SurahDetailList> {
                             child: Text(
                               data.textAr,
                               textAlign: TextAlign.right,
-                              style: GoogleFonts.notoNaskhArabic(
-                                textStyle: Theme.of(
-                                  context,
-                                ).textTheme.headlineMedium,
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.onTertiary,
-                              ),
+                              style: arabicStyle,
                             ),
                           ),
                         ),
                         const SizedBox(height: 30),
-                        Text(
-                          data.text(code),
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onTertiary.withValues(alpha: 0.5),
-                              ),
-                        ),
+                        Text(data.text(code), style: translationStyle),
                       ],
                     ),
                   );
