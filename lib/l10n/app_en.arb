@@ -201,5 +201,6 @@
         }
     },
     "jumpToAyahGo": "Go",
-    "nearbyMosques": "Nearby Mosques"
+    "nearbyMosques": "Nearby Mosques",
+    "qiblaDirection": "Qibla Direction"
 }

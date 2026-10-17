@@ -373,4 +373,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get nearbyMosques => 'Masjid Terdekat';
+
+  @override
+  String get qiblaDirection => 'Arah Kiblat';
 }

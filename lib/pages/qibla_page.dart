@@ -1,8 +1,10 @@
 import 'dart:math' as math;
+
 import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QiblaPage extends StatefulWidget {
@@ -13,8 +15,7 @@ class QiblaPage extends StatefulWidget {
   State<QiblaPage> createState() => _QiblaPageState();
 }
 
-class _QiblaPageState extends State<QiblaPage>
-    with SingleTickerProviderStateMixin {
+class _QiblaPageState extends State<QiblaPage> {
   bool _isLoading = true;
   double? _qiblaDirection;
   String _location = '';
@@ -80,10 +81,6 @@ class _QiblaPageState extends State<QiblaPage>
 
   @override
   Widget build(BuildContext context) {
-    return _buildBody();
-  }
-
-  Widget _buildBody() {
     // The page lives in an IndexedStack; only listen to the compass while
     // the tab is visible so the sensor does not run in the background.
     if (!widget.isActive) return const SizedBox.shrink();
@@ -92,20 +89,12 @@ class _QiblaPageState extends State<QiblaPage>
       return const Center(child: CircularProgressIndicator());
     }
 
+    final l10n = AppLocalizations.of(context);
     final qiblaDirection = _qiblaDirection;
     if (qiblaDirection == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text(
-            AppLocalizations.of(context)!.qiblaNoLocation,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+      return _QiblaStatus(
+        icon: Icons.location_off_rounded,
+        message: l10n?.qiblaNoLocation ?? '',
       );
     }
 
@@ -113,262 +102,489 @@ class _QiblaPageState extends State<QiblaPage>
       stream: FlutterCompass.events,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              AppLocalizations.of(context)!.errorRead,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.error,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          return _QiblaStatus(
+            icon: Icons.explore_off_rounded,
+            message: l10n?.errorRead ?? '',
+            isError: true,
           );
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
-        final double? heading = snapshot.data?.heading;
-
+        final heading = snapshot.data?.heading;
         if (heading == null) {
-          return Center(
-            child: Text(
-              AppLocalizations.of(context)!.errorNotSupport,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.error,
-                fontWeight: FontWeight.bold,
+          return _QiblaStatus(
+            icon: Icons.explore_off_rounded,
+            message: l10n?.errorNotSupport ?? '',
+            isError: true,
+          );
+        }
+
+        return _QiblaView(
+          location: _location,
+          qiblaDirection: qiblaDirection,
+          heading: heading,
+        );
+      },
+    );
+  }
+}
+
+class _QiblaView extends StatelessWidget {
+  final String location;
+  final double qiblaDirection;
+  final double heading;
+
+  const _QiblaView({
+    required this.location,
+    required this.qiblaDirection,
+    required this.heading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final qiblaAngle = qiblaDirection - heading;
+    final diff = (qiblaAngle + 180) % 360 - 180;
+    final isFacing = diff.abs() < 2;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+      child: Column(
+        children: [
+          _LocationCard(location: location, qiblaDirection: qiblaDirection),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final dimension = math.min(
+                    math.min(constraints.maxWidth, constraints.maxHeight),
+                    320.0,
+                  );
+                  return Center(
+                    child: _Compass(
+                      dimension: dimension,
+                      heading: heading,
+                      qiblaAngle: qiblaAngle,
+                      isFacing: isFacing,
+                    ),
+                  );
+                },
               ),
             ),
-          );
-        }
+          ),
+          _TurnHint(diff: diff, isFacing: isFacing),
+        ],
+      ),
+    );
+  }
+}
 
-        final qiblaAngle = qiblaDirection - heading;
+class _LocationCard extends StatelessWidget {
+  final String location;
+  final double qiblaDirection;
 
-        double diff = qiblaAngle;
-        diff = (diff + 180) % 360 - 180;
+  const _LocationCard({required this.location, required this.qiblaDirection});
 
-        String turnText;
-        Color textColor;
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
+    final onCard = colorScheme.onPrimary;
+    const radius = BorderRadius.all(Radius.circular(20));
 
-        if (diff.abs() < 2) {
-          turnText = AppLocalizations.of(context)!.qiblaFacing;
-          textColor = Theme.of(context).colorScheme.primary;
-        } else if (diff > 0) {
-          turnText = AppLocalizations.of(context)!.qiblaRotate(
-            diff.toStringAsFixed(0),
-            AppLocalizations.of(context)!.right,
-          );
-          textColor = Theme.of(context).colorScheme.onTertiary;
-        } else {
-          turnText = AppLocalizations.of(context)!.qiblaRotate(
-            math.min(diff.abs(), 359).toStringAsFixed(0),
-            AppLocalizations.of(context)!.left,
-          );
-          textColor = Theme.of(context).colorScheme.onTertiary;
-        }
-
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        gradient: LinearGradient(
+          colors: [
+            colorScheme.primary,
+            Color.alphaBlend(
+              colorScheme.secondary.withValues(alpha: 0.35),
+              colorScheme.primary,
+            ),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.primary.withValues(alpha: 0.3),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
           children: [
-            SizedBox(height: 12),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12.0),
-              padding: const EdgeInsets.all(16),
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
-                borderRadius: BorderRadius.circular(24),
+                color: onCard.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Icon(
+                Icons.location_on_rounded,
+                size: 22,
+                color: colorScheme.secondaryFixedDim,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.location_on,
-                    size: Theme.of(context).textTheme.bodyLarge?.fontSize,
-                    color: Theme.of(context).colorScheme.primary,
+                  Text(
+                    l10n?.qiblaDirection ?? '',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: onCard.withValues(alpha: 0.8),
+                    ),
                   ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      _location,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      textAlign: TextAlign.center,
+                  const SizedBox(height: 2),
+                  Text(
+                    location.isEmpty ? '-' : location,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: onCard,
                     ),
                   ),
                 ],
               ),
             ),
-            Spacer(),
-            Center(
-              child: SizedBox(
-                width: 320,
-                height: 320,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    AnimatedRotation(
-                      turns: -heading / 360,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).colorScheme.primary,
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                            width: 2,
-                          ),
-                        ),
-                        child: CustomPaint(
-                          painter: CompassDialPainter(
-                            tickColor: Theme.of(context).colorScheme.onPrimary,
-                            northStyle: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary,
-                                ),
-                            labelStyle: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(context).colorScheme.onPrimary
-                                      .withValues(alpha: 0.7),
-                                ),
-                          ),
-                          size: const Size(320, 320),
-                        ),
-                      ),
-                    ),
+            const SizedBox(width: 12),
+            Text(
+              '${qiblaDirection.toStringAsFixed(0)}°',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.secondaryFixedDim,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-                    AnimatedRotation(
-                      turns: qiblaAngle / 360,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Positioned(
-                            top: 50,
-                            bottom: 160,
-                            child: Container(
-                              width: 3,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Theme.of(context).colorScheme.secondary,
-                                    Theme.of(context).colorScheme.secondary
-                                        .withValues(alpha: 0),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                            ),
-                          ),
-                          Positioned(top: 20, child: _buildKaabaIcon()),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.secondary,
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.onPrimaryFixed,
-                          width: 3,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.secondary.withValues(alpha: 0.5),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
+class _Compass extends StatelessWidget {
+  final double dimension;
+  final double heading;
+  final double qiblaAngle;
+  final bool isFacing;
+
+  const _Compass({
+    required this.dimension,
+    required this.heading,
+    required this.qiblaAngle,
+    required this.isFacing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final onDial = colorScheme.onPrimary;
+    final dialSize = Size.square(dimension);
+    const rotationDuration = Duration(milliseconds: 300);
+
+    return SizedBox.square(
+      dimension: dimension,
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutCubic,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: isFacing
+                      ? colorScheme.secondary.withValues(alpha: 0.55)
+                      : colorScheme.primary.withValues(alpha: 0.25),
+                  blurRadius: isFacing ? 36 : 24,
+                  spreadRadius: isFacing ? 4 : 0,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+          ),
+          AnimatedRotation(
+            turns: -heading / 360,
+            duration: rotationDuration,
+            curve: Curves.easeOut,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    colorScheme.primary,
+                    Color.alphaBlend(
+                      colorScheme.secondary.withValues(alpha: 0.35),
+                      colorScheme.primary,
                     ),
                   ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                border: Border.all(
+                  color: onDial.withValues(alpha: 0.15),
+                  width: 4,
+                ),
+              ),
+              child: CustomPaint(
+                size: dialSize,
+                painter: CompassDialPainter(
+                  tickColor: onDial.withValues(alpha: 0.85),
+                  northStyle: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.secondaryFixedDim,
+                  ),
+                  labelStyle: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: onDial.withValues(alpha: 0.7),
+                  ),
                 ),
               ),
             ),
-            Spacer(),
-            Text(
-              turnText,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.bold,
+          ),
+          AnimatedRotation(
+            turns: qiblaAngle / 360,
+            duration: rotationDuration,
+            curve: Curves.easeOut,
+            child: SizedBox.square(
+              dimension: dimension,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    top: dimension * 0.18,
+                    bottom: dimension / 2,
+                    child: Container(
+                      width: 3,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            colorScheme.secondaryFixedDim,
+                            colorScheme.secondaryFixedDim.withValues(alpha: 0),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: dimension * 0.06,
+                    child: _KaabaMarker(isFacing: isFacing),
+                  ),
+                ],
               ),
             ),
-            Spacer(),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildKaabaIcon() {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: colorScheme.onPrimaryFixed,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: colorScheme.outlineVariant, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.secondary.withValues(alpha: 0.3),
-            blurRadius: 16,
-            spreadRadius: 4,
+          ),
+          Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colorScheme.secondaryFixedDim,
+              border: Border.all(color: onDial, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.secondary.withValues(alpha: 0.5),
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: -22,
+            child: Icon(
+              Icons.arrow_drop_down_rounded,
+              size: 36,
+              color: isFacing
+                  ? colorScheme.secondary
+                  : colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+            ),
           ),
         ],
       ),
-      child: Stack(
+    );
+  }
+}
+
+class _KaabaMarker extends StatelessWidget {
+  final bool isFacing;
+
+  const _KaabaMarker({required this.isFacing});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: 42,
+      height: 42,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: isFacing ? colorScheme.secondaryFixedDim : colorScheme.surface,
+        shape: BoxShape.circle,
+        border: Border.all(color: colorScheme.secondaryFixedDim, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.secondary.withValues(alpha: 0.35),
+            blurRadius: 14,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: FaIcon(
+        FontAwesomeIcons.kaaba,
+        size: 18,
+        color: colorScheme.onSurface,
+      ),
+    );
+  }
+}
+
+class _TurnHint extends StatelessWidget {
+  final double diff;
+  final bool isFacing;
+
+  const _TurnHint({required this.diff, required this.isFacing});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
+
+    final String text;
+    final IconData icon;
+    if (isFacing) {
+      text = l10n?.qiblaFacing ?? '';
+      icon = Icons.check_circle_rounded;
+    } else if (diff > 0) {
+      text = l10n?.qiblaRotate(diff.toStringAsFixed(0), l10n.right) ?? '';
+      icon = Icons.rotate_right_rounded;
+    } else {
+      final degree = math.min(diff.abs(), 359).toStringAsFixed(0);
+      text = l10n?.qiblaRotate(degree, l10n.left) ?? '';
+      icon = Icons.rotate_left_rounded;
+    }
+
+    final foreground = isFacing ? colorScheme.onPrimary : colorScheme.onSurface;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isFacing ? colorScheme.primary : colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isFacing
+              ? colorScheme.primary
+              : colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Positioned(
-            top: 10,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 8,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    colorScheme.secondary,
-                    colorScheme.secondaryFixed,
-                    colorScheme.secondary,
-                  ],
-                ),
-              ),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            transitionBuilder: (child, animation) =>
+                ScaleTransition(scale: animation, child: child),
+            child: Icon(
+              icon,
+              key: ValueKey(icon),
+              size: 20,
+              color: isFacing
+                  ? colorScheme.secondaryFixedDim
+                  : colorScheme.secondary,
             ),
           ),
-          Positioned(
-            top: 19,
-            right: 8,
-            child: Container(
-              width: 6,
-              height: 10,
-              decoration: BoxDecoration(
-                border: Border.all(color: colorScheme.secondary, width: 1.5),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: foreground,
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _QiblaStatus extends StatelessWidget {
+  final IconData icon;
+  final String message;
+  final bool isError;
+
+  const _QiblaStatus({
+    required this.icon,
+    required this.message,
+    this.isError = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final accent = isError ? colorScheme.error : colorScheme.primary;
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 96,
+              height: 96,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: accent.withValues(alpha: 0.3),
+                  width: 2,
+                ),
+              ),
+              child: Icon(icon, size: 36, color: accent),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -391,7 +607,7 @@ class CompassDialPainter extends CustomPainter {
     final radius = size.width / 2;
 
     final tickPaint = Paint()
-      ..color = tickColor
+      ..color = tickColor.withValues(alpha: tickColor.a * 0.6)
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
@@ -419,7 +635,7 @@ class CompassDialPainter extends CustomPainter {
       canvas.drawLine(
         startPoint,
         endPoint,
-        isCardinal ? activeTickPaint : tickPaint,
+        isMajor ? activeTickPaint : tickPaint,
       );
     }
 

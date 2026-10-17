@@ -373,4 +373,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nearbyMosques => 'Nearby Mosques';
+
+  @override
+  String get qiblaDirection => 'Qibla Direction';
 }
