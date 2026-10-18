@@ -56,22 +56,43 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
 
   @override
   Widget build(BuildContext context) {
-    int completedCount = _prayerProgress.values.where((v) => v).length;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
+    final completedCount = _prayerProgress.values.where((v) => v).length;
+    final progress = completedCount / _prayerNames.length;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.shadow.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                AppLocalizations.of(context)!.prayerProgress,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                  color: Theme.of(context).colorScheme.onTertiary,
+              Expanded(
+                child: Text(
+                  l10n?.prayerProgress ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
               ),
               Container(
@@ -80,104 +101,129 @@ class _HomePrayerProgressState extends State<HomePrayerProgress> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer.withAlpha(100),
+                  color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  '$completedCount/${_prayerNames.length} ${AppLocalizations.of(context)!.completed}',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  '$completedCount/${_prayerNames.length} '
+                  '${l10n?.completed ?? ''}',
+                  style: theme.textTheme.labelSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    color: colorScheme.onPrimaryContainer,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: _prayerNames.map((prayer) {
-              final isCompleted = _prayerProgress[prayer] ?? false;
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () => _toggleProgress(prayer),
-                  behavior: HitTestBehavior.opaque,
-                  child: Column(
-                    children: [
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: isCompleted
-                              ? LinearGradient(
-                                  colors: [
-                                    Theme.of(context).colorScheme.primary,
-                                    Theme.of(context).colorScheme.primary,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                )
-                              : null,
-                          color: isCompleted
-                              ? null
-                              : Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainer.withAlpha(150),
-                          border: Border.all(
-                            color: isCompleted
-                                ? Colors.transparent
-                                : Theme.of(
-                                    context,
-                                  ).colorScheme.outline.withAlpha(50),
-                          ),
-                          boxShadow: isCompleted
-                              ? [
-                                  BoxShadow(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary.withAlpha(80),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ]
-                              : [],
-                        ),
-                        child: Icon(
-                          isCompleted
-                              ? Icons.check_rounded
-                              : Icons.radio_button_off_rounded,
-                          color: isCompleted
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant.withAlpha(100),
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        PrayerProxy().getPrayerLabel(context, prayer),
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              fontWeight: isCompleted
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: isCompleted
-                                  ? Theme.of(context).colorScheme.onSurface
-                                  : Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface.withAlpha(150),
-                            ),
-                      ),
-                    ],
-                  ),
+          const SizedBox(height: 12),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: progress),
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, _) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: value,
+                  minHeight: 6,
+                  backgroundColor: colorScheme.surfaceContainerHighest,
+                  color: colorScheme.secondary,
                 ),
               );
-            }).toList(),
+            },
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              for (final prayer in _prayerNames)
+                Expanded(
+                  child: _PrayerCheckItem(
+                    label: PrayerProxy().getPrayerLabel(context, prayer),
+                    isCompleted: _prayerProgress[prayer] ?? false,
+                    onTap: () => _toggleProgress(prayer),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PrayerCheckItem extends StatelessWidget {
+  final String label;
+  final bool isCompleted;
+  final VoidCallback onTap;
+
+  const _PrayerCheckItem({
+    required this.label,
+    required this.isCompleted,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isCompleted
+                  ? colorScheme.primary
+                  : colorScheme.primaryContainer.withValues(alpha: 0.5),
+              border: Border.all(
+                color: isCompleted
+                    ? colorScheme.primary
+                    : colorScheme.primary.withValues(alpha: 0.25),
+              ),
+              boxShadow: isCompleted
+                  ? [
+                      BoxShadow(
+                        color: colorScheme.primary.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : const [],
+            ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation, child: child),
+              child: Icon(
+                isCompleted ? Icons.check_rounded : Icons.mosque_outlined,
+                key: ValueKey(isCompleted),
+                size: 20,
+                color: isCompleted
+                    ? colorScheme.onPrimary
+                    : colorScheme.primary.withValues(alpha: 0.7),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              maxLines: 1,
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: isCompleted ? FontWeight.bold : FontWeight.w500,
+                color: isCompleted
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
         ],
       ),

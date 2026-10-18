@@ -1,6 +1,4 @@
-import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomePrayerSkeleton extends StatelessWidget {
@@ -8,132 +6,78 @@ class HomePrayerSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = Theme.of(context).colorScheme.onPrimary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final baseColor = colorScheme.onPrimary;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            colorFilter: ColorFilter.mode(
-              Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
-              BlendMode.darken,
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: LinearGradient(
+          colors: [
+            colorScheme.primary,
+            Color.alphaBlend(
+              colorScheme.secondary.withValues(alpha: 0.35),
+              colorScheme.primary,
             ),
-            image: AssetImage('assets/images/background.jpg'),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.shadow.withAlpha(10),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: baseColor.withValues(alpha: 0.15),
+        highlightColor: baseColor.withValues(alpha: 0.35),
+        child: Column(
+          children: [
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: _Block(width: 140, height: 28),
+            ),
+            const SizedBox(height: 16),
+            const _Block(width: 180, height: 14),
+            const SizedBox(height: 6),
+            const _Block(width: 140, height: 12),
+            const SizedBox(height: 12),
+            const _Block(width: 170, height: 56),
+            const SizedBox(height: 10),
+            const _Block(width: 200, height: 14),
+            const SizedBox(height: 18),
+            const _Block(width: double.infinity, height: 1),
+            const SizedBox(height: 16),
+            Row(
+              children: List.generate(
+                5,
+                (_) => const Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    child: _Block(width: double.infinity, height: 72),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
-        child: Shimmer.fromColors(
-          baseColor: baseColor.withValues(alpha: 0.5),
-          highlightColor: baseColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        'City, Country',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.nextPrayerTitle,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '..................\n..................',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Prayer',
-                style: GoogleFonts.notoSerif(
-                  textStyle: Theme.of(context).textTheme.headlineLarge,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                '00:00',
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.prayerTimes,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                        ),
+      ),
+    );
+  }
+}
 
-                        Spacer(),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          size: 32,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+class _Block extends StatelessWidget {
+  final double width;
+  final double height;
+
+  const _Block({required this.width, required this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
+        borderRadius: BorderRadius.circular(12),
       ),
     );
   }

@@ -12,6 +12,7 @@ import 'package:deenly/pages/home/home_prayer_error.dart';
 import 'package:deenly/pages/home/home_prayer_info.dart';
 import 'package:deenly/pages/home/home_prayer_progress.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
+import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   final PrayerProxy _prayerProxy = PrayerProxy();
   final HadithProxy _hadithProxy = HadithProxy();
   bool _isGettingPrayerData = true;
@@ -34,11 +36,23 @@ class HomePageState extends State<HomePage> {
   PrayerModel? _prayerModel;
   HadithModel? _hadithModel;
 
+  late final AnimationController _entranceController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+
   @override
   void initState() {
     super.initState();
+    _entranceController.forward();
     loadPrayerData(true);
     _loadHadithData();
+  }
+
+  @override
+  void dispose() {
+    _entranceController.dispose();
+    super.dispose();
   }
 
   Future<void> loadPrayerData(bool isInit) async {
@@ -139,54 +153,62 @@ class HomePageState extends State<HomePage> {
     final prayerModel = _prayerModel;
     final hadithModel = _hadithModel;
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    final Widget prayerSection;
+    if (_isGettingPrayerData) {
+      prayerSection = const HomePrayerSkeleton();
+    } else if (prayerModel != null) {
+      prayerSection = Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Text(
-              AppLocalizations.of(context)!.assalamuAlaikum,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          HomePrayerInfo(
+            location: _location ?? '',
+            prayerModel: prayerModel,
+            onRefreshLocation: () => loadPrayerData(false),
           ),
-          const SizedBox(height: 10),
-
-          if (_isGettingPrayerData)
-            const HomePrayerSkeleton()
-          else if (prayerModel != null) ...[
-            HomePrayerInfo(
-              location: _location ?? '',
-              prayerModel: prayerModel,
-              onRefreshLocation: () => loadPrayerData(false),
-            ),
-            if (_isApproximate)
-              HomeApproximateNotice(
-                cityName: _location ?? '',
-                onChooseCity: _chooseCity,
-              ),
-          ] else
-            HomePrayerError(
-              onRetry: () => loadPrayerData(false),
+          if (_isApproximate)
+            HomeApproximateNotice(
+              cityName: _location ?? '',
               onChooseCity: _chooseCity,
             ),
+        ],
+      );
+    } else {
+      prayerSection = HomePrayerError(
+        onRetry: () => loadPrayerData(false),
+        onChooseCity: _chooseCity,
+      );
+    }
 
-          const SizedBox(height: 10),
+    /// The hadith card is optional: hide it if loading failed.
+    final Widget? hadithSection = _isGettingHadithData
+        ? const HomeHadithSkeleton()
+        : hadithModel != null
+        ? HomeHadithWidget(hadithModel: hadithModel)
+        : null;
 
-          HomePrayerProgress(),
+    final sections = [
+      prayerSection,
+      const HomePrayerProgress(),
+      ?hadithSection,
+    ];
 
-          const SizedBox(height: 10),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        children: [
+          for (var i = 0; i < sections.length; i++) ...[
+            if (i > 0) const SizedBox(height: 16),
+            StaggeredEntrance(
+              animation: _entranceController,
+              index: i,
 
-          // The hadith card is optional: hide it if loading failed.
-          if (_isGettingHadithData)
-            HomeHadithSkeleton()
-          else if (hadithModel != null)
-            HomeHadithWidget(hadithModel: hadithModel),
-
-          const SizedBox(height: 12),
+              /// The hadith card sizes itself from its on-screen position,
+              /// so it only fades in to keep that position stable.
+              slideFrom: sections[i] is HomeHadithWidget
+                  ? Offset.zero
+                  : const Offset(0, 0.25),
+              child: sections[i],
+            ),
+          ],
         ],
       ),
     );

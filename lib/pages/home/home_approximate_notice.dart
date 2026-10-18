@@ -17,7 +17,7 @@ class HomeApproximateNotice extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),

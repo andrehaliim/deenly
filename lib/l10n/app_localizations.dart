@@ -763,6 +763,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Qibla Direction'**
   String get qiblaDirection;
+
+  /// No description provided for @nextPrayerIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{prayer} begins in'**
+  String nextPrayerIn(String prayer);
+
+  /// No description provided for @durationHoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h {minutes}m'**
+  String durationHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
 }
 
 class _AppLocalizationsDelegate

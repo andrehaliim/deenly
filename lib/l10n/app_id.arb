@@ -133,5 +133,8 @@
     "jumpToAyahInvalid": "Masukkan angka antara 1 dan {total}",
     "jumpToAyahGo": "Buka",
     "nearbyMosques": "Masjid Terdekat",
-    "qiblaDirection": "Arah Kiblat"
+    "qiblaDirection": "Arah Kiblat",
+    "nextPrayerIn": "{prayer} dimulai dalam",
+    "durationHoursMinutes": "{hours} jam {minutes} menit",
+    "durationMinutes": "{minutes} menit"
 }

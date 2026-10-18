@@ -376,4 +376,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get qiblaDirection => 'Qibla Direction';
+
+  @override
+  String nextPrayerIn(String prayer) {
+    return '$prayer begins in';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '${hours}h ${minutes}m';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
 }

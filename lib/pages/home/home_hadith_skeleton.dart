@@ -1,83 +1,69 @@
-import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class HomeHadithSkeleton extends StatefulWidget {
+class HomeHadithSkeleton extends StatelessWidget {
   const HomeHadithSkeleton({super.key});
 
   @override
-  State<HomeHadithSkeleton> createState() => _HomeHadithSkeletonState();
-}
-
-class _HomeHadithSkeletonState extends State<HomeHadithSkeleton> {
-  @override
   Widget build(BuildContext context) {
-    final baseColor = Theme.of(context).colorScheme.onPrimary;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.75),
-            Theme.of(context).colorScheme.primary,
-          ],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
+        color: colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withAlpha(10),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
       ),
       child: Shimmer.fromColors(
-        baseColor: baseColor.withValues(alpha: 0.5),
-        highlightColor: baseColor,
-        child: Column(
+        baseColor: colorScheme.surfaceContainerHigh,
+        highlightColor: colorScheme.surfaceContainerLowest,
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Text(
-                AppLocalizations.of(context)!.hadithTitle,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            Row(
+              children: [
+                _Line(width: 120, height: 18),
+                Spacer(),
+                _Line(width: 28, height: 28),
+              ],
             ),
-            const SizedBox(height: 10),
-            const SizedBox(height: 16),
-
-            // Hadith lines
-            _line(width: double.infinity),
-            const SizedBox(height: 8),
-            _line(width: double.infinity),
-            const SizedBox(height: 8),
-            _line(width: double.infinity),
-            const SizedBox(height: 8),
-            _line(width: 200),
-
-            const SizedBox(height: 16),
-
-            // Narrator
-            _line(width: 180),
+            SizedBox(height: 8),
+            _Line(width: 160),
+            SizedBox(height: 16),
+            _Line(width: double.infinity),
+            SizedBox(height: 8),
+            _Line(width: double.infinity),
+            SizedBox(height: 8),
+            _Line(width: double.infinity),
+            SizedBox(height: 8),
+            _Line(width: 200),
+            SizedBox(height: 16),
+            _Line(width: double.infinity, height: 44),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _line({required double width}) {
+class _Line extends StatelessWidget {
+  final double width;
+  final double height;
+
+  const _Line({required this.width, this.height = 12});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      height: 12,
+      height: height,
       width: width,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(8),
       ),
     );

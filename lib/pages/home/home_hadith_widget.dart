@@ -163,8 +163,9 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
     final textStyle = DefaultTextStyle.of(context).style.merge(
       GoogleFonts.notoSerif(
         textStyle: theme.textTheme.bodyMedium,
-        color: colorScheme.onPrimary,
+        color: colorScheme.onSurface,
         fontStyle: FontStyle.italic,
+        height: 1.5,
       ),
     );
     _textStyle = textStyle;
@@ -176,102 +177,118 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
     }
 
     return Container(
-      padding: const EdgeInsets.all(24),
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            colorScheme.primary.withValues(alpha: 0.75),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        color: colorScheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
         ),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.5),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: colorScheme.shadow.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Text(
-              l10n?.hadithTitle ?? '',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final toggleSpan = TextSpan(
-                text: _isExpanded ? l10n?.showLess ?? '' : l10n?.showMore ?? '',
-                style: textStyle.copyWith(
-                  color: colorScheme.secondary,
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.normal,
-                ),
-                recognizer: _toggleRecognizer,
-              );
-
-              final String visibleText;
-              if (collapsedLines == null) {
-                visibleText = text;
-              } else if (_isExpanded) {
-                visibleText = '$text ';
-              } else {
-                visibleText = _truncateToFit(
-                  text: text,
-                  style: textStyle,
-                  suffix: toggleSpan,
-                  maxLines: collapsedLines,
-                  maxWidth: constraints.maxWidth,
-                );
-              }
-
-              return Text.rich(
-                TextSpan(
-                  style: textStyle,
-                  children: [
-                    TextSpan(text: visibleText),
-                    if (collapsedLines != null) toggleSpan,
-                  ],
-                ),
-                key: _textKey,
-                maxLines: _isExpanded ? null : collapsedLines,
-              );
-            },
-          ),
-          const SizedBox(height: 10),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n?.hadithNarrated ?? '',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onPrimary,
-                ),
-              ),
-              const SizedBox(width: 5),
               Expanded(
                 child: Text(
-                  widget.hadithModel.englishNarrator
-                      .replaceAll("Narrated", "")
-                      .replaceAll(":", ""),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onPrimary,
+                  l10n?.hadithTitle ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.menu_book_rounded,
+                  size: 16,
+                  color: colorScheme.onPrimary,
+                ),
+              ),
             ],
+          ),
+          const SizedBox(height: 4),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(text: l10n?.hadithNarrated ?? ''),
+                TextSpan(
+                  text: widget.hadithModel.englishNarrator
+                      .replaceAll('Narrated', '')
+                      .replaceAll(':', '')
+                      .trim(),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final toggleSpan = TextSpan(
+                  text: _isExpanded
+                      ? l10n?.showLess ?? ''
+                      : l10n?.showMore ?? '',
+                  style: textStyle.copyWith(
+                    color: colorScheme.secondary,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.normal,
+                  ),
+                  recognizer: _toggleRecognizer,
+                );
+
+                final String visibleText;
+                if (collapsedLines == null) {
+                  visibleText = text;
+                } else if (_isExpanded) {
+                  visibleText = '$text ';
+                } else {
+                  visibleText = _truncateToFit(
+                    text: text,
+                    style: textStyle,
+                    suffix: toggleSpan,
+                    maxLines: collapsedLines,
+                    maxWidth: constraints.maxWidth,
+                  );
+                }
+
+                return Text.rich(
+                  TextSpan(
+                    style: textStyle,
+                    children: [
+                      TextSpan(text: visibleText),
+                      if (collapsedLines != null) toggleSpan,
+                    ],
+                  ),
+                  key: _textKey,
+                  maxLines: _isExpanded ? null : collapsedLines,
+                );
+              },
+            ),
           ),
         ],
       ),

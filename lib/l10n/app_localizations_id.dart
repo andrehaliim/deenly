@@ -376,4 +376,19 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get qiblaDirection => 'Arah Kiblat';
+
+  @override
+  String nextPrayerIn(String prayer) {
+    return '$prayer dimulai dalam';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours jam $minutes menit';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes menit';
+  }
 }

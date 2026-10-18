@@ -202,5 +202,32 @@
     },
     "jumpToAyahGo": "Go",
     "nearbyMosques": "Nearby Mosques",
-    "qiblaDirection": "Qibla Direction"
+    "qiblaDirection": "Qibla Direction",
+    "nextPrayerIn": "{prayer} begins in",
+    "@nextPrayerIn": {
+        "placeholders": {
+            "prayer": {
+                "type": "String"
+            }
+        }
+    },
+    "durationHoursMinutes": "{hours}h {minutes}m",
+    "@durationHoursMinutes": {
+        "placeholders": {
+            "hours": {
+                "type": "int"
+            },
+            "minutes": {
+                "type": "int"
+            }
+        }
+    },
+    "durationMinutes": "{minutes} min",
+    "@durationMinutes": {
+        "placeholders": {
+            "minutes": {
+                "type": "int"
+            }
+        }
+    }
 }
