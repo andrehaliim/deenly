@@ -15,6 +15,8 @@ class DatabaseHelper {
   static const String tableHadith = 'hadith';
   static const String tableJuz = 'juz';
   static const String tableContinueReading = 'continue_reading';
+  static const String tableDoaGroup = 'doa_group';
+  static const String tableDoa = 'doa';
 
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
@@ -33,7 +35,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 9,
+      version: 10,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -107,6 +109,8 @@ class DatabaseHelper {
         updatedAt TEXT
       )
     ''');
+
+    await _createDoaTables(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -205,6 +209,10 @@ class DatabaseHelper {
     if (oldVersion < 9) {
       await _createSurahDetailIndex(db);
     }
+
+    if (oldVersion < 10) {
+      await _createDoaTables(db);
+    }
   }
 
   /// Opening a surah filters by chapter and sorts by verse; without this
@@ -213,6 +221,37 @@ class DatabaseHelper {
     await db.execute('''
       CREATE INDEX IF NOT EXISTS idx_surah_detail_chapter_verse
       ON $tableSurahDetail(chapter_no, verse_no)
+    ''');
+  }
+
+  /// Groups are a separate table so the category list can be read without
+  /// scanning every doa, and keeps its own display order.
+  Future<void> _createDoaTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $tableDoaGroup(
+        id INTEGER PRIMARY KEY,
+        name_indonesian TEXT NOT NULL,
+        name_english TEXT NOT NULL,
+        sort_order INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $tableDoa(
+        id INTEGER PRIMARY KEY,
+        group_id INTEGER NOT NULL REFERENCES $tableDoaGroup(id),
+        name_indonesian TEXT NOT NULL,
+        name_english TEXT NOT NULL,
+        text_arabic TEXT NOT NULL,
+        text_latin TEXT,
+        text_indonesian TEXT,
+        text_english TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE INDEX IF NOT EXISTS idx_doa_group_id
+      ON $tableDoa(group_id)
     ''');
   }
 
@@ -346,5 +385,65 @@ class DatabaseHelper {
     final Map<String, dynamic> data = jsonDecode(jsonString);
     final List<dynamic> juzs = data['juz'];
     return juzs.cast<Map<String, dynamic>>();
+  }
+
+  Future<void> seedDoaIfNeeded() async {
+    final alreadySeeded = await _isDoaSeeded();
+    if (alreadySeeded) return;
+
+    final db = await database;
+    final doas = await _loadDoaJson();
+
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+
+      // The JSON has no group ids, so groups are numbered in the order they
+      // first appear, which is also their display order.
+      final Map<String, int> groupIds = {};
+      for (final doa in doas) {
+        final groupId = groupIds.putIfAbsent(doa['grup'], () {
+          final id = groupIds.length + 1;
+          batch.insert(tableDoaGroup, {
+            'id': id,
+            'name_indonesian': doa['grup'],
+            'name_english': doa['grup_en'],
+            'sort_order': id,
+          }, conflictAlgorithm: ConflictAlgorithm.replace);
+          return id;
+        });
+
+        batch.insert(tableDoa, {
+          'id': doa['id'],
+          'group_id': groupId,
+          'name_indonesian': doa['nama'],
+          'name_english': doa['nama_en'],
+          'text_arabic': doa['ar'],
+          'text_latin': doa['tr'],
+          'text_indonesian': doa['idn'],
+          'text_english': doa['en'],
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+
+      await batch.commit(noResult: true);
+    });
+  }
+
+  Future<bool> _isDoaSeeded() async {
+    final db = await database;
+    final result = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM $tableDoa'),
+    );
+    return (result ?? 0) > 0;
+  }
+
+  Future<List<Map<String, dynamic>>> _loadDoaJson() async {
+    final jsonString = await rootBundle.loadString('assets/jsons/doa.json');
+    return compute(_parseDoaJson, jsonString);
+  }
+
+  static List<Map<String, dynamic>> _parseDoaJson(String jsonString) {
+    final Map<String, dynamic> data = jsonDecode(jsonString);
+    final List<dynamic> doas = data['data'];
+    return doas.cast<Map<String, dynamic>>();
   }
 }

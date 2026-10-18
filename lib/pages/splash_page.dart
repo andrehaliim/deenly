@@ -22,7 +22,7 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   static const _introDuration = Duration(milliseconds: 1600);
-  static const _totalSteps = 4;
+  static const _totalSteps = 5;
 
   final HadithProxy _hadithProxy = HadithProxy();
   final LocationProxy _locationProxy = LocationProxy();
@@ -70,23 +70,27 @@ class _SplashPageState extends State<SplashPage>
   }
 
   Future<Widget> _loadData() async {
-    debugPrint('🔄 [0/4] Starting _loadData...');
+    debugPrint('🔄 [0/5] Starting _loadData...');
 
     await _hadithProxy.load();
     _completeStep();
-    debugPrint('✅ [1/4] Hadith loaded');
+    debugPrint('✅ [1/5] Hadith loaded');
 
     await DatabaseHelper.instance.seedSurahIfNeeded();
     _completeStep();
-    debugPrint('✅ [2/4] Surah seeded');
+    debugPrint('✅ [2/5] Surah seeded');
 
     await DatabaseHelper.instance.seedJuzIfNeeded();
     _completeStep();
-    debugPrint('✅ [3/4] Juz seeded');
+    debugPrint('✅ [3/5] Juz seeded');
+
+    await DatabaseHelper.instance.seedDoaIfNeeded();
+    _completeStep();
+    debugPrint('✅ [4/5] Doa seeded');
 
     final nextPage = await _resolveNextPage();
     _completeStep();
-    debugPrint('✅ [4/4] Permission status checked');
+    debugPrint('✅ [5/5] Permission status checked');
 
     return nextPage;
   }
