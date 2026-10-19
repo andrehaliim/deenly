@@ -17,6 +17,7 @@ class DatabaseHelper {
   static const String tableContinueReading = 'continue_reading';
   static const String tableDoaGroup = 'doa_group';
   static const String tableDoa = 'doa';
+  static const String tableAsmaulHusna = 'asmaul_husna';
 
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
@@ -35,7 +36,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 10,
+      version: 11,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -111,6 +112,7 @@ class DatabaseHelper {
     ''');
 
     await _createDoaTables(db);
+    await _createAsmaulHusnaTable(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -213,6 +215,10 @@ class DatabaseHelper {
     if (oldVersion < 10) {
       await _createDoaTables(db);
     }
+
+    if (oldVersion < 11) {
+      await _createAsmaulHusnaTable(db);
+    }
   }
 
   /// Opening a surah filters by chapter and sorts by verse; without this
@@ -252,6 +258,20 @@ class DatabaseHelper {
     await db.execute('''
       CREATE INDEX IF NOT EXISTS idx_doa_group_id
       ON $tableDoa(group_id)
+    ''');
+  }
+
+  /// The id is the name's traditional order (1-99), so it also serves as
+  /// the display order.
+  Future<void> _createAsmaulHusnaTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $tableAsmaulHusna(
+        id INTEGER PRIMARY KEY,
+        text_arabic TEXT NOT NULL,
+        text_latin TEXT NOT NULL,
+        meaning_indonesian TEXT NOT NULL,
+        meaning_english TEXT NOT NULL
+      )
     ''');
   }
 
@@ -445,5 +465,48 @@ class DatabaseHelper {
     final Map<String, dynamic> data = jsonDecode(jsonString);
     final List<dynamic> doas = data['data'];
     return doas.cast<Map<String, dynamic>>();
+  }
+
+  Future<void> seedAsmaulHusnaIfNeeded() async {
+    final alreadySeeded = await _isAsmaulHusnaSeeded();
+    if (alreadySeeded) return;
+
+    final db = await database;
+    final names = await _loadAsmaulHusnaJson();
+
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (final name in names) {
+        batch.insert(tableAsmaulHusna, {
+          'id': name['urutan'],
+          'text_arabic': name['arab'],
+          'text_latin': name['latin'],
+          'meaning_indonesian': name['indonesia'],
+          'meaning_english': name['inggris'],
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  Future<bool> _isAsmaulHusnaSeeded() async {
+    final db = await database;
+    final result = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM $tableAsmaulHusna'),
+    );
+    return (result ?? 0) > 0;
+  }
+
+  Future<List<Map<String, dynamic>>> _loadAsmaulHusnaJson() async {
+    final jsonString = await rootBundle.loadString(
+      'assets/jsons/asmaulhusna.json',
+    );
+    return compute(_parseAsmaulHusnaJson, jsonString);
+  }
+
+  static List<Map<String, dynamic>> _parseAsmaulHusnaJson(String jsonString) {
+    final Map<String, dynamic> data = jsonDecode(jsonString);
+    final List<dynamic> names = data['data'];
+    return names.cast<Map<String, dynamic>>();
   }
 }

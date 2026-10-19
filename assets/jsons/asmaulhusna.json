@@ -1,0 +1,697 @@
+{
+    "data": [
+        {
+            "urutan": 1,
+            "latin": "Ar Rahman",
+            "arab": "الرحمن",
+            "indonesia": "Yang Maha Pengasih",
+            "inggris": "The Most Merciful, The Entirely Merciful"
+        },
+        {
+            "urutan": 2,
+            "latin": "Ar Rahiim",
+            "arab": "الرحيم",
+            "indonesia": "Yang Maha Penyayang",
+            "inggris": "The Especially Merciful"
+        },
+        {
+            "urutan": 3,
+            "latin": "Al Malik",
+            "arab": "الملك",
+            "indonesia": "Yang Maha Merajai / Memerintah",
+            "inggris": "The King and Owner of Dominion"
+        },
+        {
+            "urutan": 4,
+            "latin": "Al Quddus",
+            "arab": "القدوس",
+            "indonesia": "Yang Maha Suci",
+            "inggris": "The Absolutely Pure and Perfect"
+        },
+        {
+            "urutan": 5,
+            "latin": "As Salaam",
+            "arab": "السلام",
+            "indonesia": "Yang Maha Memberi Kesejahteraan",
+            "inggris": "The Source of Peace, The Flawless"
+        },
+        {
+            "urutan": 6,
+            "latin": "Al Mu 'min",
+            "arab": "المؤمن",
+            "indonesia": "Yang Maha Memberi Keamanan",
+            "inggris": "The Granter of Security and Faith"
+        },
+        {
+            "urutan": 7,
+            "latin": "Al Muhaimin",
+            "arab": "المهيمن",
+            "indonesia": "Yang Maha Pemelihara",
+            "inggris": "The Guardian, The Witness, The Overseer"
+        },
+        {
+            "urutan": 8,
+            "latin": "Al 'Aziiz",
+            "arab": "العزيز",
+            "indonesia": "Yang Maha Perkasa",
+            "inggris": "The Almighty, The All-Powerful, The Invincible, The Honorable"
+        },
+        {
+            "urutan": 9,
+            "latin": "Al Jabbar",
+            "arab": "الجبار",
+            "indonesia": "Yang Memiliki Mutlak Kegagahan",
+            "inggris": "The Compeller, The Restorer"
+        },
+        {
+            "urutan": 10,
+            "latin": "Al Mutakabbir",
+            "arab": "المتكبر",
+            "indonesia": "Yang Maha Megah, Yang Memiliki Kebesaran",
+            "inggris": "The Supreme in Glory, The Rightfully Proud"
+        },
+        {
+            "urutan": 11,
+            "latin": "Al Khaliq",
+            "arab": "الخالق",
+            "indonesia": "Yang Maha Pencipta",
+            "inggris": "The Creator, The Maker"
+        },
+        {
+            "urutan": 12,
+            "latin": "Al Baari '",
+            "arab": "البارئ",
+            "indonesia": "Yang Maha Melepaskan(Membuat, Membentuk, Menyeimbangkan)",
+            "inggris": "The Originator, The Inventor"
+        },
+        {
+            "urutan": 13,
+            "latin": "Al Mushawwir",
+            "arab": "المصور",
+            "indonesia": "Yang Maha Membentuk Rupa(makhluknya)",
+            "inggris": "The Fashioner, The Shaper"
+        },
+        {
+            "urutan": 14,
+            "latin": "Al Ghaffaar",
+            "arab": "الغفار",
+            "indonesia": "Yang Maha Pengampun",
+            "inggris": "The Constant Forgiver, The Great Forgiver"
+        },
+        {
+            "urutan": 15,
+            "latin": "Al Qahhaar",
+            "arab": "القهار",
+            "indonesia": "Yang Maha Memaksa",
+            "inggris": "The Subduer, The Ever-Dominating"
+        },
+        {
+            "urutan": 16,
+            "latin": "Al Wahhaab",
+            "arab": "الوهاب",
+            "indonesia": "Yang Maha Pemberi Karunia",
+            "inggris": "The Giver of Gifts, The Bestower"
+        },
+        {
+            "urutan": 17,
+            "latin": "Ar Razzaaq",
+            "arab": "الرزاق",
+            "indonesia": "Yang Maha Pemberi Rezeki",
+            "inggris": "The Ever-Providing, The Constant Provider"
+        },
+        {
+            "urutan": 18,
+            "latin": "Al Fattaah",
+            "arab": "الفتاح",
+            "indonesia": "Yang Maha Pembuka Rahmat",
+            "inggris": "The Opener, The Judge"
+        },
+        {
+            "urutan": 19,
+            "latin": "Al 'Aliim",
+            "arab": "العليم",
+            "indonesia": "Yang Maha Mengetahui(Memiliki Ilmu)",
+            "inggris": "The All-Knowing, The Omniscient"
+        },
+        {
+            "urutan": 20,
+            "latin": "Al Qaabidh",
+            "arab": "القابض",
+            "indonesia": "Yang Maha Menyempitkan(makhluknya)",
+            "inggris": "The Withholder, The Restrainer"
+        },
+        {
+            "urutan": 21,
+            "latin": "Al Baasith",
+            "arab": "الباسط",
+            "indonesia": "Yang Maha Melapangkan(makhluknya)",
+            "inggris": "The Extender, The Expander"
+        },
+        {
+            "urutan": 22,
+            "latin": "Al Khaafidh",
+            "arab": "الخافض",
+            "indonesia": "Yang Maha Merendahkan(makhluknya)",
+            "inggris": "The Reducer, The Abaser"
+        },
+        {
+            "urutan": 23,
+            "latin": "Ar Raafi '",
+            "arab": "الرافع",
+            "indonesia": "Yang Maha Meninggikan(makhluknya)",
+            "inggris": "The Exalter, The Elevator"
+        },
+        {
+            "urutan": 24,
+            "latin": "Al Mu'izz",
+            "arab": "المعز",
+            "indonesia": "Yang Maha Memuliakan(makhluknya)",
+            "inggris": "The Honourer, The Bestower of Honor"
+        },
+        {
+            "urutan": 25,
+            "latin": "Al Mudzil",
+            "arab": "المذل",
+            "indonesia": "Yang Maha Menghinakan(makhluknya)",
+            "inggris": "The Dishonourer, The Humiliator"
+        },
+        {
+            "urutan": 26,
+            "latin": "Al Samii '",
+            "arab": "السميع",
+            "indonesia": "Yang Maha Mendengar",
+            "inggris": "The All-Hearing"
+        },
+        {
+            "urutan": 27,
+            "latin": "Al Bashiir",
+            "arab": "البصير",
+            "indonesia": "Yang Maha Melihat",
+            "inggris": "The All-Seeing"
+        },
+        {
+            "urutan": 28,
+            "latin": "Al Hakam",
+            "arab": "الحكم",
+            "indonesia": "Yang Maha Menetapkan",
+            "inggris": "The Judge, The Giver of Justice"
+        },
+        {
+            "urutan": 29,
+            "latin": "Al 'Adl",
+            "arab": "العدل",
+            "indonesia": "Yang Maha Adil",
+            "inggris": "The Utterly Just"
+        },
+        {
+            "urutan": 30,
+            "latin": "Al Lathiif",
+            "arab": "اللطيف",
+            "indonesia": "Yang Maha Lembut",
+            "inggris": "The Most Gentle, The Subtle One"
+        },
+        {
+            "urutan": 31,
+            "latin": "Al Khabiir",
+            "arab": "الخبير",
+            "indonesia": "Yang Maha Mengenal",
+            "inggris": "The All-Aware, The All-Acquainted"
+        },
+        {
+            "urutan": 32,
+            "latin": "Al Haliim",
+            "arab": "الحليم",
+            "indonesia": "Yang Maha Penyantun",
+            "inggris": "The Most Forbearing"
+        },
+        {
+            "urutan": 33,
+            "latin": "Al 'Azhiim",
+            "arab": "العظيم",
+            "indonesia": "Yang Maha Agung",
+            "inggris": "The Magnificent, The Supreme"
+        },
+        {
+            "urutan": 34,
+            "latin": "Al Ghafuur",
+            "arab": "الغفور",
+            "indonesia": "Yang Maha Pengampun",
+            "inggris": "The Forgiving, The Exceedingly Forgiving"
+        },
+        {
+            "urutan": 35,
+            "latin": "As Syakuur",
+            "arab": "الشكور",
+            "indonesia": "Yang Maha Pembalas Budi(Menghargai)",
+            "inggris": "The Most Appreciative"
+        },
+        {
+            "urutan": 36,
+            "latin": "Al 'Aliy",
+            "arab": "العلى",
+            "indonesia": "Yang Maha Tinggi",
+            "inggris": "The Most High, The Exalted"
+        },
+        {
+            "urutan": 37,
+            "latin": "Al Kabiir",
+            "arab": "الكبير",
+            "indonesia": "Yang Maha Besar",
+            "inggris": "The Greatest, The Most Grand"
+        },
+        {
+            "urutan": 38,
+            "latin": "Al Hafizh",
+            "arab": "الحفيظ",
+            "indonesia": "Yang Maha Memelihara",
+            "inggris": "The Preserver, The All-Heedful and All-Protecting"
+        },
+        {
+            "urutan": 39,
+            "latin": "Al Muqiit",
+            "arab": "المقيت",
+            "indonesia": "Yang Maha Pemberi Kecukupan",
+            "inggris": "The Nourisher, The All-Powerful Maintainer"
+        },
+        {
+            "urutan": 40,
+            "latin": "Al Hasiib",
+            "arab": "الحسيب",
+            "indonesia": "Yang Maha Membuat Perhitungan",
+            "inggris": "The Reckoner"
+        },
+        {
+            "urutan": 41,
+            "latin": "Al Jaliil",
+            "arab": "الجليل",
+            "indonesia": "Yang Maha Mulia",
+            "inggris": "The Majestic"
+        },
+        {
+            "urutan": 42,
+            "latin": "Al Kariim",
+            "arab": "الكريم",
+            "indonesia": "Yang Maha Mulia",
+            "inggris": "The Most Generous, The Most Noble"
+        },
+        {
+            "urutan": 43,
+            "latin": "Ar Raqiib",
+            "arab": "الرقيب",
+            "indonesia": "Yang Maha Mengawasi",
+            "inggris": "The Watchful, The All-Watchful"
+        },
+        {
+            "urutan": 44,
+            "latin": "Al Mujiib",
+            "arab": "المجيب",
+            "indonesia": "Yang Maha Mengabulkan",
+            "inggris": "The Responsive, The Answerer"
+        },
+        {
+            "urutan": 45,
+            "latin": "Al Waasi '",
+            "arab": "الواسع",
+            "indonesia": "Yang Maha Luas",
+            "inggris": "The All-Encompassing, the Boundless"
+        },
+        {
+            "urutan": 46,
+            "latin": "Al Hakiim",
+            "arab": "الحكيم",
+            "indonesia": "Yang Maha Maka Bijaksana",
+            "inggris": "The All-Wise"
+        },
+        {
+            "urutan": 47,
+            "latin": "Al Waduud",
+            "arab": "الودود",
+            "indonesia": "Yang Maha Mengasihi",
+            "inggris": "The Most Loving"
+        },
+        {
+            "urutan": 48,
+            "latin": "Al Majiid",
+            "arab": "المجيد",
+            "indonesia": "Yang Maha Mulia",
+            "inggris": "The All-Glorious, The Ever-Majestic"
+        },
+        {
+            "urutan": 49,
+            "latin": "Al Baa'its",
+            "arab": "الباعث",
+            "indonesia": "Yang Maha Membangkitkan",
+            "inggris": "The Infuser of New Life, The Resurrector"
+        },
+        {
+            "urutan": 50,
+            "latin": "As Syahiid",
+            "arab": "الشهيد",
+            "indonesia": "Yang Maha Menyaksikan",
+            "inggris": "The All-Witnessing"
+        },
+        {
+            "urutan": 51,
+            "latin": "Al Haqq",
+            "arab": "الحق",
+            "indonesia": "Yang Maha Benar",
+            "inggris": "The Absolute Truth"
+        },
+        {
+            "urutan": 52,
+            "latin": "Al Wakiil",
+            "arab": "الوكيل",
+            "indonesia": "Yang Maha Memelihara",
+            "inggris": "The Trustee, The Disposer of Affairs"
+        },
+        {
+            "urutan": 53,
+            "latin": "Al Qawiyyu",
+            "arab": "القوى",
+            "indonesia": "Yang Maha Kuat",
+            "inggris": "The All-Strong"
+        },
+        {
+            "urutan": 54,
+            "latin": "Al Matiin",
+            "arab": "المتين",
+            "indonesia": "Yang Maha Kokoh",
+            "inggris": "The Firm, The Steadfast"
+        },
+        {
+            "urutan": 55,
+            "latin": "Al Waliyy",
+            "arab": "الولى",
+            "indonesia": "Yang Maha Melindungi",
+            "inggris": "The Protector, The Guardian"
+        },
+        {
+            "urutan": 56,
+            "latin": "Al Hamiid",
+            "arab": "الحميد",
+            "indonesia": "Yang Maha Terpuji",
+            "inggris": "The Praiseworthy, The Most Praised"
+        },
+        {
+            "urutan": 57,
+            "latin": "Al Muhshii",
+            "arab": "المحصى",
+            "indonesia": "Yang Maha Mengalkulasi(Menghitung Segala Sesuatu)",
+            "inggris": "The All-Enumerating, The Counter"
+        },
+        {
+            "urutan": 58,
+            "latin": "Al Mubdi '",
+            "arab": "المبدئ",
+            "indonesia": "Yang Maha Memulai",
+            "inggris": "The Originator, The Initiator"
+        },
+        {
+            "urutan": 59,
+            "latin": "Al Mu'iid",
+            "arab": "المعيد",
+            "indonesia": "Yang Maha Mengembalikan Kehidupan",
+            "inggris": "The Restorer, The Reviver"
+        },
+        {
+            "urutan": 60,
+            "latin": "Al Muhyii",
+            "arab": "المحيى",
+            "indonesia": "Yang Maha Menghidupkan",
+            "inggris": "The Giver of Life"
+        },
+        {
+            "urutan": 61,
+            "latin": "Al Mumiitu",
+            "arab": "المميت",
+            "indonesia": "Yang Maha Mematikan",
+            "inggris": "The Taker of Life, The Causer of Death"
+        },
+        {
+            "urutan": 62,
+            "latin": "Al Hayyu",
+            "arab": "الحي",
+            "indonesia": "Yang Maha Hidup",
+            "inggris": "The Ever-Living"
+        },
+        {
+            "urutan": 63,
+            "latin": "Al Qayyuum",
+            "arab": "القيوم",
+            "indonesia": "Yang Maha Mandiri",
+            "inggris": "The Sustainer, The Self-Subsisting"
+        },
+        {
+            "urutan": 64,
+            "latin": "Al Waajid",
+            "arab": "الواجد",
+            "indonesia": "Yang Maha Penemu",
+            "inggris": "The Ever-Wealthy, The Self-Sufficient"
+        },
+        {
+            "urutan": 65,
+            "latin": "Al Maajid",
+            "arab": "الماجد",
+            "indonesia": "Yang Maha Mulia",
+            "inggris": "The Noble, The Generous"
+        },
+        {
+            "urutan": 66,
+            "latin": "Al Wahiid",
+            "arab": "الواحد",
+            "indonesia": "Yang Maha Tunggal",
+            "inggris": "The One, The Indivisible"
+        },
+        {
+            "urutan": 67,
+            "latin": "Al Ahad",
+            "arab": "الاحد",
+            "indonesia": "Yang Maha Esa",
+            "inggris": "The Unique, The Only One"
+        },
+        {
+            "urutan": 68,
+            "latin": "As Shamad",
+            "arab": "الصمد",
+            "indonesia": "Yang Maha Dibutuhkan, Tempat Meminta",
+            "inggris": "The Self-Subsisting, The One Upon Whom All Depend"
+        },
+        {
+            "urutan": 69,
+            "latin": "Al Qaadir",
+            "arab": "القادر",
+            "indonesia": "Yang Maha Menentukan, Maha Menyeimbangkan",
+            "inggris": "The Omnipotent, The All-Able"
+        },
+        {
+            "urutan": 70,
+            "latin": "Al Muqtadir",
+            "arab": "المقتدر",
+            "indonesia": "Yang Maha Berkuasa",
+            "inggris": "The All-Powerful, The Dominant"
+        },
+        {
+            "urutan": 71,
+            "latin": "Al Muqaddim",
+            "arab": "المقدم",
+            "indonesia": "Yang Maha Mendahulukan",
+            "inggris": "The Expediter, The Promoter"
+        },
+        {
+            "urutan": 72,
+            "latin": "Al Mu 'akkhir",
+            "arab": "المؤخر",
+            "indonesia": "Yang Maha Mengakhirkan",
+            "inggris": "The Delayer, The Postponer"
+        },
+        {
+            "urutan": 73,
+            "latin": "Al Awwal",
+            "arab": "الأول",
+            "indonesia": "Yang Maha Awal",
+            "inggris": "The First, The Pre-Existing"
+        },
+        {
+            "urutan": 74,
+            "latin": "Al Aakhir",
+            "arab": "الأخر",
+            "indonesia": "Yang Maha Akhir",
+            "inggris": "The Last, The Ever-Remaining"
+        },
+        {
+            "urutan": 75,
+            "latin": "Az Zhaahir",
+            "arab": "الظاهر",
+            "indonesia": "Yang Maha Nyata",
+            "inggris": "The Manifest, The Highest"
+        },
+        {
+            "urutan": 76,
+            "latin": "Al Baathin",
+            "arab": "الباطن",
+            "indonesia": "Yang Maha Ghaib",
+            "inggris": "The Hidden One, Knower of the Hidden"
+        },
+        {
+            "urutan": 77,
+            "latin": "Al Waali",
+            "arab": "الوالي",
+            "indonesia": "Yang Maha Memerintah",
+            "inggris": "The Sole Governor"
+        },
+        {
+            "urutan": 78,
+            "latin": "Al Muta'aalii",
+            "arab": "المتعالي",
+            "indonesia": "Yang Maha Tinggi",
+            "inggris": "The Self-Exalted"
+        },
+        {
+            "urutan": 79,
+            "latin": "Al Barru",
+            "arab": "البر",
+            "indonesia": "Yang Maha Penderma(Maha Pemberi Kebajikan)",
+            "inggris": "The Source of All Goodness"
+        },
+        {
+            "urutan": 80,
+            "latin": "At Tawwaab",
+            "arab": "التواب",
+            "indonesia": "Yang Maha Penerima Tobat",
+            "inggris": "The Accepter of Repentance, The Ever-Relenting"
+        },
+        {
+            "urutan": 81,
+            "latin": "Al Muntaqim",
+            "arab": "المنتقم",
+            "indonesia": "Yang Maha Pemberi Balasan",
+            "inggris": "The Avenger"
+        },
+        {
+            "urutan": 82,
+            "latin": "Al Afuww",
+            "arab": "العفو",
+            "indonesia": "Yang Maha Pemaaf",
+            "inggris": "The Pardoner"
+        },
+        {
+            "urutan": 83,
+            "latin": "Ar Ra 'uuf",
+            "arab": "الرؤوف",
+            "indonesia": "Yang Maha Pengasuh",
+            "inggris": "The Most Kind"
+        },
+        {
+            "urutan": 84,
+            "latin": "Malikul Mulk",
+            "arab": "مالك الملك",
+            "indonesia": "Yang Maha Penguasa Kerajaan(Semesta)",
+            "inggris": "Master of the Dominion, Owner of the Kingdom"
+        },
+        {
+            "urutan": 85,
+            "latin": "Dzul Jalaali Wal Ikraam",
+            "arab": "ذو الجلال و الإكرام",
+            "indonesia": "Yang Maha Pemilik Kebesaran dan Kemuliaan",
+            "inggris": "Possessor of Glory and Honour"
+        },
+        {
+            "urutan": 86,
+            "latin": "Al Muqsith",
+            "arab": "المقسط",
+            "indonesia": "Yang Maha Pemberi Keadilan",
+            "inggris": "The Just One"
+        },
+        {
+            "urutan": 87,
+            "latin": "Al Jamii'",
+            "arab": "الجامع",
+            "indonesia": "Yang Maha Mengumpulkan",
+            "inggris": "The Gatherer, the Uniter"
+        },
+        {
+            "urutan": 88,
+            "latin": "Al Ghaniyy",
+            "arab": "الغنى",
+            "indonesia": "Yang Maha Kaya",
+            "inggris": "The Self-Sufficient, The Free of All Need"
+        },
+        {
+            "urutan": 89,
+            "latin": "Al Mughnii",
+            "arab": "المغنى",
+            "indonesia": "Yang Maha Pemberi Kekayaan",
+            "inggris": "The Enricher"
+        },
+        {
+            "urutan": 90,
+            "latin": "Al Maani",
+            "arab": "المانع",
+            "indonesia": "Yang Maha Mencegah",
+            "inggris": "The Withholder"
+        },
+        {
+            "urutan": 91,
+            "latin": "Ad Dhaar",
+            "arab": "الضار",
+            "indonesia": "Yang Maha Penimpa Kemudharatan",
+            "inggris": "The Creator of Harm"
+        },
+        {
+            "urutan": 92,
+            "latin": "An Nafii '",
+            "arab": "النافع",
+            "indonesia": "Yang Maha Memberi Manfaat",
+            "inggris": "The Propitious, The Benefactor"
+        },
+        {
+            "urutan": 93,
+            "latin": "An Nuur",
+            "arab": "النور",
+            "indonesia": "Yang Maha Bercahaya(Menerangi, Memberi Cahaya)",
+            "inggris": "The Light"
+        },
+        {
+            "urutan": 94,
+            "latin": "Al Haadii",
+            "arab": "الهادئ",
+            "indonesia": "Yang Maha Pemberi Petunjuk",
+            "inggris": "The Guide"
+        },
+        {
+            "urutan": 95,
+            "latin": "Al Badii'",
+            "arab": "البديع",
+            "indonesia": "Yang Maha Pencipta Yang Tiada Bandingannya",
+            "inggris": "The Incomparable Originator"
+        },
+        {
+            "urutan": 96,
+            "latin": "Al Baaqii",
+            "arab": "الباقي",
+            "indonesia": "Yang Maha Kekal",
+            "inggris": "The Ever-Lasting"
+        },
+        {
+            "urutan": 97,
+            "latin": "Al Waarits",
+            "arab": "الوارث",
+            "indonesia": "Yang Maha Pewaris",
+            "inggris": "The Inheritor"
+        },
+        {
+            "urutan": 98,
+            "latin": "Ar Rasyiid",
+            "arab": "الرشيد",
+            "indonesia": "Yang Maha Pandai",
+            "inggris": "The Guide to the Right Path"
+        },
+        {
+            "urutan": 99,
+            "latin": "As Shabuur",
+            "arab": "الصبور",
+            "indonesia": "Yang Maha Sabar",
+            "inggris": "The Patient"
+        }
+    ]
+}
