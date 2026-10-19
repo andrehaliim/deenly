@@ -16,24 +16,20 @@ class CustomBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       {
-        'icon': FontAwesomeIcons.bookQuran,
-        'label': AppLocalizations.of(context)!.menuQuran,
-      },
-      {
-        'icon': FontAwesomeIcons.mosque,
-        'label': AppLocalizations.of(context)!.menuMosque,
-      },
-      {
         'icon': FontAwesomeIcons.house,
         'label': AppLocalizations.of(context)!.menuHome,
       },
       {
-        'icon': FontAwesomeIcons.compass,
-        'label': AppLocalizations.of(context)!.menuQibla,
+        'icon': FontAwesomeIcons.personPraying,
+        'label': AppLocalizations.of(context)!.menuPrayers,
       },
       {
-        'icon': FontAwesomeIcons.fingerprint,
-        'label': AppLocalizations.of(context)!.menuTasbih,
+        'icon': FontAwesomeIcons.bookQuran,
+        'label': AppLocalizations.of(context)!.menuQuran,
+      },
+      {
+        'icon': FontAwesomeIcons.gear,
+        'label': AppLocalizations.of(context)!.menuSetting,
       },
     ];
 

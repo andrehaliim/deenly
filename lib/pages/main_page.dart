@@ -1,10 +1,8 @@
 import 'package:deenly/pages/home/home_page.dart';
-import 'package:deenly/pages/mosque_page.dart';
 import 'package:deenly/components/custom_navigation_bar.dart';
-import 'package:deenly/pages/qibla_page.dart';
+import 'package:deenly/pages/prayers_page.dart';
 import 'package:deenly/pages/quran/quran_page.dart';
 import 'package:deenly/pages/setting_page.dart';
-import 'package:deenly/pages/tasbih_page.dart';
 import 'package:flutter/material.dart';
 import 'package:deenly/components/app_theme.dart';
 
@@ -16,20 +14,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  static const int _quranIndex = 2;
+
   final GlobalKey<HomePageState> _homeKey = GlobalKey<HomePageState>();
   final GlobalKey<QuranPageState> _quranKey = GlobalKey<QuranPageState>();
-  int _selectedIndex = 2;
-
-  void _openSettings() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SettingPage(
-          onSaved: () => _homeKey.currentState?.loadPrayerData(false),
-        ),
-      ),
-    );
-  }
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +32,7 @@ class _MainPageState extends State<MainPage> {
         elevation: 0,
         centerTitle: true,
         actions: [
-          _selectedIndex == 0
+          _selectedIndex == _quranIndex
               ? IconButton(
                   icon: Icon(
                     (_quranKey.currentState?.isSearching ?? false)
@@ -58,25 +47,18 @@ class _MainPageState extends State<MainPage> {
                   },
                 )
               : Container(),
-          _selectedIndex != 2
-              ? Container()
-              : IconButton(
-                  icon: Icon(
-                    Icons.settings,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  onPressed: _openSettings,
-                ),
         ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          QuranPage(key: _quranKey),
-          MosquePage(isActive: _selectedIndex == 1),
           HomePage(key: _homeKey),
-          QiblaPage(isActive: _selectedIndex == 3),
-          const TasbihPage(),
+          const PrayersPage(),
+          QuranPage(key: _quranKey),
+          SettingPage(
+            showAppBar: false,
+            onSaved: () => _homeKey.currentState?.loadPrayerData(false),
+          ),
         ],
       ),
       bottomNavigationBar: CustomBottomNav(

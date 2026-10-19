@@ -14,6 +14,12 @@
     "menuQibla": "Qibla",
     "menuTasbih": "Tasbih",
     "menuSetting": "Settings",
+    "menuPrayers": "Prayers",
+    "menuDoa": "Dua",
+    "menuAsmaulHusna": "Asmaul Husna",
+    "menuDzikir": "Dhikr",
+    "menuCalendar": "Calendar",
+    "menuZakat": "Zakat",
 
     "prayerProgress": "Prayer Progress",
     "completed": "Completed",

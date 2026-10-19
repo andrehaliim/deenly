@@ -48,6 +48,24 @@ class AppLocalizationsId extends AppLocalizations {
   String get menuSetting => 'Pengaturan';
 
   @override
+  String get menuPrayers => 'Shalat';
+
+  @override
+  String get menuDoa => 'Doa';
+
+  @override
+  String get menuAsmaulHusna => 'Asmaul Husna';
+
+  @override
+  String get menuDzikir => 'Dzikir';
+
+  @override
+  String get menuCalendar => 'Kalender';
+
+  @override
+  String get menuZakat => 'Zakat';
+
+  @override
   String get prayerProgress => 'Progress Shalat';
 
   @override

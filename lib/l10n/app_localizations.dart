@@ -176,6 +176,42 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get menuSetting;
 
+  /// No description provided for @menuPrayers.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayers'**
+  String get menuPrayers;
+
+  /// No description provided for @menuDoa.
+  ///
+  /// In en, this message translates to:
+  /// **'Dua'**
+  String get menuDoa;
+
+  /// No description provided for @menuAsmaulHusna.
+  ///
+  /// In en, this message translates to:
+  /// **'Asmaul Husna'**
+  String get menuAsmaulHusna;
+
+  /// No description provided for @menuDzikir.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhikr'**
+  String get menuDzikir;
+
+  /// No description provided for @menuCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get menuCalendar;
+
+  /// No description provided for @menuZakat.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat'**
+  String get menuZakat;
+
   /// No description provided for @prayerProgress.
   ///
   /// In en, this message translates to:

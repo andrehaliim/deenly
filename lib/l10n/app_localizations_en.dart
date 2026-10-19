@@ -48,6 +48,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuSetting => 'Settings';
 
   @override
+  String get menuPrayers => 'Prayers';
+
+  @override
+  String get menuDoa => 'Dua';
+
+  @override
+  String get menuAsmaulHusna => 'Asmaul Husna';
+
+  @override
+  String get menuDzikir => 'Dhikr';
+
+  @override
+  String get menuCalendar => 'Calendar';
+
+  @override
+  String get menuZakat => 'Zakat';
+
+  @override
   String get prayerProgress => 'Prayer Progress';
 
   @override

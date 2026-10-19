@@ -14,6 +14,12 @@
     "menuQibla": "Kiblat",
     "menuTasbih": "Tasbih",
     "menuSetting": "Pengaturan",
+    "menuPrayers": "Shalat",
+    "menuDoa": "Doa",
+    "menuAsmaulHusna": "Asmaul Husna",
+    "menuDzikir": "Dzikir",
+    "menuCalendar": "Kalender",
+    "menuZakat": "Zakat",
 
     "prayerProgress": "Progress Shalat",
     "completed": "Selesai",

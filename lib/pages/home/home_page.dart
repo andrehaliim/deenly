@@ -8,9 +8,9 @@ import 'package:deenly/pages/home/home_approximate_notice.dart';
 import 'package:deenly/pages/home/home_city_picker_dialog.dart';
 import 'package:deenly/pages/home/home_hadith_skeleton.dart';
 import 'package:deenly/pages/home/home_hadith_widget.dart';
+import 'package:deenly/pages/home/home_menu_grid.dart';
 import 'package:deenly/pages/home/home_prayer_error.dart';
 import 'package:deenly/pages/home/home_prayer_info.dart';
-import 'package:deenly/pages/home/home_prayer_progress.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
@@ -185,11 +185,7 @@ class HomePageState extends State<HomePage>
         ? HomeHadithWidget(hadithModel: hadithModel)
         : null;
 
-    final sections = [
-      prayerSection,
-      const HomePrayerProgress(),
-      ?hadithSection,
-    ];
+    final sections = [prayerSection, const HomeMenuGrid(), ?hadithSection];
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: 16),

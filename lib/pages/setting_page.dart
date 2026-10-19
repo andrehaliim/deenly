@@ -23,9 +23,12 @@ const String _privacyPolicyUrl =
     'https://andrehaliim.vercel.app/projects/deenly/privacy';
 
 class SettingPage extends StatefulWidget {
-  const SettingPage({super.key, this.onSaved});
+  const SettingPage({super.key, this.onSaved, this.showAppBar = true});
 
   final VoidCallback? onSaved;
+
+  /// False when shown as a tab, where the main page already has an app bar.
+  final bool showAppBar;
 
   @override
   State<SettingPage> createState() => _SettingPageState();
@@ -217,16 +220,18 @@ class _SettingPageState extends State<SettingPage>
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l10n?.menuSetting ?? '',
-          style: theme.extension<AppTextStyles>()?.brandTitle,
-        ),
-        iconTheme: IconThemeData(color: theme.colorScheme.primary),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-      ),
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: Text(
+                l10n?.menuSetting ?? '',
+                style: theme.extension<AppTextStyles>()?.brandTitle,
+              ),
+              iconTheme: IconThemeData(color: theme.colorScheme.primary),
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+            )
+          : null,
       body: SafeArea(
         top: false,
         child: ListView(
@@ -269,9 +274,8 @@ class _SettingPageState extends State<SettingPage>
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _saveAdjustments(DrawerProvider drawerProvider) async {
