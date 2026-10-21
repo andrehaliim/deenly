@@ -1,9 +1,10 @@
 import 'dart:io';
-import 'dart:ui' show PlatformDispatcher;
+import 'dart:ui' show DartPluginRegistrant, PlatformDispatcher;
 
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/proxys/prayer_log_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,7 +12,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+/// Runs in a background isolate when a notification action that does not
+/// open the app is tapped, so it must be a top-level entry point.
+@pragma('vm:entry-point')
+Future<void> onBackgroundNotificationResponse(
+  NotificationResponse response,
+) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+  await NotificationHelper.handleResponse(response);
+}
+
 class NotificationHelper {
+  /// Action on the adhan notification that marks the prayer as done.
+  static const String actionMarkDone = 'mark_done';
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -27,11 +42,9 @@ class NotificationHelper {
 
       bool? isInitialized = await flutterLocalNotificationsPlugin.initialize(
         settings: initializationSettings,
-        onDidReceiveNotificationResponse: (details) {
-          if (details.payload != null) {
-            debugPrint("Notification payload: ${details.payload}");
-          }
-        },
+        onDidReceiveNotificationResponse: handleResponse,
+        onDidReceiveBackgroundNotificationResponse:
+            onBackgroundNotificationResponse,
       );
 
       if (isInitialized == null) {
@@ -47,6 +60,31 @@ class NotificationHelper {
       debugPrint(
         "Notification Helper failed to initialize (Normal for tests): $e",
       );
+    }
+  }
+
+  /// Payload of an adhan notification: the day it belongs to and the
+  /// prayer, so a late tap still marks the right day.
+  static String _adhanPayload(TZDateTime time, String prayer) =>
+      '${PrayerLogProxy.dateKey(time)}|$prayer';
+
+  /// Marks the prayer of an adhan notification as done when its action was
+  /// tapped. Other taps only open the app.
+  static Future<void> handleResponse(NotificationResponse response) async {
+    if (response.actionId != actionMarkDone) return;
+
+    final parts = response.payload?.split('|') ?? const [];
+    final date = parts.length == 2 ? DateTime.tryParse(parts[0]) : null;
+    if (date == null) {
+      debugPrint('Unknown adhan payload: ${response.payload}');
+      return;
+    }
+
+    try {
+      await PrayerLogProxy().setDone(date, parts[1], true);
+      debugPrint('${parts[1]} on ${parts[0]} marked done from notification');
+    } catch (e, st) {
+      debugPrint('Marking prayer from notification failed: $e\n$st');
     }
   }
 
@@ -111,29 +149,37 @@ class NotificationHelper {
       } catch (_) {}
     }
 
-    const androidNotificationDetails = AndroidNotificationDetails(
+    final l10n = await _loadL10n();
+    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayerName);
+
+    /// The action is handled in the background, without opening the app.
+    final androidNotificationDetails = AndroidNotificationDetails(
       'deenly_notification_channel',
       'Deenly Notifications',
       importance: Importance.max,
       priority: Priority.high,
-      sound: RawResourceAndroidNotificationSound('adhan'),
+      sound: const RawResourceAndroidNotificationSound('adhan'),
       playSound: true,
+      actions: [
+        AndroidNotificationAction(
+          actionMarkDone,
+          l10n.notificationMarkDone,
+          showsUserInterface: false,
+          cancelNotification: true,
+        ),
+      ],
     );
-
-    const notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-    );
-
-    final l10n = await _loadL10n();
-    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayerName);
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id: notifId,
       title: l10n.notificationAdhanTitle,
       body: l10n.notificationAdhanBody(prayerLabel),
-      notificationDetails: notificationDetails,
+      notificationDetails: NotificationDetails(
+        android: androidNotificationDetails,
+      ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       scheduledDate: scheduledTime,
+      payload: _adhanPayload(scheduledTime, prayerName),
     );
 
     debugPrint("Notification scheduled for $prayerName at $scheduledTime");

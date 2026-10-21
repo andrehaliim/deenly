@@ -919,6 +919,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Jumu\'ah'**
   String get jumuah;
+
+  /// No description provided for @notificationMarkDone.
+  ///
+  /// In en, this message translates to:
+  /// **'I have prayed'**
+  String get notificationMarkDone;
 }
 
 class _AppLocalizationsDelegate

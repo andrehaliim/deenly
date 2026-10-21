@@ -469,4 +469,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get jumuah => 'Jumat';
+
+  @override
+  String get notificationMarkDone => 'Sudah shalat';
 }

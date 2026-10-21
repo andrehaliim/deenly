@@ -159,5 +159,6 @@
     "prayerHistory": "Riwayat Shalat",
     "streakDays": "{count} hari beruntun",
     "historyRate": "{percent}% terlaksana dalam {days} hari terakhir",
-    "jumuah": "Jumat"
+    "jumuah": "Jumat",
+    "notificationMarkDone": "Sudah shalat"
 }

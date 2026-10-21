@@ -469,4 +469,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get jumuah => 'Jumu\'ah';
+
+  @override
+  String get notificationMarkDone => 'I have prayed';
 }

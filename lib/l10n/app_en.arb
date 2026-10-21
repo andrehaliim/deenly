@@ -283,5 +283,6 @@
             }
         }
     },
-    "jumuah": "Jumu'ah"
+    "jumuah": "Jumu'ah",
+    "notificationMarkDone": "I have prayed"
 }

@@ -13,7 +13,7 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   static const int _homeIndex = 0;
   static const int _prayersIndex = 1;
   static const int _quranIndex = 2;
@@ -22,6 +22,27 @@ class _MainPageState extends State<MainPage> {
   final GlobalKey<PrayersPageState> _prayersKey = GlobalKey<PrayersPageState>();
   final GlobalKey<QuranPageState> _quranKey = GlobalKey<QuranPageState>();
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Prayers can be marked from the adhan notification while the app is
+  /// in the background, so both tabs re-read them when it comes back.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) return;
+    _homeKey.currentState?.loadProgress();
+    _prayersKey.currentState?.reload();
+  }
 
   void _select(int index) {
     /// Each tab picks up what the other changed since the last visit: the
