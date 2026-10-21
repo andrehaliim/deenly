@@ -8,7 +8,8 @@ import 'package:deenly/pages/tasbih_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-/// 4x2 grid of shortcuts to the app's tools on the home page.
+/// 4x2 grid of shortcuts to the app's tools, shown as a light sheet in
+/// the middle of the home overview card.
 class HomeMenuGrid extends StatelessWidget {
   const HomeMenuGrid({super.key});
 
@@ -52,26 +53,16 @@ class HomeMenuGrid extends StatelessWidget {
     ];
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         children: [
           for (var row = 0; row < items.length / _columns; row++)
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 for (final item in items.skip(row * _columns).take(_columns))
                   Expanded(child: _MenuButton(item: item)),
@@ -109,40 +100,53 @@ class _MenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final page = item.page;
 
-    return InkWell(
-      onTap: () {
-        final page = item.page;
-        if (page != null) _open(context, page);
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        child: Column(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              alignment: Alignment.center,
-              child: FaIcon(item.icon, size: 22, color: colorScheme.primary),
-            ),
-            const SizedBox(height: 8),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                item.label,
-                maxLines: 1,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurfaceVariant,
+    /// Tools without a page yet are dimmed so they don't read as broken.
+    return Opacity(
+      opacity: page != null ? 1 : 0.45,
+      child: InkWell(
+        onTap: page != null ? () => _open(context, page) : null,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+          child: Column(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      colorScheme.primaryContainer,
+                      colorScheme.primaryContainer.withValues(alpha: 0.5),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                alignment: Alignment.center,
+                child: FaIcon(
+                  item.icon,
+                  size: 20,
+                  color: colorScheme.onPrimaryContainer,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 6),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  item.label,
+                  maxLines: 1,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

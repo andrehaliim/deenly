@@ -10,86 +10,47 @@ import 'package:provider/provider.dart';
 
 class HomeHadithWidget extends StatefulWidget {
   final HadithModel hadithModel;
-  const HomeHadithWidget({super.key, required this.hadithModel});
+  final bool isExpanded;
+  final VoidCallback onToggleExpanded;
+
+  /// Whether the parent gives this a bounded height to fill while
+  /// collapsed; the text then shows as many lines as fit in it.
+  final bool fillsHeight;
+
+  const HomeHadithWidget({
+    super.key,
+    required this.hadithModel,
+    required this.isExpanded,
+    required this.onToggleExpanded,
+    required this.fillsHeight,
+  });
 
   @override
   State<HomeHadithWidget> createState() => _HomeHadithWidgetState();
 }
 
 class _HomeHadithWidgetState extends State<HomeHadithWidget> {
-  /// Fewest hadith lines shown while collapsed, even on tiny screens.
-  static const int _minCollapsedLines = 3;
+  /// Lines shown while collapsed when there is no height to fill.
+  static const int _unboundedCollapsedLines = 3;
 
-  /// Space kept between the card and the bottom of the viewport.
-  static const double _bottomSpacing = 12;
-
-  final GlobalKey _textKey = GlobalKey();
   late final TapGestureRecognizer _toggleRecognizer = TapGestureRecognizer()
-    ..onTap = _toggleExpanded;
+    ..onTap = widget.onToggleExpanded;
 
-  bool _isExpanded = false;
+  @override
+  void initState() {
+    super.initState();
 
-  /// Max lines while collapsed; `null` means the full text fits.
-  int? _collapsedLines;
-  String? _text;
-  TextStyle? _textStyle;
+    /// Line heights measured with a fallback font are off, so lay out
+    /// again once Noto Serif has loaded.
+    GoogleFonts.pendingFonts().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
 
-  /// Adjusts [_collapsedLines] so the collapsed card ends above the
-  /// bottom of the scroll viewport (i.e. above the bottom nav).
-  void _fitToViewport() {
-    if (!mounted || _isExpanded) return;
-
-    final text = _text;
-    final style = _textStyle;
-    final scrollable = Scrollable.maybeOf(context);
-    final cardBox = context.findRenderObject();
-    final textBox = _textKey.currentContext?.findRenderObject();
-    final viewportBox = scrollable?.context.findRenderObject();
-    if (text == null ||
-        style == null ||
-        scrollable == null ||
-        cardBox is! RenderBox ||
-        textBox is! RenderBox ||
-        viewportBox is! RenderBox ||
-        !cardBox.hasSize ||
-        !textBox.hasSize ||
-        !viewportBox.hasSize) {
-      return;
-    }
-
-    final painter = TextPainter(
-      text: TextSpan(text: text, style: style),
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-    )..layout(maxWidth: textBox.size.width);
-    final metrics = painter.computeLineMetrics();
-    painter.dispose();
-    if (metrics.isEmpty) return;
-
-    final totalLines = metrics.length;
-    final lineHeight = metrics.first.height;
-    if (lineHeight <= 0) return;
-
-    // Position inside the scroll content, independent of scroll offset.
-    final cardTop =
-        cardBox.localToGlobal(Offset.zero, ancestor: viewportBox).dy +
-        scrollable.position.pixels;
-    final overflow =
-        cardTop +
-        cardBox.size.height +
-        _bottomSpacing -
-        viewportBox.size.height;
-
-    final currentLines = _collapsedLines ?? totalLines;
-    final lineDelta = overflow > 0
-        ? -(overflow / lineHeight).ceil()
-        : (-overflow / lineHeight).floor();
-    final targetLines = math.max(_minCollapsedLines, currentLines + lineDelta);
-    final newLines = targetLines >= totalLines ? null : targetLines;
-
-    if (newLines != _collapsedLines) {
-      setState(() => _collapsedLines = newLines);
-    }
+  @override
+  void didUpdateWidget(HomeHadithWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _toggleRecognizer.onTap = widget.onToggleExpanded;
   }
 
   @override
@@ -98,8 +59,28 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
     super.dispose();
   }
 
-  void _toggleExpanded() {
-    setState(() => _isExpanded = !_isExpanded);
+  /// Lines to show while collapsed: as many as fit in [constraints], or
+  /// [_unboundedCollapsedLines] when its height is unbounded. `null` means
+  /// the whole text fits.
+  int? _collapsedLinesFor(
+    String text,
+    TextStyle style,
+    BoxConstraints constraints,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: constraints.maxWidth);
+    final totalLines = painter.computeLineMetrics().length;
+    final height = painter.height;
+    painter.dispose();
+    if (totalLines == 0) return null;
+
+    final fitLines = constraints.hasBoundedHeight
+        ? math.max(1, (constraints.maxHeight / (height / totalLines)).floor())
+        : _unboundedCollapsedLines;
+    return fitLines >= totalLines ? null : fitLines;
   }
 
   /// Returns the longest prefix of [text] that, followed by an ellipsis
@@ -149,51 +130,27 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final onCard = colorScheme.onPrimary;
+    final accent = colorScheme.secondaryFixedDim;
     final l10n = AppLocalizations.of(context);
     final localeProvider = context.watch<LocaleProvider>();
 
     final text = localeProvider.locale?.languageCode == 'id'
         ? widget.hadithModel.hadithIndonesian
         : widget.hadithModel.hadithEnglish;
-    if (text != _text) {
-      _text = text;
-      _collapsedLines = null;
-    }
-
     final textStyle = DefaultTextStyle.of(context).style.merge(
       GoogleFonts.notoSerif(
         textStyle: theme.textTheme.bodyMedium,
-        color: colorScheme.onSurface,
+        color: onCard.withValues(alpha: 0.92),
         fontStyle: FontStyle.italic,
         height: 1.5,
       ),
     );
-    _textStyle = textStyle;
+    final isExpanded = widget.isExpanded;
 
-    final collapsedLines = _collapsedLines;
-
-    if (!_isExpanded) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _fitToViewport());
-    }
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
+    /// Sits on the prayer gradient at the bottom of the home overview card.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -204,27 +161,23 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
                   l10n?.hadithTitle ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
+                    color: onCard,
                   ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary,
+                  color: onCard.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  Icons.menu_book_rounded,
-                  size: 16,
-                  color: colorScheme.onPrimary,
-                ),
+                child: Icon(Icons.menu_book_rounded, size: 16, color: accent),
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text.rich(
             TextSpan(
               children: [
@@ -239,55 +192,62 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
               ],
             ),
             style: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: onCard.withValues(alpha: 0.75),
             ),
           ),
-          const SizedBox(height: 12),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutCubic,
-            alignment: Alignment.topCenter,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final toggleSpan = TextSpan(
-                  text: _isExpanded
-                      ? l10n?.showLess ?? ''
-                      : l10n?.showMore ?? '',
-                  style: textStyle.copyWith(
-                    color: colorScheme.secondary,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.normal,
-                  ),
-                  recognizer: _toggleRecognizer,
-                );
-
-                final String visibleText;
-                if (collapsedLines == null) {
-                  visibleText = text;
-                } else if (_isExpanded) {
-                  visibleText = '$text ';
-                } else {
-                  visibleText = _truncateToFit(
-                    text: text,
-                    style: textStyle,
-                    suffix: toggleSpan,
-                    maxLines: collapsedLines,
-                    maxWidth: constraints.maxWidth,
+          const SizedBox(height: 8),
+          Flexible(
+            flex: widget.fillsHeight ? 1 : 0,
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final collapsedLines = _collapsedLinesFor(
+                    text,
+                    textStyle,
+                    constraints,
                   );
-                }
+                  final toggleSpan = TextSpan(
+                    text: isExpanded
+                        ? l10n?.showLess ?? ''
+                        : l10n?.showMore ?? '',
+                    style: textStyle.copyWith(
+                      color: accent,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.normal,
+                    ),
+                    recognizer: _toggleRecognizer,
+                  );
 
-                return Text.rich(
-                  TextSpan(
-                    style: textStyle,
-                    children: [
-                      TextSpan(text: visibleText),
-                      if (collapsedLines != null) toggleSpan,
-                    ],
-                  ),
-                  key: _textKey,
-                  maxLines: _isExpanded ? null : collapsedLines,
-                );
-              },
+                  final String visibleText;
+                  if (collapsedLines == null) {
+                    visibleText = text;
+                  } else if (isExpanded) {
+                    visibleText = '$text ';
+                  } else {
+                    visibleText = _truncateToFit(
+                      text: text,
+                      style: textStyle,
+                      suffix: toggleSpan,
+                      maxLines: collapsedLines,
+                      maxWidth: constraints.maxWidth,
+                    );
+                  }
+
+                  return Text.rich(
+                    TextSpan(
+                      style: textStyle,
+                      children: [
+                        TextSpan(text: visibleText),
+                        if (collapsedLines != null) toggleSpan,
+                      ],
+                    ),
+                    maxLines: isExpanded ? null : collapsedLines,
+                  );
+                },
+              ),
             ),
           ),
         ],

@@ -10,22 +10,7 @@ class HomePrayerSkeleton extends StatelessWidget {
     final baseColor = colorScheme.onPrimary;
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            Color.alphaBlend(
-              colorScheme.secondary.withValues(alpha: 0.35),
-              colorScheme.primary,
-            ),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
       child: Shimmer.fromColors(
         baseColor: baseColor.withValues(alpha: 0.15),
         highlightColor: baseColor.withValues(alpha: 0.35),
@@ -35,24 +20,24 @@ class HomePrayerSkeleton extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: _Block(width: 140, height: 28),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             const _Block(width: 180, height: 14),
             const SizedBox(height: 6),
             const _Block(width: 140, height: 12),
             const SizedBox(height: 12),
-            const _Block(width: 170, height: 56),
+            const _Block(width: 150, height: 48),
             const SizedBox(height: 10),
             const _Block(width: 200, height: 14),
-            const SizedBox(height: 18),
+            const SizedBox(height: 12),
             const _Block(width: double.infinity, height: 1),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             Row(
               children: List.generate(
                 5,
                 (_) => const Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: _Block(width: double.infinity, height: 72),
+                    child: _Block(width: double.infinity, height: 64),
                   ),
                 ),
               ),

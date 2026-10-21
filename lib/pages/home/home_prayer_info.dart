@@ -131,144 +131,114 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
     final nextPrayer = _next['nextPrayer'] ?? '';
     final nextTime = _next['nextTime'] ?? '';
 
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            Color.alphaBlend(
-              colorScheme.secondary.withValues(alpha: 0.35),
-              colorScheme.primary,
-            ),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        image: const DecorationImage(
-          image: AssetImage('assets/images/background.jpg'),
-          fit: BoxFit.cover,
-          opacity: 0.12,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -50,
-            top: -50,
-            child: CustomPaint(
-              size: const Size.square(180),
-              painter: EightPointStarPainter(
-                color: onCard.withValues(alpha: 0.08),
-                strokeWidth: 10,
-              ),
+    return Stack(
+      children: [
+        Positioned(
+          right: -50,
+          top: -50,
+          child: CustomPaint(
+            size: const Size.square(180),
+            painter: EightPointStarPainter(
+              color: onCard.withValues(alpha: 0.08),
+              strokeWidth: 10,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: _LocationChip(
-                        location: widget.location,
-                        onTap: widget.onRefreshLocation,
-                      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: _LocationChip(
+                      location: widget.location,
+                      onTap: widget.onRefreshLocation,
                     ),
-                    if (widget.progress case final progress?) ...[
-                      const SizedBox(width: 8),
-                      const Spacer(),
-                      _ProgressChip(
-                        completed: progress.completed,
-                        total: progress.total,
-                        streak: progress.streak,
-                        onTap: widget.onProgressTap,
+                  ),
+                  if (widget.progress case final progress?) ...[
+                    const SizedBox(width: 8),
+                    const Spacer(),
+                    _ProgressChip(
+                      completed: progress.completed,
+                      total: progress.total,
+                      streak: progress.streak,
+                      onTap: widget.onProgressTap,
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                '${model.hijriDate} ${model.hijriMonth} ${model.hijriYear}',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: onCard,
+                ),
+              ),
+              Text(
+                _gregorianDate(languageCode),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: onCard.withValues(alpha: 0.75),
+                ),
+              ),
+              const SizedBox(height: 4),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  DateFormat('HH:mm').format(_now),
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: onCard,
+                    height: 1.1,
+                  ),
+                ),
+              ),
+              if (l10n != null && nextTime.isNotEmpty)
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: l10n.nextPrayerIn(
+                          PrayerProxy().getPrayerLabel(context, nextPrayer),
+                        ),
+                      ),
+                      const TextSpan(text: ' '),
+                      TextSpan(
+                        text: _formatDuration(l10n, _timeUntil(nextTime)),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: accent,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  '${model.hijriDate} ${model.hijriMonth} ${model.hijriYear}',
+                  ),
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: onCard,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: onCard.withValues(alpha: 0.85),
                   ),
                 ),
-                Text(
-                  _gregorianDate(languageCode),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: onCard.withValues(alpha: 0.75),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    DateFormat('HH:mm').format(_now),
-                    style: theme.textTheme.displayLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: onCard,
-                      height: 1.1,
-                    ),
-                  ),
-                ),
-                if (l10n != null && nextTime.isNotEmpty)
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: l10n.nextPrayerIn(
-                            PrayerProxy().getPrayerLabel(context, nextPrayer),
-                          ),
-                        ),
-                        const TextSpan(text: ' '),
-                        TextSpan(
-                          text: _formatDuration(l10n, _timeUntil(nextTime)),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: accent,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: onCard.withValues(alpha: 0.85),
-                    ),
-                  ),
-                const SizedBox(height: 18),
-                Divider(color: onCard.withValues(alpha: 0.2), height: 1),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    for (final prayer in _prayers)
-                      Expanded(
-                        child: _PrayerTimeItem(
-                          prayer: prayer,
-                          time: timings[prayer] ?? '',
-                          isNext: prayer == nextPrayer,
-                        ),
+              const SizedBox(height: 12),
+              Divider(color: onCard.withValues(alpha: 0.2), height: 1),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  for (final prayer in _prayers)
+                    Expanded(
+                      child: _PrayerTimeItem(
+                        prayer: prayer,
+                        time: timings[prayer] ?? '',
+                        isNext: prayer == nextPrayer,
                       ),
-                  ],
-                ),
-              ],
-            ),
+                    ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -415,7 +385,7 @@ class _PrayerTimeItem extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 2),
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: isNext ? onCard.withValues(alpha: 0.12) : Colors.transparent,
         borderRadius: BorderRadius.circular(14),
@@ -433,9 +403,9 @@ class _PrayerTimeItem extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Icon(prayerIconOf(prayer), size: 22, color: color),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             time,
             style: theme.textTheme.labelLarge?.copyWith(
