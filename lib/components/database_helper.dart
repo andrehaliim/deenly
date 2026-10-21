@@ -25,9 +25,11 @@ class DatabaseHelper {
   DatabaseHelper._init();
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDB('deenly.db');
-    return _database!;
+    final existing = _database;
+    if (existing != null) return existing;
+    final db = await _initDB('deenly.db');
+    _database = db;
+    return db;
   }
 
   Future<Database> _initDB(String filePath) async {
@@ -311,8 +313,8 @@ class DatabaseHelper {
     final path = '$dbPath/deenly.db';
 
     final file = File(path);
-    final copyPath =
-        '/storage/emulated/0/Download/deenly_${DateTime.now().millisecondsSinceEpoch}.db';
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final copyPath = '/storage/emulated/0/Download/deenly_$timestamp.db';
     await file.copy(copyPath);
     debugPrint('DB Exported, to pull run "adb pull $copyPath"');
   }

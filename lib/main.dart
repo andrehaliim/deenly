@@ -118,8 +118,9 @@ void main() async {
         ChangeNotifierProxyProvider<LocaleProvider, SurahProvider>(
           create: (_) => SurahProvider(),
           update: (_, localeProvider, surahProvider) {
-            surahProvider!.updateLanguage(localeProvider.locale?.languageCode);
-            return surahProvider;
+            final provider = surahProvider ?? SurahProvider();
+            provider.updateLanguage(localeProvider.locale?.languageCode);
+            return provider;
           },
         ),
         ChangeNotifierProvider(create: (_) => AudioProvider()),

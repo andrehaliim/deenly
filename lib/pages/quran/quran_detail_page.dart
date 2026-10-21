@@ -199,14 +199,15 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
         body: SafeArea(
           child: Consumer<SurahProvider>(
             builder: (context, provider, _) {
-              if (provider.surahDetail == null && provider.isDetailLoading) {
+              final details = provider.surahDetail;
+              if (details == null && provider.isDetailLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (provider.surahDetail == null) {
+              if (details == null) {
                 return Center(
                   child: Text(
-                    AppLocalizations.of(context)!.failedFetchSurahDetail,
+                    AppLocalizations.of(context)?.failedFetchSurahDetail ?? '',
                   ),
                 );
               }
@@ -248,7 +249,7 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                     child: SurahDetailList(
                       key: ValueKey(_activeSurah.id),
                       surah: _activeSurah,
-                      details: provider.surahDetail!,
+                      details: details,
                       langCode: provider.code ?? 'en',
                       restorePosition: _isInitialSurah,
                       isLoadingNextSurah: _isLoadingNextSurah,

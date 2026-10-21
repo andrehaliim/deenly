@@ -352,7 +352,8 @@ class _SurahDetailListState extends State<SurahDetailList> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      AppLocalizations.of(context)!.continueScrollNextSurah,
+                      AppLocalizations.of(context)?.continueScrollNextSurah ??
+                          '',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: color,

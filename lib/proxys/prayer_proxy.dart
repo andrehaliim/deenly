@@ -184,7 +184,9 @@ class PrayerProxy {
     int h = int.parse(parts[0]);
     int m = int.parse(parts[1]);
     DateTime dt = DateTime(2000, 1, 1, h, m).add(Duration(minutes: minutes));
-    return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+    final hour = dt.hour.toString().padLeft(2, '0');
+    final minute = dt.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 
   String getPrayerLabel(BuildContext context, String prayer) {
