@@ -925,6 +925,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I have prayed'**
   String get notificationMarkDone;
+
+  /// No description provided for @settingMissedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder if not prayed yet'**
+  String get settingMissedTitle;
+
+  /// No description provided for @notificationMissedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you prayed {prayer}?'**
+  String notificationMissedTitle(String prayer);
+
+  /// No description provided for @notificationMissedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark it once you have, so your progress is recorded'**
+  String get notificationMissedBody;
 }
 
 class _AppLocalizationsDelegate

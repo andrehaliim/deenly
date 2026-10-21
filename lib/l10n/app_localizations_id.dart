@@ -472,4 +472,16 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get notificationMarkDone => 'Sudah shalat';
+
+  @override
+  String get settingMissedTitle => 'Pengingat jika belum shalat';
+
+  @override
+  String notificationMissedTitle(String prayer) {
+    return 'Sudah shalat $prayer?';
+  }
+
+  @override
+  String get notificationMissedBody =>
+      'Tandai jika sudah, supaya progresmu tercatat';
 }

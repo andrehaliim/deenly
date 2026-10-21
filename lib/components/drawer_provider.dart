@@ -31,6 +31,9 @@ class DrawerProvider extends ChangeNotifier {
   bool _isReminderEnabled = false;
   bool get isReminderEnabled => _isReminderEnabled;
 
+  bool _isMissedReminderEnabled = false;
+  bool get isMissedReminderEnabled => _isMissedReminderEnabled;
+
   DrawerProvider(this.prefs, Map<String, int> adjustments) {
     _adjustments.addAll(adjustments);
     _loadSettings();
@@ -51,6 +54,8 @@ class DrawerProvider extends ChangeNotifier {
     }
 
     _isReminderEnabled = prefs.getBool('isReminderEnabled') ?? false;
+    _isMissedReminderEnabled =
+        prefs.getBool(NotificationHelper.keyMissedReminder) ?? false;
   }
 
   Future<void> togglePrayer(String prayer, bool value) async {
@@ -120,6 +125,29 @@ class DrawerProvider extends ChangeNotifier {
   void toggleAdjustmentExpansion() {
     _isAdjustmentExpanded = !_isAdjustmentExpanded;
     notifyListeners();
+  }
+
+  /// Turns the reminder for prayers not marked yet on or off. Returns
+  /// false, leaving it off, when there are no prayer times to use.
+  Future<bool> toggleMissedReminder(bool value) async {
+    _isMissedReminderEnabled = value;
+    await prefs.setBool(NotificationHelper.keyMissedReminder, value);
+
+    if (!value) {
+      await NotificationHelper().disableMissedReminders();
+    } else {
+      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+      if (prayerModel == null) {
+        _isMissedReminderEnabled = false;
+        await prefs.setBool(NotificationHelper.keyMissedReminder, false);
+        notifyListeners();
+        return false;
+      }
+      await NotificationHelper().scheduleMissedReminders(prayerModel);
+    }
+
+    notifyListeners();
+    return true;
   }
 
   Future<bool> toggleReminder(bool value) async {

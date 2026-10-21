@@ -162,6 +162,28 @@ class _SettingPageState extends State<SettingPage>
         ],
       ),
       SettingSection(
+        title: l10n?.settingMissedTitle ?? '',
+        children: [
+          SettingTile(
+            icon: Icons.task_alt_rounded,
+            title: l10n?.settingBeforeValue ?? '',
+            trailing: SettingSwitch(
+              value: drawerProvider.isMissedReminderEnabled,
+              onChanged: (value) async {
+                final success = await drawerProvider.toggleMissedReminder(
+                  value,
+                );
+                if (!success && mounted) {
+                  _showSnackBar(
+                    AppLocalizations.of(context)?.reminderEnableFailed ?? '',
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+      SettingSection(
         title: l10n?.settingTimeTitle ?? '',
         isExpanded: drawerProvider.isAdjustmentExpanded,
         onTitleTap: drawerProvider.toggleAdjustmentExpansion,

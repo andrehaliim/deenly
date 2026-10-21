@@ -135,6 +135,7 @@ class HomePageState extends State<HomePage>
       final notificationHelper = NotificationHelper();
       await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
       await notificationHelper.scheduleReminderNotifications(prayerModel);
+      await notificationHelper.scheduleMissedReminders(prayerModel);
     } catch (e, st) {
       debugPrint('Updating widget/notifications failed: $e\n$st');
     }

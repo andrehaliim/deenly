@@ -1,3 +1,4 @@
+import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
@@ -168,6 +169,7 @@ class PrayersPageState extends State<PrayersPage>
     apply(isDone);
     try {
       await _prayerLogProxy.setDone(date, prayer, isDone);
+      await NotificationHelper().updateMissedReminder(date, prayer, isDone);
     } catch (e, st) {
       debugPrint('Saving prayer log failed: $e\n$st');
       if (mounted && DateUtils.isSameDay(date, _date)) apply(!isDone);

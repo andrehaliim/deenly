@@ -160,5 +160,8 @@
     "streakDays": "{count} hari beruntun",
     "historyRate": "{percent}% terlaksana dalam {days} hari terakhir",
     "jumuah": "Jumat",
-    "notificationMarkDone": "Sudah shalat"
+    "notificationMarkDone": "Sudah shalat",
+    "settingMissedTitle": "Pengingat jika belum shalat",
+    "notificationMissedTitle": "Sudah shalat {prayer}?",
+    "notificationMissedBody": "Tandai jika sudah, supaya progresmu tercatat"
 }

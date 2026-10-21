@@ -472,4 +472,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationMarkDone => 'I have prayed';
+
+  @override
+  String get settingMissedTitle => 'Reminder if not prayed yet';
+
+  @override
+  String notificationMissedTitle(String prayer) {
+    return 'Have you prayed $prayer?';
+  }
+
+  @override
+  String get notificationMissedBody =>
+      'Mark it once you have, so your progress is recorded';
 }

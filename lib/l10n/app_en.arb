@@ -284,5 +284,15 @@
         }
     },
     "jumuah": "Jumu'ah",
-    "notificationMarkDone": "I have prayed"
+    "notificationMarkDone": "I have prayed",
+    "settingMissedTitle": "Reminder if not prayed yet",
+    "notificationMissedTitle": "Have you prayed {prayer}?",
+    "@notificationMissedTitle": {
+        "placeholders": {
+            "prayer": {
+                "type": "String"
+            }
+        }
+    },
+    "notificationMissedBody": "Mark it once you have, so your progress is recorded"
 }
