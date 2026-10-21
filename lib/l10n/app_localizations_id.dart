@@ -284,6 +284,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get mosqueLoadFailed => 'Gagal memuat masjid terdekat.';
 
   @override
+  String get asmaulHusnaLoadFailed => 'Gagal memuat Asmaul Husna.';
+
+  @override
   String get appTitle => 'Deenly';
 
   @override

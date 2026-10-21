@@ -106,6 +106,7 @@
     "qiblaNoLocation": "Lokasi belum tersedia. Aktifkan GPS atau pilih kota di halaman Beranda.",
     "mosqueLocationUnavailable": "Tidak dapat mengambil lokasimu. Pastikan GPS aktif dan izin lokasi sudah diberikan.",
     "mosqueLoadFailed": "Gagal memuat masjid terdekat.",
+    "asmaulHusnaLoadFailed": "Gagal memuat Asmaul Husna.",
 
     "appTitle": "Deenly",
     "splashTagline": "Teman ibadah Muslim modern",

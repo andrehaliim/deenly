@@ -608,6 +608,12 @@ abstract class AppLocalizations {
   /// **'Failed to load nearby mosques.'**
   String get mosqueLoadFailed;
 
+  /// No description provided for @asmaulHusnaLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load Asmaul Husna.'**
+  String get asmaulHusnaLoadFailed;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

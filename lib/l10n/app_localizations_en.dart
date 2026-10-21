@@ -284,6 +284,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mosqueLoadFailed => 'Failed to load nearby mosques.';
 
   @override
+  String get asmaulHusnaLoadFailed => 'Failed to load Asmaul Husna.';
+
+  @override
   String get appTitle => 'Deenly';
 
   @override
