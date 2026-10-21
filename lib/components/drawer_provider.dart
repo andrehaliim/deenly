@@ -4,6 +4,7 @@ import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class DrawerProvider extends ChangeNotifier {
   /// Prayers shown in the drawer, in order. The notification id of each
@@ -30,6 +31,9 @@ class DrawerProvider extends ChangeNotifier {
   bool _isReminderEnabled = false;
   bool get isReminderEnabled => _isReminderEnabled;
 
+  bool _isMissedReminderEnabled = false;
+  bool get isMissedReminderEnabled => _isMissedReminderEnabled;
+
   DrawerProvider(this.prefs, Map<String, int> adjustments) {
     _adjustments.addAll(adjustments);
     _loadSettings();
@@ -50,6 +54,8 @@ class DrawerProvider extends ChangeNotifier {
     }
 
     _isReminderEnabled = prefs.getBool('isReminderEnabled') ?? false;
+    _isMissedReminderEnabled =
+        prefs.getBool(NotificationHelper.keyMissedReminder) ?? false;
   }
 
   Future<void> togglePrayer(String prayer, bool value) async {
@@ -57,6 +63,50 @@ class DrawerProvider extends ChangeNotifier {
     await prefs.setBool(_enabledKey(prayer), value);
     WidgetHelper().updateWidgetNotification(prayer.toLowerCase(), value);
     notifyListeners();
+  }
+
+  /// Turns the adhan notification of [prayer] on or off and schedules it.
+  /// Returns false, leaving it off, when it could not be scheduled.
+  Future<bool> setPrayerNotification(String prayer, bool value) async {
+    await togglePrayer(prayer, value);
+    final notifId = notificationIdOf(prayer);
+    if (!value) {
+      await NotificationHelper().cancelNotification(notifId);
+      return true;
+    }
+
+    final success = await _schedulePrayerNotification(prayer, notifId);
+    if (!success) await togglePrayer(prayer, false);
+    return success;
+  }
+
+  Future<bool> _schedulePrayerNotification(String prayer, int notifId) async {
+    final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+    if (prayerModel == null) return false;
+
+    /// toJson() keys match the prayer names ('Fajr', 'Dhuhr', ...).
+    final parts = (prayerModel.toJson()[prayer] as String).split(':');
+    final now = DateTime.now();
+    var prayerDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
+    if (prayerDateTime.isBefore(now)) {
+      prayerDateTime = prayerDateTime.add(const Duration(days: 1));
+    }
+
+    final isScheduled = await NotificationHelper().schedulePrayerNotification(
+      notifId: notifId,
+      prayerName: prayer,
+      scheduledTime: tz.TZDateTime.from(prayerDateTime, tz.local),
+    );
+    if (!isScheduled) {
+      debugPrint('Notification failed to schedule for $prayer');
+    }
+    return isScheduled;
   }
 
   /// Applies [adjustments] (minutes per prayer) to the stored prayer
@@ -75,6 +125,29 @@ class DrawerProvider extends ChangeNotifier {
   void toggleAdjustmentExpansion() {
     _isAdjustmentExpanded = !_isAdjustmentExpanded;
     notifyListeners();
+  }
+
+  /// Turns the reminder for prayers not marked yet on or off. Returns
+  /// false, leaving it off, when there are no prayer times to use.
+  Future<bool> toggleMissedReminder(bool value) async {
+    _isMissedReminderEnabled = value;
+    await prefs.setBool(NotificationHelper.keyMissedReminder, value);
+
+    if (!value) {
+      await NotificationHelper().disableMissedReminders();
+    } else {
+      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+      if (prayerModel == null) {
+        _isMissedReminderEnabled = false;
+        await prefs.setBool(NotificationHelper.keyMissedReminder, false);
+        notifyListeners();
+        return false;
+      }
+      await NotificationHelper().scheduleMissedReminders(prayerModel);
+    }
+
+    notifyListeners();
+    return true;
   }
 
   Future<bool> toggleReminder(bool value) async {

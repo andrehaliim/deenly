@@ -1,9 +1,10 @@
 import 'dart:io';
-import 'dart:ui' show PlatformDispatcher;
+import 'dart:ui' show DartPluginRegistrant, PlatformDispatcher;
 
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/proxys/prayer_log_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,7 +12,44 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+/// Runs in a background isolate when a notification action that does not
+/// open the app is tapped, so it must be a top-level entry point.
+@pragma('vm:entry-point')
+Future<void> onBackgroundNotificationResponse(
+  NotificationResponse response,
+) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+
+  /// Needed to cancel the missed prayer reminder from this isolate.
+  await NotificationHelper().init();
+  await NotificationHelper.handleResponse(response);
+}
+
 class NotificationHelper {
+  /// Action on the adhan notification that marks the prayer as done.
+  static const String actionMarkDone = 'mark_done';
+
+  static const String keyMissedReminder = 'isMissedReminderEnabled';
+
+  /// Ids of the missed prayer reminders, after the adhan (1-5) and the
+  /// before-adhan reminders (11-55).
+  static const int _missedReminderIdBase = 100;
+
+  /// A missed prayer reminder comes this long before the prayer's time
+  /// ends, but never sooner than [_missedReminderMinDelay] after it began.
+  /// Isha has no end, so it comes [_missedReminderLead] after it began.
+  static const Duration _missedReminderLead = Duration(minutes: 30);
+  static const Duration _missedReminderMinDelay = Duration(minutes: 15);
+
+  /// Time each prayer ends, as a [PrayerModel.toJson] key.
+  static const Map<String, String> _prayerEnds = {
+    'Fajr': 'Sunrise',
+    'Dhuhr': 'Asr',
+    'Asr': 'Maghrib',
+    'Maghrib': 'Isha',
+  };
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -27,11 +65,9 @@ class NotificationHelper {
 
       bool? isInitialized = await flutterLocalNotificationsPlugin.initialize(
         settings: initializationSettings,
-        onDidReceiveNotificationResponse: (details) {
-          if (details.payload != null) {
-            debugPrint("Notification payload: ${details.payload}");
-          }
-        },
+        onDidReceiveNotificationResponse: handleResponse,
+        onDidReceiveBackgroundNotificationResponse:
+            onBackgroundNotificationResponse,
       );
 
       if (isInitialized == null) {
@@ -47,6 +83,32 @@ class NotificationHelper {
       debugPrint(
         "Notification Helper failed to initialize (Normal for tests): $e",
       );
+    }
+  }
+
+  /// Payload of an adhan notification: the day it belongs to and the
+  /// prayer, so a late tap still marks the right day.
+  static String _adhanPayload(TZDateTime time, String prayer) =>
+      '${PrayerLogProxy.dateKey(time)}|$prayer';
+
+  /// Marks the prayer of an adhan notification as done when its action was
+  /// tapped. Other taps only open the app.
+  static Future<void> handleResponse(NotificationResponse response) async {
+    if (response.actionId != actionMarkDone) return;
+
+    final parts = response.payload?.split('|') ?? const [];
+    final date = parts.length == 2 ? DateTime.tryParse(parts[0]) : null;
+    if (date == null) {
+      debugPrint('Unknown adhan payload: ${response.payload}');
+      return;
+    }
+
+    try {
+      await PrayerLogProxy().setDone(date, parts[1], true);
+      debugPrint('${parts[1]} on ${parts[0]} marked done from notification');
+      await NotificationHelper().updateMissedReminder(date, parts[1], true);
+    } catch (e, st) {
+      debugPrint('Marking prayer from notification failed: $e\n$st');
     }
   }
 
@@ -111,29 +173,37 @@ class NotificationHelper {
       } catch (_) {}
     }
 
-    const androidNotificationDetails = AndroidNotificationDetails(
+    final l10n = await _loadL10n();
+    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayerName);
+
+    /// The action is handled in the background, without opening the app.
+    final androidNotificationDetails = AndroidNotificationDetails(
       'deenly_notification_channel',
       'Deenly Notifications',
       importance: Importance.max,
       priority: Priority.high,
-      sound: RawResourceAndroidNotificationSound('adhan'),
+      sound: const RawResourceAndroidNotificationSound('adhan'),
       playSound: true,
+      actions: [
+        AndroidNotificationAction(
+          actionMarkDone,
+          l10n.notificationMarkDone,
+          showsUserInterface: false,
+          cancelNotification: true,
+        ),
+      ],
     );
-
-    const notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-    );
-
-    final l10n = await _loadL10n();
-    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayerName);
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id: notifId,
       title: l10n.notificationAdhanTitle,
       body: l10n.notificationAdhanBody(prayerLabel),
-      notificationDetails: notificationDetails,
+      notificationDetails: NotificationDetails(
+        android: androidNotificationDetails,
+      ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       scheduledDate: scheduledTime,
+      payload: _adhanPayload(scheduledTime, prayerName),
     );
 
     debugPrint("Notification scheduled for $prayerName at $scheduledTime");
@@ -277,6 +347,125 @@ class NotificationHelper {
       await prefs.setBool('isReminderEnabled', false);
     }
     debugPrint("All reminder notifications disabled");
+  }
+
+  static int _missedReminderIdOf(String prayer) =>
+      _missedReminderIdBase + PrayerLogProxy.trackedPrayers.indexOf(prayer) + 1;
+
+  /// When to ask whether [prayer] of [prayerModel] (today's times) was
+  /// done, or null when its times are unknown.
+  static DateTime? missedReminderTime(PrayerModel prayerModel, String prayer) {
+    final timings = prayerModel.toJson();
+    final start = _todayAt(timings[prayer] as String? ?? '');
+    if (start == null) return null;
+
+    final endKey = _prayerEnds[prayer];
+    if (endKey == null) return start.add(_missedReminderLead);
+
+    final end = _todayAt(timings[endKey] as String? ?? '');
+    if (end == null) return null;
+    final earliest = start.add(_missedReminderMinDelay);
+    final time = end.subtract(_missedReminderLead);
+    return time.isBefore(earliest) ? earliest : time;
+  }
+
+  /// Today at [time] ("HH:mm"), or null if unparsable.
+  static DateTime? _todayAt(String time) {
+    final parts = time.split(':');
+    if (parts.length != 2) return null;
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null || minute == null) return null;
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, hour, minute);
+  }
+
+  /// Schedules today's missed prayer reminders for the prayers not marked
+  /// yet, when enabled. Unlike the adhan they are never moved to tomorrow:
+  /// the daily task schedules the next day's.
+  Future<void> scheduleMissedReminders(PrayerModel prayerModel) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(keyMissedReminder) != true) return;
+
+    final done = await PrayerLogProxy().getDonePrayers(DateTime.now());
+    final l10n = await _loadL10n();
+    for (final prayer in PrayerLogProxy.trackedPrayers) {
+      if (done.contains(prayer)) continue;
+      final time = missedReminderTime(prayerModel, prayer);
+      if (time == null) continue;
+      await _scheduleMissedReminder(prayer, time, l10n);
+    }
+  }
+
+  /// Keeps the reminder of [prayer] in step with its check: marking it
+  /// cancels the reminder, unmarking it today schedules it again.
+  Future<void> updateMissedReminder(
+    DateTime date,
+    String prayer,
+    bool isDone,
+  ) async {
+    if (!DateUtils.isSameDay(date, DateTime.now())) return;
+
+    if (isDone) {
+      await cancelNotification(_missedReminderIdOf(prayer));
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(keyMissedReminder) != true) return;
+    final prayerModel = await PrayerProxy().getTodayPrayer();
+    if (prayerModel == null) return;
+    final time = missedReminderTime(prayerModel, prayer);
+    if (time == null) return;
+    await _scheduleMissedReminder(prayer, time, await _loadL10n());
+  }
+
+  Future<void> disableMissedReminders() async {
+    for (final prayer in PrayerLogProxy.trackedPrayers) {
+      await cancelNotification(_missedReminderIdOf(prayer));
+    }
+  }
+
+  Future<void> _scheduleMissedReminder(
+    String prayer,
+    DateTime time,
+    AppLocalizations l10n,
+  ) async {
+    if (!time.isAfter(DateTime.now())) return;
+
+    final scheduledTime = tz.TZDateTime.from(time, tz.local);
+    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayer);
+
+    /// Same action and payload as the adhan, so it marks the prayer too.
+    final androidNotificationDetails = AndroidNotificationDetails(
+      'deenly_missed_channel',
+      'Deenly Missed Prayer Reminders',
+      importance: Importance.high,
+      priority: Priority.high,
+      sound: const RawResourceAndroidNotificationSound('arabic_oud'),
+      playSound: true,
+      actions: [
+        AndroidNotificationAction(
+          actionMarkDone,
+          l10n.notificationMarkDone,
+          showsUserInterface: false,
+          cancelNotification: true,
+        ),
+      ],
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id: _missedReminderIdOf(prayer),
+      title: l10n.notificationMissedTitle(prayerLabel),
+      body: l10n.notificationMissedBody,
+      notificationDetails: NotificationDetails(
+        android: androidNotificationDetails,
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      scheduledDate: scheduledTime,
+      payload: _adhanPayload(scheduledTime, prayer),
+    );
+    debugPrint('Missed reminder scheduled for $prayer at $scheduledTime');
   }
 
   /// Loads the strings for the user's chosen app language, falling back to

@@ -1,3 +1,4 @@
+import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/location_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/foundation.dart';
@@ -24,10 +25,15 @@ class PrayerSyncHelper {
       return;
     }
 
-    if (await _prayerProxy.getTodayPrayer() != null) return;
-
+    final today = await _prayerProxy.getTodayPrayer();
     final latitude = prefs.getDouble(keyLatitude);
     final longitude = prefs.getDouble(keyLongitude);
+    final hasCoordinates = latitude != null && longitude != null;
+
+    /// Only a saved location may refetch an outdated cache; the timezone
+    /// fallback would replace it with an approximate one.
+    if (today != null && (!_isOutdated(today) || !hasCoordinates)) return;
+
     if (latitude != null && longitude != null) {
       await _fetchAndSave(
         prefs,
@@ -41,6 +47,9 @@ class PrayerSyncHelper {
 
     await _syncFromTimezone(prefs);
   }
+
+  /// Cached before Imsak and Sunrise were stored.
+  bool _isOutdated(PrayerModel prayer) => prayer.sunrise.isEmpty;
 
   Future<bool> hasSavedLocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -89,7 +98,8 @@ class PrayerSyncHelper {
         (locationName != null && locationName != savedName) ||
         (prefs.getBool(keyApproximate) ?? false);
     final timezoneChanged = prefs.getString(keyTimezone) != tz.local.name;
-    final todayMissing = await _prayerProxy.getTodayPrayer() == null;
+    final today = await _prayerProxy.getTodayPrayer();
+    final todayMissing = today == null || _isOutdated(today);
 
     if (!locationChanged && !timezoneChanged && !todayMissing) return;
 

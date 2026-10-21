@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/continue_model.dart';
 import 'package:deenly/pages/quran/eight_point_star_painter.dart';
@@ -22,6 +23,7 @@ class ContinueCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final l10n = AppLocalizations.of(context);
     final ayahNum = data.ayahNumber == 0 ? 1 : data.ayahNumber;
     final total = data.surah.surahTotal;
@@ -33,20 +35,10 @@ class ContinueCard extends StatelessWidget {
       child: PressableCard(
         onTap: onTap,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              colorScheme.primary,
-              Color.alphaBlend(
-                colorScheme.secondary.withValues(alpha: 0.35),
-                colorScheme.primary,
-              ),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: appColors?.heroGradient,
           boxShadow: [
             BoxShadow(
-              color: colorScheme.primary.withValues(alpha: 0.3),
+              color: appColors?.heroShadow ?? colorScheme.shadow,
               blurRadius: 14,
               offset: const Offset(0, 6),
             ),

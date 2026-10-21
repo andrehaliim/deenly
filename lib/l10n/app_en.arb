@@ -14,6 +14,12 @@
     "menuQibla": "Qibla",
     "menuTasbih": "Tasbih",
     "menuSetting": "Settings",
+    "menuPrayers": "Prayers",
+    "menuDoa": "Dua",
+    "menuAsmaulHusna": "Asmaul Husna",
+    "menuDzikir": "Dhikr",
+    "menuCalendar": "Calendar",
+    "menuZakat": "Zakat",
 
     "prayerProgress": "Prayer Progress",
     "completed": "Completed",
@@ -155,6 +161,16 @@
     "qiblaNoLocation": "Location is not available yet. Turn on GPS or choose a city on the Home page.",
     "mosqueLocationUnavailable": "Could not get your location. Make sure GPS is on and location permission is granted.",
     "mosqueLoadFailed": "Failed to load nearby mosques.",
+    "asmaulHusnaLoadFailed": "Failed to load Asmaul Husna.",
+    "doaLoadFailed": "Failed to load duas.",
+    "doaCount": "{count, plural, =1{1 dua} other{{count} duas}}",
+    "@doaCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
 
     "appTitle": "Deenly",
     "splashTagline": "A companion for the modern Muslim",
@@ -229,5 +245,64 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "imsak": "Imsak",
+    "sunrise": "Sunrise",
+    "prayerNow": "Now",
+    "prayerStartsIn": "in {duration}",
+    "@prayerStartsIn": {
+        "placeholders": {
+            "duration": {
+                "type": "String"
+            }
+        }
+    },
+    "backToToday": "Back to today",
+    "previousDay": "Previous day",
+    "nextDay": "Next day",
+    "chooseDate": "Choose date",
+    "prayerScheduleEmpty": "Prayer times for this date are not available yet",
+    "adhanOn": "Adhan notification on",
+    "adhanOff": "Adhan notification off",
+    "prayerNotYet": "It is not prayer time yet",
+    "prayerTrackLocked": "Only the last {days} days can be marked",
+    "@prayerTrackLocked": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "prayerHistory": "Prayer History",
+    "streakDays": "{count} day streak",
+    "@streakDays": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "historyRate": "{percent}% done in the last {days} days",
+    "@historyRate": {
+        "placeholders": {
+            "percent": {
+                "type": "int"
+            },
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "jumuah": "Jumu'ah",
+    "notificationMarkDone": "I have prayed",
+    "settingMissedTitle": "Reminder if not prayed yet",
+    "notificationMissedTitle": "Have you prayed {prayer}?",
+    "@notificationMissedTitle": {
+        "placeholders": {
+            "prayer": {
+                "type": "String"
+            }
+        }
+    },
+    "notificationMissedBody": "Mark it once you have, so your progress is recorded"
 }

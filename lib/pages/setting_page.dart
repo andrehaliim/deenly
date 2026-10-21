@@ -6,7 +6,6 @@ import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
-import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/pages/setting/prayer_adjustment_tile.dart';
 import 'package:deenly/pages/setting/setting_section.dart';
@@ -16,16 +15,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:url_launcher/url_launcher.dart';
 
 const String _privacyPolicyUrl =
     'https://andrehaliim.vercel.app/projects/deenly/privacy';
 
 class SettingPage extends StatefulWidget {
-  const SettingPage({super.key, this.onSaved});
+  const SettingPage({super.key, this.onSaved, this.showAppBar = true});
 
   final VoidCallback? onSaved;
+
+  /// False when shown as a tab, where the main page already has an app bar.
+  final bool showAppBar;
 
   @override
   State<SettingPage> createState() => _SettingPageState();
@@ -161,6 +162,28 @@ class _SettingPageState extends State<SettingPage>
         ],
       ),
       SettingSection(
+        title: l10n?.settingMissedTitle ?? '',
+        children: [
+          SettingTile(
+            icon: Icons.task_alt_rounded,
+            title: l10n?.settingBeforeValue ?? '',
+            trailing: SettingSwitch(
+              value: drawerProvider.isMissedReminderEnabled,
+              onChanged: (value) async {
+                final success = await drawerProvider.toggleMissedReminder(
+                  value,
+                );
+                if (!success && mounted) {
+                  _showSnackBar(
+                    AppLocalizations.of(context)?.reminderEnableFailed ?? '',
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+      SettingSection(
         title: l10n?.settingTimeTitle ?? '',
         isExpanded: drawerProvider.isAdjustmentExpanded,
         onTitleTap: drawerProvider.toggleAdjustmentExpansion,
@@ -211,22 +234,33 @@ class _SettingPageState extends State<SettingPage>
               title: 'List Pending Notification',
               onTap: NotificationHelper().getPendingNotifications,
             ),
+            SettingTile(
+              icon: Icons.notification_add_rounded,
+              title: 'Test Notif',
+              onTap: () => NotificationHelper().showNotification(
+                id: 9999,
+                title: 'Deenly',
+                body: 'Test notification',
+              ),
+            ),
           ],
         ),
       _SettingFooter(version: _version),
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l10n?.menuSetting ?? '',
-          style: theme.extension<AppTextStyles>()?.brandTitle,
-        ),
-        iconTheme: IconThemeData(color: theme.colorScheme.primary),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-      ),
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: Text(
+                l10n?.menuSetting ?? '',
+                style: theme.extension<AppTextStyles>()?.brandTitle,
+              ),
+              iconTheme: IconThemeData(color: theme.colorScheme.primary),
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+            )
+          : null,
       body: SafeArea(
         top: false,
         child: ListView(
@@ -252,16 +286,8 @@ class _SettingPageState extends State<SettingPage>
     String prayer,
     bool value,
   ) async {
-    drawerProvider.togglePrayer(prayer, value);
-    final success = await _schedulePrayerNotification(
-      prayerName: prayer,
-      notifId: DrawerProvider.notificationIdOf(prayer),
-      isEnabled: value,
-    );
-
-    if (!success) {
-      drawerProvider.togglePrayer(prayer, false);
-      if (!mounted) return;
+    final success = await drawerProvider.setPrayerNotification(prayer, value);
+    if (!success && mounted) {
       _showSnackBar(
         AppLocalizations.of(context)?.notificationScheduleFailed ?? '',
       );
@@ -310,57 +336,6 @@ class _SettingPageState extends State<SettingPage>
     if (!opened && mounted) {
       _showSnackBar(AppLocalizations.of(context)?.couldNotOpenLink ?? '');
     }
-  }
-
-  Future<bool> _schedulePrayerNotification({
-    required String prayerName,
-    required int notifId,
-    required bool isEnabled,
-  }) async {
-    if (!isEnabled) {
-      await NotificationHelper().cancelNotification(notifId);
-      return true;
-    }
-
-    final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
-    if (prayerModel == null) {
-      return false;
-    }
-
-    /// toJson() keys match the prayer names ('Fajr', 'Dhuhr', ...).
-    final prayerTime = prayerModel.toJson()[prayerName] as String;
-    final parts = prayerTime.split(':');
-    final hour = int.parse(parts[0]);
-    final minute = int.parse(parts[1]);
-
-    final now = DateTime.now();
-
-    DateTime prayerDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      hour,
-      minute,
-    );
-
-    if (prayerDateTime.isBefore(now)) {
-      prayerDateTime = prayerDateTime.add(const Duration(days: 1));
-    }
-
-    final scheduledTime = tz.TZDateTime.from(prayerDateTime, tz.local);
-
-    bool isScheduled = await NotificationHelper().schedulePrayerNotification(
-      notifId: notifId,
-      prayerName: prayerName,
-      scheduledTime: scheduledTime,
-    );
-
-    if (!isScheduled) {
-      debugPrint('Notification failed to schedule for $prayerName');
-      return false;
-    }
-
-    return true;
   }
 }
 

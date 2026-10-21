@@ -48,6 +48,24 @@ class AppLocalizationsId extends AppLocalizations {
   String get menuSetting => 'Pengaturan';
 
   @override
+  String get menuPrayers => 'Shalat';
+
+  @override
+  String get menuDoa => 'Doa';
+
+  @override
+  String get menuAsmaulHusna => 'Asmaul Husna';
+
+  @override
+  String get menuDzikir => 'Dzikir';
+
+  @override
+  String get menuCalendar => 'Kalender';
+
+  @override
+  String get menuZakat => 'Zakat';
+
+  @override
   String get prayerProgress => 'Progress Shalat';
 
   @override
@@ -266,6 +284,17 @@ class AppLocalizationsId extends AppLocalizations {
   String get mosqueLoadFailed => 'Gagal memuat masjid terdekat.';
 
   @override
+  String get asmaulHusnaLoadFailed => 'Gagal memuat Asmaul Husna.';
+
+  @override
+  String get doaLoadFailed => 'Gagal memuat doa.';
+
+  @override
+  String doaCount(int count) {
+    return '$count doa';
+  }
+
+  @override
   String get appTitle => 'Deenly';
 
   @override
@@ -391,4 +420,79 @@ class AppLocalizationsId extends AppLocalizations {
   String durationMinutes(int minutes) {
     return '$minutes menit';
   }
+
+  @override
+  String get imsak => 'Imsak';
+
+  @override
+  String get sunrise => 'Terbit';
+
+  @override
+  String get prayerNow => 'Sekarang';
+
+  @override
+  String prayerStartsIn(String duration) {
+    return '$duration lagi';
+  }
+
+  @override
+  String get backToToday => 'Kembali ke hari ini';
+
+  @override
+  String get previousDay => 'Hari sebelumnya';
+
+  @override
+  String get nextDay => 'Hari berikutnya';
+
+  @override
+  String get chooseDate => 'Pilih tanggal';
+
+  @override
+  String get prayerScheduleEmpty =>
+      'Jadwal shalat untuk tanggal ini belum tersedia';
+
+  @override
+  String get adhanOn => 'Notifikasi adzan aktif';
+
+  @override
+  String get adhanOff => 'Notifikasi adzan nonaktif';
+
+  @override
+  String get prayerNotYet => 'Belum masuk waktu shalat';
+
+  @override
+  String prayerTrackLocked(int days) {
+    return 'Hanya bisa ditandai sampai $days hari ke belakang';
+  }
+
+  @override
+  String get prayerHistory => 'Riwayat Shalat';
+
+  @override
+  String streakDays(int count) {
+    return '$count hari beruntun';
+  }
+
+  @override
+  String historyRate(int percent, int days) {
+    return '$percent% terlaksana dalam $days hari terakhir';
+  }
+
+  @override
+  String get jumuah => 'Jumat';
+
+  @override
+  String get notificationMarkDone => 'Sudah shalat';
+
+  @override
+  String get settingMissedTitle => 'Pengingat jika belum shalat';
+
+  @override
+  String notificationMissedTitle(String prayer) {
+    return 'Sudah shalat $prayer?';
+  }
+
+  @override
+  String get notificationMissedBody =>
+      'Tandai jika sudah, supaya progresmu tercatat';
 }

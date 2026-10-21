@@ -66,6 +66,7 @@ void callbackDispatcher() {
               prayerModel,
             );
             await notificationHelper.scheduleReminderNotifications(prayerModel);
+            await notificationHelper.scheduleMissedReminders(prayerModel);
             // The widget recomputes the next prayer itself on update.
             await WidgetHelper().updateWidgetPrayer(prayerModel);
           }

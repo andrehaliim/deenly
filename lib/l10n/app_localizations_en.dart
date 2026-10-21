@@ -48,6 +48,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuSetting => 'Settings';
 
   @override
+  String get menuPrayers => 'Prayers';
+
+  @override
+  String get menuDoa => 'Dua';
+
+  @override
+  String get menuAsmaulHusna => 'Asmaul Husna';
+
+  @override
+  String get menuDzikir => 'Dhikr';
+
+  @override
+  String get menuCalendar => 'Calendar';
+
+  @override
+  String get menuZakat => 'Zakat';
+
+  @override
   String get prayerProgress => 'Prayer Progress';
 
   @override
@@ -266,6 +284,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mosqueLoadFailed => 'Failed to load nearby mosques.';
 
   @override
+  String get asmaulHusnaLoadFailed => 'Failed to load Asmaul Husna.';
+
+  @override
+  String get doaLoadFailed => 'Failed to load duas.';
+
+  @override
+  String doaCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count duas',
+      one: '1 dua',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get appTitle => 'Deenly';
 
   @override
@@ -391,4 +426,79 @@ class AppLocalizationsEn extends AppLocalizations {
   String durationMinutes(int minutes) {
     return '$minutes min';
   }
+
+  @override
+  String get imsak => 'Imsak';
+
+  @override
+  String get sunrise => 'Sunrise';
+
+  @override
+  String get prayerNow => 'Now';
+
+  @override
+  String prayerStartsIn(String duration) {
+    return 'in $duration';
+  }
+
+  @override
+  String get backToToday => 'Back to today';
+
+  @override
+  String get previousDay => 'Previous day';
+
+  @override
+  String get nextDay => 'Next day';
+
+  @override
+  String get chooseDate => 'Choose date';
+
+  @override
+  String get prayerScheduleEmpty =>
+      'Prayer times for this date are not available yet';
+
+  @override
+  String get adhanOn => 'Adhan notification on';
+
+  @override
+  String get adhanOff => 'Adhan notification off';
+
+  @override
+  String get prayerNotYet => 'It is not prayer time yet';
+
+  @override
+  String prayerTrackLocked(int days) {
+    return 'Only the last $days days can be marked';
+  }
+
+  @override
+  String get prayerHistory => 'Prayer History';
+
+  @override
+  String streakDays(int count) {
+    return '$count day streak';
+  }
+
+  @override
+  String historyRate(int percent, int days) {
+    return '$percent% done in the last $days days';
+  }
+
+  @override
+  String get jumuah => 'Jumu\'ah';
+
+  @override
+  String get notificationMarkDone => 'I have prayed';
+
+  @override
+  String get settingMissedTitle => 'Reminder if not prayed yet';
+
+  @override
+  String notificationMissedTitle(String prayer) {
+    return 'Have you prayed $prayer?';
+  }
+
+  @override
+  String get notificationMissedBody =>
+      'Mark it once you have, so your progress is recorded';
 }

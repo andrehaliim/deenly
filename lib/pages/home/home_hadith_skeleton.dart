@@ -6,22 +6,13 @@ class HomeHadithSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final baseColor = Theme.of(context).colorScheme.onPrimary;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 16),
       child: Shimmer.fromColors(
-        baseColor: colorScheme.surfaceContainerHigh,
-        highlightColor: colorScheme.surfaceContainerLowest,
+        baseColor: baseColor.withValues(alpha: 0.15),
+        highlightColor: baseColor.withValues(alpha: 0.35),
         child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -34,16 +25,10 @@ class HomeHadithSkeleton extends StatelessWidget {
             ),
             SizedBox(height: 8),
             _Line(width: 160),
-            SizedBox(height: 16),
-            _Line(width: double.infinity),
-            SizedBox(height: 8),
-            _Line(width: double.infinity),
-            SizedBox(height: 8),
+            SizedBox(height: 12),
             _Line(width: double.infinity),
             SizedBox(height: 8),
             _Line(width: 200),
-            SizedBox(height: 16),
-            _Line(width: double.infinity, height: 44),
           ],
         ),
       ),
@@ -63,7 +48,7 @@ class _Line extends StatelessWidget {
       height: height,
       width: width,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(8),
       ),
     );

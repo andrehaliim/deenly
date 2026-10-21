@@ -176,6 +176,42 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get menuSetting;
 
+  /// No description provided for @menuPrayers.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayers'**
+  String get menuPrayers;
+
+  /// No description provided for @menuDoa.
+  ///
+  /// In en, this message translates to:
+  /// **'Dua'**
+  String get menuDoa;
+
+  /// No description provided for @menuAsmaulHusna.
+  ///
+  /// In en, this message translates to:
+  /// **'Asmaul Husna'**
+  String get menuAsmaulHusna;
+
+  /// No description provided for @menuDzikir.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhikr'**
+  String get menuDzikir;
+
+  /// No description provided for @menuCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get menuCalendar;
+
+  /// No description provided for @menuZakat.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat'**
+  String get menuZakat;
+
   /// No description provided for @prayerProgress.
   ///
   /// In en, this message translates to:
@@ -572,6 +608,24 @@ abstract class AppLocalizations {
   /// **'Failed to load nearby mosques.'**
   String get mosqueLoadFailed;
 
+  /// No description provided for @asmaulHusnaLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load Asmaul Husna.'**
+  String get asmaulHusnaLoadFailed;
+
+  /// No description provided for @doaLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load duas.'**
+  String get doaLoadFailed;
+
+  /// No description provided for @doaCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 dua} other{{count} duas}}'**
+  String doaCount(int count);
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
@@ -781,6 +835,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes} min'**
   String durationMinutes(int minutes);
+
+  /// No description provided for @imsak.
+  ///
+  /// In en, this message translates to:
+  /// **'Imsak'**
+  String get imsak;
+
+  /// No description provided for @sunrise.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise'**
+  String get sunrise;
+
+  /// No description provided for @prayerNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get prayerNow;
+
+  /// No description provided for @prayerStartsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'in {duration}'**
+  String prayerStartsIn(String duration);
+
+  /// No description provided for @backToToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to today'**
+  String get backToToday;
+
+  /// No description provided for @previousDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous day'**
+  String get previousDay;
+
+  /// No description provided for @nextDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Next day'**
+  String get nextDay;
+
+  /// No description provided for @chooseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose date'**
+  String get chooseDate;
+
+  /// No description provided for @prayerScheduleEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer times for this date are not available yet'**
+  String get prayerScheduleEmpty;
+
+  /// No description provided for @adhanOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhan notification on'**
+  String get adhanOn;
+
+  /// No description provided for @adhanOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhan notification off'**
+  String get adhanOff;
+
+  /// No description provided for @prayerNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'It is not prayer time yet'**
+  String get prayerNotYet;
+
+  /// No description provided for @prayerTrackLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the last {days} days can be marked'**
+  String prayerTrackLocked(int days);
+
+  /// No description provided for @prayerHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer History'**
+  String get prayerHistory;
+
+  /// No description provided for @streakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day streak'**
+  String streakDays(int count);
+
+  /// No description provided for @historyRate.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% done in the last {days} days'**
+  String historyRate(int percent, int days);
+
+  /// No description provided for @jumuah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumu\'ah'**
+  String get jumuah;
+
+  /// No description provided for @notificationMarkDone.
+  ///
+  /// In en, this message translates to:
+  /// **'I have prayed'**
+  String get notificationMarkDone;
+
+  /// No description provided for @settingMissedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder if not prayed yet'**
+  String get settingMissedTitle;
+
+  /// No description provided for @notificationMissedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you prayed {prayer}?'**
+  String notificationMissedTitle(String prayer);
+
+  /// No description provided for @notificationMissedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark it once you have, so your progress is recorded'**
+  String get notificationMissedBody;
 }
 
 class _AppLocalizationsDelegate

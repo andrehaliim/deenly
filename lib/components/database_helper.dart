@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:deenly/proxys/prayer_log_proxy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
@@ -12,6 +13,7 @@ class DatabaseHelper {
   static const String tableSurahDetail = 'surah_detail';
   static const String tablePrayer = 'prayer';
   static const String tablePrayerAdjustment = 'prayer_adjustment';
+  static const String tablePrayerLog = 'prayer_log';
   static const String tableHadith = 'hadith';
   static const String tableJuz = 'juz';
   static const String tableContinueReading = 'continue_reading';
@@ -38,7 +40,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 11,
+      version: 13,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -72,7 +74,9 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE $tablePrayer(
         id INTEGER PRIMARY KEY,
+        imsak TEXT,
         fajr TEXT,
+        sunrise TEXT,
         dhuhr TEXT,
         asr TEXT,
         maghrib TEXT,
@@ -87,6 +91,7 @@ class DatabaseHelper {
     await _createSurahDetailIndex(db);
 
     await _createPrayerAdjustmentTable(db);
+    await _createPrayerLogTable(db);
 
     await db.execute('''
       CREATE TABLE $tableHadith(
@@ -220,6 +225,55 @@ class DatabaseHelper {
 
     if (oldVersion < 11) {
       await _createAsmaulHusnaTable(db);
+    }
+
+    /// Existing rows stay empty until the next sync refetches them.
+    if (oldVersion < 12) {
+      await db.execute('ALTER TABLE $tablePrayer ADD COLUMN imsak TEXT');
+      await db.execute('ALTER TABLE $tablePrayer ADD COLUMN sunrise TEXT');
+    }
+
+    if (oldVersion < 13) {
+      await _createPrayerLogTable(db);
+      await _migratePrayerLogFromPrefs(db);
+    }
+  }
+
+  /// One row per prayer marked as done; a missing row means not done.
+  Future<void> _createPrayerLogTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $tablePrayerLog(
+        date TEXT NOT NULL,
+        prayer TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        PRIMARY KEY (date, prayer)
+      )
+    ''');
+  }
+
+  /// The old tracker kept only today's checks in prefs and reset them every
+  /// day, so only today's are worth keeping.
+  Future<void> _migratePrayerLogFromPrefs(Database db) async {
+    final prefs = await SharedPreferences.getInstance();
+    const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    final now = DateTime.now();
+    final legacyToday = '${now.year}-${now.month}-${now.day}';
+
+    if (prefs.getString('prayerProgressLastReset') == legacyToday) {
+      final date = PrayerLogProxy.dateKey(now);
+      for (final prayer in prayers) {
+        if (prefs.getBool('${prayer.toLowerCase()}Progress') != true) continue;
+        await db.insert(tablePrayerLog, {
+          'date': date,
+          'prayer': prayer,
+          'updatedAt': now.toIso8601String(),
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    }
+
+    await prefs.remove('prayerProgressLastReset');
+    for (final prayer in prayers) {
+      await prefs.remove('${prayer.toLowerCase()}Progress');
     }
   }
 

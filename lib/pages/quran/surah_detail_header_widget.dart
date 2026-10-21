@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/pages/quran/eight_point_star_painter.dart';
@@ -23,6 +24,7 @@ class SurahDetailHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final onCard = colorScheme.onPrimary;
     final l10n = AppLocalizations.of(context);
 
@@ -44,20 +46,10 @@ class SurahDetailHeader extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
-          gradient: LinearGradient(
-            colors: [
-              colorScheme.primary,
-              Color.alphaBlend(
-                colorScheme.secondary.withValues(alpha: 0.35),
-                colorScheme.primary,
-              ),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: appColors?.heroGradient,
           boxShadow: [
             BoxShadow(
-              color: colorScheme.primary.withValues(alpha: 0.3),
+              color: appColors?.heroShadow ?? colorScheme.shadow,
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),

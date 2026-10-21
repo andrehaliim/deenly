@@ -8,18 +8,22 @@ import 'package:deenly/pages/home/home_approximate_notice.dart';
 import 'package:deenly/pages/home/home_city_picker_dialog.dart';
 import 'package:deenly/pages/home/home_hadith_skeleton.dart';
 import 'package:deenly/pages/home/home_hadith_widget.dart';
+import 'package:deenly/pages/home/home_overview_card.dart';
 import 'package:deenly/pages/home/home_prayer_error.dart';
 import 'package:deenly/pages/home/home_prayer_info.dart';
-import 'package:deenly/pages/home/home_prayer_progress.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
+import 'package:deenly/proxys/prayer_log_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  /// Opens the prayers tab, from the progress chip.
+  final VoidCallback onOpenPrayers;
+
+  const HomePage({super.key, required this.onOpenPrayers});
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -35,6 +39,19 @@ class HomePageState extends State<HomePage>
   bool _isApproximate = false;
   PrayerModel? _prayerModel;
   HadithModel? _hadithModel;
+  ({int completed, int total, int streak})? _progress;
+  bool _isHadithExpanded = false;
+
+  /// Shortest viewport, before text scaling, that fits the prayer card,
+  /// menu and a couple of hadith lines; shorter screens scroll instead of
+  /// fitting the collapsed page to one screen.
+  static const double _minFillHeight = 600;
+
+  /// Room the approximate location notice takes above the card.
+  static const double _noticeHeight = 110;
+
+  static const double _sectionSpacing = 16;
+  static const double _bottomPadding = 16;
 
   late final AnimationController _entranceController = AnimationController(
     vsync: this,
@@ -47,6 +64,29 @@ class HomePageState extends State<HomePage>
     _entranceController.forward();
     loadPrayerData(true);
     _loadHadithData();
+    loadProgress();
+  }
+
+  /// Re-read when coming back to this tab, since prayers are marked on the
+  /// prayers tab.
+  Future<void> loadProgress() async {
+    const prayers = PrayerLogProxy.trackedPrayers;
+    final proxy = PrayerLogProxy();
+    final today = DateTime.now();
+    try {
+      final done = await proxy.getDonePrayers(today);
+      final streak = await proxy.getStreak(today, prayers);
+      if (!mounted) return;
+      setState(() {
+        _progress = (
+          completed: prayers.where(done.contains).length,
+          total: prayers.length,
+          streak: streak,
+        );
+      });
+    } catch (e, st) {
+      debugPrint('Loading prayer progress failed: $e\n$st');
+    }
   }
 
   @override
@@ -107,6 +147,7 @@ class HomePageState extends State<HomePage>
       final notificationHelper = NotificationHelper();
       await notificationHelper.scheduleAllPrayerNotifications(prayerModel);
       await notificationHelper.scheduleReminderNotifications(prayerModel);
+      await notificationHelper.scheduleMissedReminders(prayerModel);
     } catch (e, st) {
       debugPrint('Updating widget/notifications failed: $e\n$st');
     }
@@ -153,64 +194,86 @@ class HomePageState extends State<HomePage>
     final prayerModel = _prayerModel;
     final hadithModel = _hadithModel;
 
-    final Widget prayerSection;
+    final Widget prayerHeader;
     if (_isGettingPrayerData) {
-      prayerSection = const HomePrayerSkeleton();
+      prayerHeader = const HomePrayerSkeleton();
     } else if (prayerModel != null) {
-      prayerSection = Column(
-        children: [
-          HomePrayerInfo(
-            location: _location ?? '',
-            prayerModel: prayerModel,
-            onRefreshLocation: () => loadPrayerData(false),
-          ),
-          if (_isApproximate)
-            HomeApproximateNotice(
-              cityName: _location ?? '',
-              onChooseCity: _chooseCity,
-            ),
-        ],
+      prayerHeader = HomePrayerInfo(
+        location: _location ?? '',
+        prayerModel: prayerModel,
+        onRefreshLocation: () => loadPrayerData(false),
+        progress: _progress,
+        onProgressTap: widget.onOpenPrayers,
       );
     } else {
-      prayerSection = HomePrayerError(
+      prayerHeader = HomePrayerError(
         onRetry: () => loadPrayerData(false),
         onChooseCity: _chooseCity,
       );
     }
 
-    /// The hadith card is optional: hide it if loading failed.
-    final Widget? hadithSection = _isGettingHadithData
-        ? const HomeHadithSkeleton()
-        : hadithModel != null
-        ? HomeHadithWidget(hadithModel: hadithModel)
-        : null;
+    final showNotice =
+        !_isGettingPrayerData && prayerModel != null && _isApproximate;
 
-    final sections = [
-      prayerSection,
-      const HomePrayerProgress(),
-      ?hadithSection,
-    ];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final minFillHeight =
+            MediaQuery.textScalerOf(context).scale(_minFillHeight) +
+            (showNotice ? _noticeHeight : 0);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        children: [
-          for (var i = 0; i < sections.length; i++) ...[
-            if (i > 0) const SizedBox(height: 16),
-            StaggeredEntrance(
-              animation: _entranceController,
-              index: i,
+        /// Collapsed, the page is exactly one screen and the hadith fills
+        /// what the prayer card and menu leave, down to the bottom nav.
+        final fillsHeight =
+            !_isHadithExpanded && constraints.maxHeight >= minFillHeight;
 
-              /// The hadith card sizes itself from its on-screen position,
-              /// so it only fades in to keep that position stable.
-              slideFrom: sections[i] is HomeHadithWidget
-                  ? Offset.zero
-                  : const Offset(0, 0.25),
-              child: sections[i],
+        /// The hadith is optional: hide it if loading failed.
+        final Widget? hadithFooter = _isGettingHadithData
+            ? const HomeHadithSkeleton()
+            : hadithModel != null
+            ? HomeHadithWidget(
+                hadithModel: hadithModel,
+                isExpanded: _isHadithExpanded,
+                fillsHeight: fillsHeight,
+                onToggleExpanded: () =>
+                    setState(() => _isHadithExpanded = !_isHadithExpanded),
+              )
+            : null;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: _bottomPadding),
+          child: SizedBox(
+            height: fillsHeight ? constraints.maxHeight - _bottomPadding : null,
+            child: Column(
+              children: [
+                if (showNotice) ...[
+                  StaggeredEntrance(
+                    animation: _entranceController,
+                    index: 0,
+                    child: HomeApproximateNotice(
+                      cityName: _location ?? '',
+                      onChooseCity: _chooseCity,
+                    ),
+                  ),
+                  const SizedBox(height: _sectionSpacing),
+                ],
+                Flexible(
+                  flex: fillsHeight ? 1 : 0,
+                  fit: FlexFit.tight,
+                  child: StaggeredEntrance(
+                    animation: _entranceController,
+                    index: showNotice ? 1 : 0,
+                    child: HomeOverviewCard(
+                      header: prayerHeader,
+                      footer: hadithFooter,
+                      fillsHeight: fillsHeight,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 }

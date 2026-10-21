@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/pages/prayers/prayer_icon.dart';
 import 'package:deenly/pages/quran/eight_point_star_painter.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +15,17 @@ class HomePrayerInfo extends StatefulWidget {
   final PrayerModel prayerModel;
   final VoidCallback onRefreshLocation;
 
+  /// Today's prayer progress; the chip is hidden while it is null.
+  final ({int completed, int total, int streak})? progress;
+  final VoidCallback onProgressTap;
+
   const HomePrayerInfo({
     super.key,
     required this.location,
     required this.prayerModel,
     required this.onRefreshLocation,
+    required this.progress,
+    required this.onProgressTap,
   });
 
   @override
@@ -124,131 +131,114 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
     final nextPrayer = _next['nextPrayer'] ?? '';
     final nextTime = _next['nextTime'] ?? '';
 
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            Color.alphaBlend(
-              colorScheme.secondary.withValues(alpha: 0.35),
-              colorScheme.primary,
+    return Stack(
+      children: [
+        Positioned(
+          right: -50,
+          top: -50,
+          child: CustomPaint(
+            size: const Size.square(180),
+            painter: EightPointStarPainter(
+              color: onCard.withValues(alpha: 0.08),
+              strokeWidth: 10,
             ),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        image: const DecorationImage(
-          image: AssetImage('assets/images/background.jpg'),
-          fit: BoxFit.cover,
-          opacity: 0.12,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
           ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -50,
-            top: -50,
-            child: CustomPaint(
-              size: const Size.square(180),
-              painter: EightPointStarPainter(
-                color: onCard.withValues(alpha: 0.08),
-                strokeWidth: 10,
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: _LocationChip(
+                      location: widget.location,
+                      onTap: widget.onRefreshLocation,
+                    ),
+                  ),
+                  if (widget.progress case final progress?) ...[
+                    const SizedBox(width: 8),
+                    const Spacer(),
+                    _ProgressChip(
+                      completed: progress.completed,
+                      total: progress.total,
+                      streak: progress.streak,
+                      onTap: widget.onProgressTap,
+                    ),
+                  ],
+                ],
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: _LocationChip(
-                    location: widget.location,
-                    onTap: widget.onRefreshLocation,
-                  ),
+              const SizedBox(height: 10),
+              Text(
+                '${model.hijriDate} ${model.hijriMonth} ${model.hijriYear}',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: onCard,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  '${model.hijriDate} ${model.hijriMonth} ${model.hijriYear}',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
+              ),
+              Text(
+                _gregorianDate(languageCode),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: onCard.withValues(alpha: 0.75),
+                ),
+              ),
+              const SizedBox(height: 4),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  DateFormat('HH:mm').format(_now),
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: onCard,
+                    height: 1.1,
                   ),
                 ),
-                Text(
-                  _gregorianDate(languageCode),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: onCard.withValues(alpha: 0.75),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    DateFormat('HH:mm').format(_now),
-                    style: theme.textTheme.displayLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: onCard,
-                      height: 1.1,
-                    ),
-                  ),
-                ),
-                if (l10n != null && nextTime.isNotEmpty)
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: l10n.nextPrayerIn(
-                            PrayerProxy().getPrayerLabel(context, nextPrayer),
-                          ),
-                        ),
-                        const TextSpan(text: ' '),
-                        TextSpan(
-                          text: _formatDuration(l10n, _timeUntil(nextTime)),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: accent,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: onCard.withValues(alpha: 0.85),
-                    ),
-                  ),
-                const SizedBox(height: 18),
-                Divider(color: onCard.withValues(alpha: 0.2), height: 1),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    for (final prayer in _prayers)
-                      Expanded(
-                        child: _PrayerTimeItem(
-                          prayer: prayer,
-                          time: timings[prayer] ?? '',
-                          isNext: prayer == nextPrayer,
+              ),
+              if (l10n != null && nextTime.isNotEmpty)
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: l10n.nextPrayerIn(
+                          PrayerProxy().getPrayerLabel(context, nextPrayer),
                         ),
                       ),
-                  ],
+                      const TextSpan(text: ' '),
+                      TextSpan(
+                        text: _formatDuration(l10n, _timeUntil(nextTime)),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: accent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: onCard.withValues(alpha: 0.85),
+                  ),
                 ),
-              ],
-            ),
+              const SizedBox(height: 12),
+              Divider(color: onCard.withValues(alpha: 0.2), height: 1),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  for (final prayer in _prayers)
+                    Expanded(
+                      child: _PrayerTimeItem(
+                        prayer: prayer,
+                        time: timings[prayer] ?? '',
+                        isNext: prayer == nextPrayer,
+                      ),
+                    ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -306,6 +296,72 @@ class _LocationChip extends StatelessWidget {
   }
 }
 
+/// Today's prayer progress and streak; opens the prayers tab.
+class _ProgressChip extends StatelessWidget {
+  final int completed;
+  final int total;
+  final int streak;
+  final VoidCallback onTap;
+
+  const _ProgressChip({
+    required this.completed,
+    required this.total,
+    required this.streak,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onCard = theme.colorScheme.onPrimary;
+    final accent = theme.colorScheme.secondaryFixedDim;
+    final l10n = AppLocalizations.of(context);
+    final textStyle = theme.textTheme.labelMedium?.copyWith(
+      fontWeight: FontWeight.bold,
+      color: onCard,
+    );
+
+    return Tooltip(
+      message: l10n?.prayerProgress ?? '',
+      child: Material(
+        color: onCard.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  completed >= total
+                      ? Icons.check_circle_rounded
+                      : Icons.check_circle_outline_rounded,
+                  size: 16,
+                  color: accent,
+                ),
+                const SizedBox(width: 4),
+                Text('$completed/$total', style: textStyle),
+                if (streak > 0) ...[
+                  const SizedBox(width: 10),
+                  Icon(
+                    Icons.local_fire_department_rounded,
+                    size: 16,
+                    color: accent,
+                  ),
+                  const SizedBox(width: 2),
+                  Text('$streak', style: textStyle),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _PrayerTimeItem extends StatelessWidget {
   final String prayer;
   final String time;
@@ -316,21 +372,6 @@ class _PrayerTimeItem extends StatelessWidget {
     required this.time,
     required this.isNext,
   });
-
-  static IconData _iconOf(String prayer) {
-    switch (prayer) {
-      case 'Fajr':
-        return Icons.wb_twilight_rounded;
-      case 'Dhuhr':
-        return Icons.light_mode_outlined;
-      case 'Asr':
-        return Icons.filter_drama_outlined;
-      case 'Maghrib':
-        return Icons.nights_stay_outlined;
-      default:
-        return Icons.bedtime_outlined;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -344,7 +385,7 @@ class _PrayerTimeItem extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 2),
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: isNext ? onCard.withValues(alpha: 0.12) : Colors.transparent,
         borderRadius: BorderRadius.circular(14),
@@ -362,9 +403,9 @@ class _PrayerTimeItem extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 6),
-          Icon(_iconOf(prayer), size: 22, color: color),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
+          Icon(prayerIconOf(prayer), size: 22, color: color),
+          const SizedBox(height: 4),
           Text(
             time,
             style: theme.textTheme.labelLarge?.copyWith(

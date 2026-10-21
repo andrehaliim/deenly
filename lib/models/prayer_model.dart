@@ -1,5 +1,7 @@
 class PrayerModel {
+  String imsak;
   String fajr;
+  String sunrise;
   String dhuhr;
   String asr;
   String maghrib;
@@ -10,7 +12,9 @@ class PrayerModel {
   String hijriYear;
 
   PrayerModel({
+    this.imsak = '',
     required this.fajr,
+    this.sunrise = '',
     required this.dhuhr,
     required this.asr,
     required this.maghrib,
@@ -21,29 +25,33 @@ class PrayerModel {
     required this.hijriYear,
   });
 
-factory PrayerModel.fromJsonApi(Map<String, dynamic> json) {
-  final timings = json['timings'];
-  final gregorian = json['date']['gregorian'];
-  final hijri = json['date']['hijri'];
+  factory PrayerModel.fromJsonApi(Map<String, dynamic> json) {
+    final timings = json['timings'];
+    final gregorian = json['date']['gregorian'];
+    final hijri = json['date']['hijri'];
 
-  String clean(String time) => time.split(" ").first;
+    String clean(String time) => time.split(" ").first;
 
-  return PrayerModel(
-    fajr: clean(timings["Fajr"]),
-    dhuhr: clean(timings["Dhuhr"]),
-    asr: clean(timings["Asr"]),
-    maghrib: clean(timings["Maghrib"]),
-    isha: clean(timings["Isha"]),
-    date: gregorian['date'],
-    hijriDate: hijri['day'],
-    hijriMonth: hijri['month']['en'],
-    hijriYear: hijri['year'],
-  );
-}
+    return PrayerModel(
+      imsak: clean(timings["Imsak"] ?? ''),
+      fajr: clean(timings["Fajr"]),
+      sunrise: clean(timings["Sunrise"] ?? ''),
+      dhuhr: clean(timings["Dhuhr"]),
+      asr: clean(timings["Asr"]),
+      maghrib: clean(timings["Maghrib"]),
+      isha: clean(timings["Isha"]),
+      date: gregorian['date'],
+      hijriDate: hijri['day'],
+      hijriMonth: hijri['month']['en'],
+      hijriYear: hijri['year'],
+    );
+  }
 
   factory PrayerModel.fromJsonDB(Map<String, dynamic> json) {
     return PrayerModel(
+      imsak: json["imsak"] ?? '',
       fajr: json["fajr"],
+      sunrise: json["sunrise"] ?? '',
       dhuhr: json["dhuhr"],
       asr: json["asr"],
       maghrib: json["maghrib"],
@@ -56,7 +64,9 @@ factory PrayerModel.fromJsonApi(Map<String, dynamic> json) {
   }
 
   Map<String, dynamic> toJson() => {
+    "Imsak": imsak,
     "Fajr": fajr,
+    "Sunrise": sunrise,
     "Dhuhr": dhuhr,
     "Asr": asr,
     "Maghrib": maghrib,
