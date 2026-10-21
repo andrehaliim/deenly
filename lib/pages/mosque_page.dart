@@ -85,9 +85,11 @@ class _MosquePageState extends State<MosquePage>
   }
 
   Future<void> _openDirections(double lat, double lng) async {
-    final uri = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=walking',
-    );
+    final uri = Uri.https('www.google.com', '/maps/dir/', {
+      'api': '1',
+      'destination': '$lat,$lng',
+      'travelmode': 'walking',
+    });
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {

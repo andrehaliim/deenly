@@ -237,7 +237,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                         const TextSpan(text: ' '),
                         TextSpan(
                           text: _formatDuration(l10n, _timeUntil(nextTime)),
-                          style: TextStyle(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: accent,
                             fontWeight: FontWeight.bold,
                           ),

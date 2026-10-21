@@ -11,25 +11,28 @@ class HadithProxy {
 
   List<HadithModel>? _cache;
   final Random _random = Random();
-  Future<void> load() async {
-    if (_cache != null) {
-      debugPrint('[HadithProxy] Already loaded (${_cache!.length} hadiths).');
-      return;
+  Future<List<HadithModel>> load() async {
+    final cached = _cache;
+    if (cached != null) {
+      debugPrint('[HadithProxy] Already loaded (${cached.length} hadiths).');
+      return cached;
     }
 
     debugPrint('[HadithProxy] Loading hadiths from asset…');
-    _cache = await _loadFromAsset();
-    debugPrint('[HadithProxy] ${_cache!.length} hadiths loaded.');
+    final hadiths = await _loadFromAsset();
+    _cache = hadiths;
+    debugPrint('[HadithProxy] ${hadiths.length} hadiths loaded.');
+    return hadiths;
   }
 
   Future<HadithModel> getDailyHadith() async {
-    if (_cache == null) await load();
+    final hadiths = await load();
 
-    if (_cache!.isEmpty) {
+    if (hadiths.isEmpty) {
       throw const HadithException('No hadiths found in asset file.');
     }
 
-    return _cache![_random.nextInt(_cache!.length)];
+    return hadiths[_random.nextInt(hadiths.length)];
   }
 
   void clearCache() {
