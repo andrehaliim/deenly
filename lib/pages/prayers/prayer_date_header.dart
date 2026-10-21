@@ -7,12 +7,14 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 /// Hero card of the prayers tab: location, the selected date in Hijri and
-/// Gregorian, and buttons to move between days.
+/// Gregorian, buttons to move between days and that day's prayer progress.
 class PrayerDateHeader extends StatelessWidget {
   final DateTime date;
   final PrayerModel? prayerModel;
   final String location;
   final bool isToday;
+  final int completedCount;
+  final int totalCount;
 
   /// Null when there is no day to move to (outside the cached year).
   final VoidCallback? onPrevious;
@@ -26,6 +28,8 @@ class PrayerDateHeader extends StatelessWidget {
     required this.prayerModel,
     required this.location,
     required this.isToday,
+    required this.completedCount,
+    required this.totalCount,
     required this.onPrevious,
     required this.onNext,
     required this.onPickDate,
@@ -189,11 +193,87 @@ class PrayerDateHeader extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: _DayProgress(
+                    completedCount: completedCount,
+                    totalCount: totalCount,
+                  ),
+                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DayProgress extends StatelessWidget {
+  final int completedCount;
+  final int totalCount;
+
+  const _DayProgress({required this.completedCount, required this.totalCount});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final onCard = colorScheme.onPrimary;
+    final accent = colorScheme.secondaryFixedDim;
+    final l10n = AppLocalizations.of(context);
+    final isComplete = totalCount > 0 && completedCount >= totalCount;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(color: onCard.withValues(alpha: 0.2), height: 1),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                l10n?.prayerProgress ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: onCard.withValues(alpha: 0.85),
+                ),
+              ),
+            ),
+            if (isComplete) ...[
+              Icon(Icons.check_circle_rounded, size: 16, color: accent),
+              const SizedBox(width: 4),
+            ],
+            Text(
+              '$completedCount/$totalCount ${l10n?.completed ?? ''}',
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: accent,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TweenAnimationBuilder<double>(
+          tween: Tween(end: totalCount == 0 ? 0 : completedCount / totalCount),
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, _) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: value,
+                minHeight: 6,
+                backgroundColor: onCard.withValues(alpha: 0.2),
+                color: accent,
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

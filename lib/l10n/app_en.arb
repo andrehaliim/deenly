@@ -253,5 +253,35 @@
     "chooseDate": "Choose date",
     "prayerScheduleEmpty": "Prayer times for this date are not available yet",
     "adhanOn": "Adhan notification on",
-    "adhanOff": "Adhan notification off"
+    "adhanOff": "Adhan notification off",
+    "prayerNotYet": "It is not prayer time yet",
+    "prayerTrackLocked": "Only the last {days} days can be marked",
+    "@prayerTrackLocked": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "prayerHistory": "Prayer History",
+    "streakDays": "{count} day streak",
+    "@streakDays": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "historyRate": "{percent}% done in the last {days} days",
+    "@historyRate": {
+        "placeholders": {
+            "percent": {
+                "type": "int"
+            },
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "jumuah": "Jumu'ah"
 }

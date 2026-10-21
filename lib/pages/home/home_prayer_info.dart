@@ -15,11 +15,17 @@ class HomePrayerInfo extends StatefulWidget {
   final PrayerModel prayerModel;
   final VoidCallback onRefreshLocation;
 
+  /// Today's prayer progress; the chip is hidden while it is null.
+  final ({int completed, int total, int streak})? progress;
+  final VoidCallback onProgressTap;
+
   const HomePrayerInfo({
     super.key,
     required this.location,
     required this.prayerModel,
     required this.onRefreshLocation,
+    required this.progress,
+    required this.onProgressTap,
   });
 
   @override
@@ -171,12 +177,25 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: _LocationChip(
-                    location: widget.location,
-                    onTap: widget.onRefreshLocation,
-                  ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: _LocationChip(
+                        location: widget.location,
+                        onTap: widget.onRefreshLocation,
+                      ),
+                    ),
+                    if (widget.progress case final progress?) ...[
+                      const SizedBox(width: 8),
+                      const Spacer(),
+                      _ProgressChip(
+                        completed: progress.completed,
+                        total: progress.total,
+                        streak: progress.streak,
+                        onTap: widget.onProgressTap,
+                      ),
+                    ],
+                  ],
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -300,6 +319,72 @@ class _LocationChip extends StatelessWidget {
                 color: onCard.withValues(alpha: 0.7),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Today's prayer progress and streak; opens the prayers tab.
+class _ProgressChip extends StatelessWidget {
+  final int completed;
+  final int total;
+  final int streak;
+  final VoidCallback onTap;
+
+  const _ProgressChip({
+    required this.completed,
+    required this.total,
+    required this.streak,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onCard = theme.colorScheme.onPrimary;
+    final accent = theme.colorScheme.secondaryFixedDim;
+    final l10n = AppLocalizations.of(context);
+    final textStyle = theme.textTheme.labelMedium?.copyWith(
+      fontWeight: FontWeight.bold,
+      color: onCard,
+    );
+
+    return Tooltip(
+      message: l10n?.prayerProgress ?? '',
+      child: Material(
+        color: onCard.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  completed >= total
+                      ? Icons.check_circle_rounded
+                      : Icons.check_circle_outline_rounded,
+                  size: 16,
+                  color: accent,
+                ),
+                const SizedBox(width: 4),
+                Text('$completed/$total', style: textStyle),
+                if (streak > 0) ...[
+                  const SizedBox(width: 10),
+                  Icon(
+                    Icons.local_fire_department_rounded,
+                    size: 16,
+                    color: accent,
+                  ),
+                  const SizedBox(width: 2),
+                  Text('$streak', style: textStyle),
+                ],
+              ],
+            ),
           ),
         ),
       ),

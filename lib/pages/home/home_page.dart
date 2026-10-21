@@ -14,12 +14,16 @@ import 'package:deenly/pages/home/home_prayer_info.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
+import 'package:deenly/proxys/prayer_log_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  /// Opens the prayers tab, from the progress chip.
+  final VoidCallback onOpenPrayers;
+
+  const HomePage({super.key, required this.onOpenPrayers});
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -35,6 +39,7 @@ class HomePageState extends State<HomePage>
   bool _isApproximate = false;
   PrayerModel? _prayerModel;
   HadithModel? _hadithModel;
+  ({int completed, int total, int streak})? _progress;
 
   late final AnimationController _entranceController = AnimationController(
     vsync: this,
@@ -47,6 +52,29 @@ class HomePageState extends State<HomePage>
     _entranceController.forward();
     loadPrayerData(true);
     _loadHadithData();
+    loadProgress();
+  }
+
+  /// Re-read when coming back to this tab, since prayers are marked on the
+  /// prayers tab.
+  Future<void> loadProgress() async {
+    const prayers = PrayerLogProxy.trackedPrayers;
+    final proxy = PrayerLogProxy();
+    final today = DateTime.now();
+    try {
+      final done = await proxy.getDonePrayers(today);
+      final streak = await proxy.getStreak(today, prayers);
+      if (!mounted) return;
+      setState(() {
+        _progress = (
+          completed: prayers.where(done.contains).length,
+          total: prayers.length,
+          streak: streak,
+        );
+      });
+    } catch (e, st) {
+      debugPrint('Loading prayer progress failed: $e\n$st');
+    }
   }
 
   @override
@@ -163,6 +191,8 @@ class HomePageState extends State<HomePage>
             location: _location ?? '',
             prayerModel: prayerModel,
             onRefreshLocation: () => loadPrayerData(false),
+            progress: _progress,
+            onProgressTap: widget.onOpenPrayers,
           ),
           if (_isApproximate)
             HomeApproximateNotice(

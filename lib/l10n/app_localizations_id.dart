@@ -445,4 +445,28 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get adhanOff => 'Notifikasi adzan nonaktif';
+
+  @override
+  String get prayerNotYet => 'Belum masuk waktu shalat';
+
+  @override
+  String prayerTrackLocked(int days) {
+    return 'Hanya bisa ditandai sampai $days hari ke belakang';
+  }
+
+  @override
+  String get prayerHistory => 'Riwayat Shalat';
+
+  @override
+  String streakDays(int count) {
+    return '$count hari beruntun';
+  }
+
+  @override
+  String historyRate(int percent, int days) {
+    return '$percent% terlaksana dalam $days hari terakhir';
+  }
+
+  @override
+  String get jumuah => 'Jumat';
 }

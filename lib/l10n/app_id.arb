@@ -153,5 +153,11 @@
     "chooseDate": "Pilih tanggal",
     "prayerScheduleEmpty": "Jadwal shalat untuk tanggal ini belum tersedia",
     "adhanOn": "Notifikasi adzan aktif",
-    "adhanOff": "Notifikasi adzan nonaktif"
+    "adhanOff": "Notifikasi adzan nonaktif",
+    "prayerNotYet": "Belum masuk waktu shalat",
+    "prayerTrackLocked": "Hanya bisa ditandai sampai {days} hari ke belakang",
+    "prayerHistory": "Riwayat Shalat",
+    "streakDays": "{count} hari beruntun",
+    "historyRate": "{percent}% terlaksana dalam {days} hari terakhir",
+    "jumuah": "Jumat"
 }

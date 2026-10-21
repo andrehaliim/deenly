@@ -6,19 +6,33 @@ import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/prayers/prayer_icon.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 /// Full prayer schedule of one day as a vertical timeline. For today the
 /// rail fills up to the current time, the current prayer is highlighted,
 /// the next one counts down and the times already passed are dimmed.
+/// Tapping a prayer marks it as done.
 class PrayerScheduleCard extends StatefulWidget {
   final PrayerModel prayerModel;
   final bool isToday;
+
+  /// Dhuhr is replaced by the Friday prayer.
+  final bool isFriday;
+  final Set<String> donePrayers;
+
+  /// Why no prayer of this day can be marked, or null if they can.
+  final String? lockedMessage;
+  final void Function(String prayer, bool isDone) onDoneChanged;
 
   const PrayerScheduleCard({
     super.key,
     required this.prayerModel,
     required this.isToday,
+    required this.isFriday,
+    required this.donePrayers,
+    required this.lockedMessage,
+    required this.onDoneChanged,
   });
 
   @override
@@ -93,6 +107,24 @@ class _PrayerScheduleCardState extends State<PrayerScheduleCard> {
         SnackBar(content: Text(l10n.notificationScheduleFailed)),
       );
     }
+  }
+
+  /// Marks [prayer] when allowed, otherwise tells why it is locked. Today's
+  /// prayers unlock once their time has come.
+  void _onPrayerTap(String prayer, {required bool hasStarted}) {
+    final l10n = AppLocalizations.of(context);
+    final lockedMessage =
+        widget.lockedMessage ??
+        (widget.isToday && !hasStarted ? l10n?.prayerNotYet : null);
+
+    if (lockedMessage != null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(lockedMessage)));
+      return;
+    }
+    HapticFeedback.lightImpact();
+    widget.onDoneChanged(prayer, !widget.donePrayers.contains(prayer));
   }
 
   @override
@@ -189,6 +221,7 @@ class _PrayerScheduleCardState extends State<PrayerScheduleCard> {
               label: switch (row.prayer) {
                 'Imsak' => l10n?.imsak ?? row.prayer,
                 'Sunrise' => l10n?.sunrise ?? row.prayer,
+                'Dhuhr' when widget.isFriday => l10n?.jumuah ?? row.prayer,
                 _ => PrayerProxy().getPrayerLabel(context, row.prayer),
               },
               time: timings[row.prayer] as String,
@@ -210,6 +243,14 @@ class _PrayerScheduleCardState extends State<PrayerScheduleCard> {
               /// and the upper half of the next one.
               fillAbove: (gapFill(i - 1) * 2 - 1).clamp(0.0, 1.0),
               fillBelow: (gapFill(i) * 2).clamp(0.0, 1.0),
+              isDone: widget.donePrayers.contains(row.prayer),
+              isLocked:
+                  widget.lockedMessage != null ||
+                  (widget.isToday && row.minutes > nowMinutes),
+              onTap: () => _onPrayerTap(
+                row.prayer,
+                hasStarted: row.minutes <= nowMinutes,
+              ),
               isNotificationOn: drawerProvider.isPrayerEnabled(row.prayer),
               onNotificationChanged: (value) =>
                   _toggleNotification(row.prayer, value),
@@ -279,6 +320,9 @@ class _TimelineRow extends StatelessWidget {
   final bool hasLineBelow;
   final double fillAbove;
   final double fillBelow;
+  final bool isDone;
+  final bool isLocked;
+  final VoidCallback onTap;
   final bool isNotificationOn;
   final ValueChanged<bool> onNotificationChanged;
 
@@ -295,6 +339,9 @@ class _TimelineRow extends StatelessWidget {
     required this.hasLineBelow,
     required this.fillAbove,
     required this.fillBelow,
+    required this.isDone,
+    required this.isLocked,
+    required this.onTap,
     required this.isNotificationOn,
     required this.onNotificationChanged,
   });
@@ -368,6 +415,9 @@ class _TimelineRow extends StatelessWidget {
                       status: status,
                       isCurrent: isCurrent,
                       isNext: isNext,
+                      isDone: isDone,
+                      isLocked: isLocked,
+                      onTap: onTap,
                       isNotificationOn: isNotificationOn,
                       onNotificationChanged: onNotificationChanged,
                     ),
@@ -385,6 +435,9 @@ class _PrayerContent extends StatelessWidget {
   final String? status;
   final bool isCurrent;
   final bool isNext;
+  final bool isDone;
+  final bool isLocked;
+  final VoidCallback onTap;
   final bool isNotificationOn;
   final ValueChanged<bool> onNotificationChanged;
 
@@ -394,6 +447,9 @@ class _PrayerContent extends StatelessWidget {
     required this.status,
     required this.isCurrent,
     required this.isNext,
+    required this.isDone,
+    required this.isLocked,
+    required this.onTap,
     required this.isNotificationOn,
     required this.onNotificationChanged,
   });
@@ -413,7 +469,6 @@ class _PrayerContent extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
       margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.fromLTRB(12, 8, 2, 8),
       decoration: BoxDecoration(
         /// Same gradient as the hero cards, so "now" reads as one family.
         gradient: isCurrent
@@ -450,60 +505,132 @@ class _PrayerContent extends StatelessWidget {
               ]
             : const [],
       ),
-      child: Row(
-        children: [
-          Icon(prayerIconOf(prayer), size: 20, color: accent),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 6, 2, 6),
+            child: Row(
               children: [
-                Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: foreground,
+                Semantics(
+                  checked: isDone,
+                  label: label,
+                  child: _DoneCheck(
+                    prayer: prayer,
+                    isDone: isDone,
+                    isLocked: isLocked,
+                    onAccent: isCurrent,
                   ),
                 ),
-                if (status case final status?)
-                  Text(
-                    status,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: isCurrent
-                          ? colorScheme.secondaryFixedDim
-                          : colorScheme.secondary,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: foreground,
+                        ),
+                      ),
+                      if (status case final status?)
+                        Text(
+                          status,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: isCurrent
+                                ? colorScheme.secondaryFixedDim
+                                : colorScheme.secondary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => onNotificationChanged(!isNotificationOn),
+                  tooltip: isNotificationOn ? l10n?.adhanOn : l10n?.adhanOff,
+                  visualDensity: VisualDensity.compact,
+                  icon: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    transitionBuilder: (child, animation) =>
+                        ScaleTransition(scale: animation, child: child),
+                    child: Icon(
+                      isNotificationOn
+                          ? Icons.notifications_active_rounded
+                          : Icons.notifications_off_outlined,
+                      key: ValueKey(isNotificationOn),
+                      size: 20,
+                      color: isNotificationOn
+                          ? accent
+                          : foreground.withValues(alpha: 0.4),
                     ),
                   ),
+                ),
               ],
             ),
           ),
-          IconButton(
-            onPressed: () => onNotificationChanged(!isNotificationOn),
-            tooltip: isNotificationOn ? l10n?.adhanOn : l10n?.adhanOff,
-            visualDensity: VisualDensity.compact,
-            icon: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              transitionBuilder: (child, animation) =>
-                  ScaleTransition(scale: animation, child: child),
-              child: Icon(
-                isNotificationOn
-                    ? Icons.notifications_active_rounded
-                    : Icons.notifications_off_outlined,
-                key: ValueKey(isNotificationOn),
-                size: 20,
-                color: isNotificationOn
-                    ? accent
-                    : foreground.withValues(alpha: 0.4),
-              ),
-            ),
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Round checkbox of a prayer: its icon while not done, a check once done.
+/// [onAccent] draws it on the current prayer's gradient.
+class _DoneCheck extends StatelessWidget {
+  final String prayer;
+  final bool isDone;
+  final bool isLocked;
+  final bool onAccent;
+
+  const _DoneCheck({
+    required this.prayer,
+    required this.isDone,
+    required this.isLocked,
+    required this.onAccent,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final accent = onAccent ? colorScheme.onPrimary : colorScheme.primary;
+    final onFill = onAccent ? colorScheme.primary : colorScheme.onPrimary;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+      width: 34,
+      height: 34,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isDone
+            ? accent
+            : accent.withValues(alpha: onAccent ? 0.15 : 0.08),
+        border: Border.all(
+          color: accent.withValues(alpha: isDone ? 1 : 0.3),
+          width: 1.5,
+        ),
+      ),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 250),
+        transitionBuilder: (child, animation) =>
+            ScaleTransition(scale: animation, child: child),
+        child: Icon(
+          isDone ? Icons.check_rounded : prayerIconOf(prayer),
+          key: ValueKey(isDone),
+          size: 18,
+          color: isDone
+              ? onFill
+              : accent.withValues(alpha: isLocked ? 0.45 : 1),
+        ),
       ),
     );
   }

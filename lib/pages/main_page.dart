@@ -14,6 +14,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  static const int _homeIndex = 0;
   static const int _prayersIndex = 1;
   static const int _quranIndex = 2;
 
@@ -21,6 +22,16 @@ class _MainPageState extends State<MainPage> {
   final GlobalKey<PrayersPageState> _prayersKey = GlobalKey<PrayersPageState>();
   final GlobalKey<QuranPageState> _quranKey = GlobalKey<QuranPageState>();
   int _selectedIndex = 0;
+
+  void _select(int index) {
+    /// Each tab picks up what the other changed since the last visit: the
+    /// times synced by home, the prayers marked on the prayers tab.
+    if (index == _homeIndex) _homeKey.currentState?.loadProgress();
+    if (index == _prayersIndex) _prayersKey.currentState?.reload();
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +65,7 @@ class _MainPageState extends State<MainPage> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          HomePage(key: _homeKey),
+          HomePage(key: _homeKey, onOpenPrayers: () => _select(_prayersIndex)),
           PrayersPage(key: _prayersKey),
           QuranPage(key: _quranKey),
           SettingPage(
@@ -68,13 +79,7 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: CustomBottomNav(
         selectedIndex: _selectedIndex,
-        onTap: (index) {
-          /// Picks up times synced by the home tab since the last visit.
-          if (index == _prayersIndex) _prayersKey.currentState?.reload();
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+        onTap: _select,
       ),
     );
   }

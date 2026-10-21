@@ -445,4 +445,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adhanOff => 'Adhan notification off';
+
+  @override
+  String get prayerNotYet => 'It is not prayer time yet';
+
+  @override
+  String prayerTrackLocked(int days) {
+    return 'Only the last $days days can be marked';
+  }
+
+  @override
+  String get prayerHistory => 'Prayer History';
+
+  @override
+  String streakDays(int count) {
+    return '$count day streak';
+  }
+
+  @override
+  String historyRate(int percent, int days) {
+    return '$percent% done in the last $days days';
+  }
+
+  @override
+  String get jumuah => 'Jumu\'ah';
 }

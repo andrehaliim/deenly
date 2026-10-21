@@ -883,6 +883,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Adhan notification off'**
   String get adhanOff;
+
+  /// No description provided for @prayerNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'It is not prayer time yet'**
+  String get prayerNotYet;
+
+  /// No description provided for @prayerTrackLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the last {days} days can be marked'**
+  String prayerTrackLocked(int days);
+
+  /// No description provided for @prayerHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer History'**
+  String get prayerHistory;
+
+  /// No description provided for @streakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day streak'**
+  String streakDays(int count);
+
+  /// No description provided for @historyRate.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% done in the last {days} days'**
+  String historyRate(int percent, int days);
+
+  /// No description provided for @jumuah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumu\'ah'**
+  String get jumuah;
 }
 
 class _AppLocalizationsDelegate
