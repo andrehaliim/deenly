@@ -235,5 +235,23 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "imsak": "Imsak",
+    "sunrise": "Sunrise",
+    "prayerNow": "Now",
+    "prayerStartsIn": "in {duration}",
+    "@prayerStartsIn": {
+        "placeholders": {
+            "duration": {
+                "type": "String"
+            }
+        }
+    },
+    "backToToday": "Back to today",
+    "previousDay": "Previous day",
+    "nextDay": "Next day",
+    "chooseDate": "Choose date",
+    "prayerScheduleEmpty": "Prayer times for this date are not available yet",
+    "adhanOn": "Adhan notification on",
+    "adhanOff": "Adhan notification off"
 }

@@ -142,5 +142,16 @@
     "qiblaDirection": "Arah Kiblat",
     "nextPrayerIn": "{prayer} dimulai dalam",
     "durationHoursMinutes": "{hours} jam {minutes} menit",
-    "durationMinutes": "{minutes} menit"
+    "durationMinutes": "{minutes} menit",
+    "imsak": "Imsak",
+    "sunrise": "Terbit",
+    "prayerNow": "Sekarang",
+    "prayerStartsIn": "{duration} lagi",
+    "backToToday": "Kembali ke hari ini",
+    "previousDay": "Hari sebelumnya",
+    "nextDay": "Hari berikutnya",
+    "chooseDate": "Pilih tanggal",
+    "prayerScheduleEmpty": "Jadwal shalat untuk tanggal ini belum tersedia",
+    "adhanOn": "Notifikasi adzan aktif",
+    "adhanOff": "Notifikasi adzan nonaktif"
 }

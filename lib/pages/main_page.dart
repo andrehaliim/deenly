@@ -14,9 +14,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  static const int _prayersIndex = 1;
   static const int _quranIndex = 2;
 
   final GlobalKey<HomePageState> _homeKey = GlobalKey<HomePageState>();
+  final GlobalKey<PrayersPageState> _prayersKey = GlobalKey<PrayersPageState>();
   final GlobalKey<QuranPageState> _quranKey = GlobalKey<QuranPageState>();
   int _selectedIndex = 0;
 
@@ -53,17 +55,22 @@ class _MainPageState extends State<MainPage> {
         index: _selectedIndex,
         children: [
           HomePage(key: _homeKey),
-          const PrayersPage(),
+          PrayersPage(key: _prayersKey),
           QuranPage(key: _quranKey),
           SettingPage(
             showAppBar: false,
-            onSaved: () => _homeKey.currentState?.loadPrayerData(false),
+            onSaved: () {
+              _homeKey.currentState?.loadPrayerData(false);
+              _prayersKey.currentState?.reload();
+            },
           ),
         ],
       ),
       bottomNavigationBar: CustomBottomNav(
         selectedIndex: _selectedIndex,
         onTap: (index) {
+          /// Picks up times synced by the home tab since the last visit.
+          if (index == _prayersIndex) _prayersKey.currentState?.reload();
           setState(() {
             _selectedIndex = index;
           });

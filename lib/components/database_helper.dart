@@ -36,7 +36,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 11,
+      version: 12,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -70,7 +70,9 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE $tablePrayer(
         id INTEGER PRIMARY KEY,
+        imsak TEXT,
         fajr TEXT,
+        sunrise TEXT,
         dhuhr TEXT,
         asr TEXT,
         maghrib TEXT,
@@ -218,6 +220,12 @@ class DatabaseHelper {
 
     if (oldVersion < 11) {
       await _createAsmaulHusnaTable(db);
+    }
+
+    /// Existing rows stay empty until the next sync refetches them.
+    if (oldVersion < 12) {
+      await db.execute('ALTER TABLE $tablePrayer ADD COLUMN imsak TEXT');
+      await db.execute('ALTER TABLE $tablePrayer ADD COLUMN sunrise TEXT');
     }
   }
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/pages/prayers/prayer_icon.dart';
 import 'package:deenly/pages/quran/eight_point_star_painter.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
@@ -317,21 +318,6 @@ class _PrayerTimeItem extends StatelessWidget {
     required this.isNext,
   });
 
-  static IconData _iconOf(String prayer) {
-    switch (prayer) {
-      case 'Fajr':
-        return Icons.wb_twilight_rounded;
-      case 'Dhuhr':
-        return Icons.light_mode_outlined;
-      case 'Asr':
-        return Icons.filter_drama_outlined;
-      case 'Maghrib':
-        return Icons.nights_stay_outlined;
-      default:
-        return Icons.bedtime_outlined;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -363,7 +349,7 @@ class _PrayerTimeItem extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Icon(_iconOf(prayer), size: 22, color: color),
+          Icon(prayerIconOf(prayer), size: 22, color: color),
           const SizedBox(height: 6),
           Text(
             time,

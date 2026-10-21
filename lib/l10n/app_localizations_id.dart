@@ -409,4 +409,40 @@ class AppLocalizationsId extends AppLocalizations {
   String durationMinutes(int minutes) {
     return '$minutes menit';
   }
+
+  @override
+  String get imsak => 'Imsak';
+
+  @override
+  String get sunrise => 'Terbit';
+
+  @override
+  String get prayerNow => 'Sekarang';
+
+  @override
+  String prayerStartsIn(String duration) {
+    return '$duration lagi';
+  }
+
+  @override
+  String get backToToday => 'Kembali ke hari ini';
+
+  @override
+  String get previousDay => 'Hari sebelumnya';
+
+  @override
+  String get nextDay => 'Hari berikutnya';
+
+  @override
+  String get chooseDate => 'Pilih tanggal';
+
+  @override
+  String get prayerScheduleEmpty =>
+      'Jadwal shalat untuk tanggal ini belum tersedia';
+
+  @override
+  String get adhanOn => 'Notifikasi adzan aktif';
+
+  @override
+  String get adhanOff => 'Notifikasi adzan nonaktif';
 }

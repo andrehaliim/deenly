@@ -6,7 +6,6 @@ import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
-import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/pages/setting/prayer_adjustment_tile.dart';
 import 'package:deenly/pages/setting/setting_section.dart';
@@ -16,7 +15,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:url_launcher/url_launcher.dart';
 
 const String _privacyPolicyUrl =
@@ -257,16 +255,8 @@ class _SettingPageState extends State<SettingPage>
     String prayer,
     bool value,
   ) async {
-    drawerProvider.togglePrayer(prayer, value);
-    final success = await _schedulePrayerNotification(
-      prayerName: prayer,
-      notifId: DrawerProvider.notificationIdOf(prayer),
-      isEnabled: value,
-    );
-
-    if (!success) {
-      drawerProvider.togglePrayer(prayer, false);
-      if (!mounted) return;
+    final success = await drawerProvider.setPrayerNotification(prayer, value);
+    if (!success && mounted) {
       _showSnackBar(
         AppLocalizations.of(context)?.notificationScheduleFailed ?? '',
       );
@@ -274,8 +264,9 @@ class _SettingPageState extends State<SettingPage>
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _saveAdjustments(DrawerProvider drawerProvider) async {
@@ -314,57 +305,6 @@ class _SettingPageState extends State<SettingPage>
     if (!opened && mounted) {
       _showSnackBar(AppLocalizations.of(context)?.couldNotOpenLink ?? '');
     }
-  }
-
-  Future<bool> _schedulePrayerNotification({
-    required String prayerName,
-    required int notifId,
-    required bool isEnabled,
-  }) async {
-    if (!isEnabled) {
-      await NotificationHelper().cancelNotification(notifId);
-      return true;
-    }
-
-    final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
-    if (prayerModel == null) {
-      return false;
-    }
-
-    /// toJson() keys match the prayer names ('Fajr', 'Dhuhr', ...).
-    final prayerTime = prayerModel.toJson()[prayerName] as String;
-    final parts = prayerTime.split(':');
-    final hour = int.parse(parts[0]);
-    final minute = int.parse(parts[1]);
-
-    final now = DateTime.now();
-
-    DateTime prayerDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      hour,
-      minute,
-    );
-
-    if (prayerDateTime.isBefore(now)) {
-      prayerDateTime = prayerDateTime.add(const Duration(days: 1));
-    }
-
-    final scheduledTime = tz.TZDateTime.from(prayerDateTime, tz.local);
-
-    bool isScheduled = await NotificationHelper().schedulePrayerNotification(
-      notifId: notifId,
-      prayerName: prayerName,
-      scheduledTime: scheduledTime,
-    );
-
-    if (!isScheduled) {
-      debugPrint('Notification failed to schedule for $prayerName');
-      return false;
-    }
-
-    return true;
   }
 }
 

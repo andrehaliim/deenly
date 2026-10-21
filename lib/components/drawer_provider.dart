@@ -4,6 +4,7 @@ import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class DrawerProvider extends ChangeNotifier {
   /// Prayers shown in the drawer, in order. The notification id of each
@@ -57,6 +58,50 @@ class DrawerProvider extends ChangeNotifier {
     await prefs.setBool(_enabledKey(prayer), value);
     WidgetHelper().updateWidgetNotification(prayer.toLowerCase(), value);
     notifyListeners();
+  }
+
+  /// Turns the adhan notification of [prayer] on or off and schedules it.
+  /// Returns false, leaving it off, when it could not be scheduled.
+  Future<bool> setPrayerNotification(String prayer, bool value) async {
+    await togglePrayer(prayer, value);
+    final notifId = notificationIdOf(prayer);
+    if (!value) {
+      await NotificationHelper().cancelNotification(notifId);
+      return true;
+    }
+
+    final success = await _schedulePrayerNotification(prayer, notifId);
+    if (!success) await togglePrayer(prayer, false);
+    return success;
+  }
+
+  Future<bool> _schedulePrayerNotification(String prayer, int notifId) async {
+    final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+    if (prayerModel == null) return false;
+
+    /// toJson() keys match the prayer names ('Fajr', 'Dhuhr', ...).
+    final parts = (prayerModel.toJson()[prayer] as String).split(':');
+    final now = DateTime.now();
+    var prayerDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
+    if (prayerDateTime.isBefore(now)) {
+      prayerDateTime = prayerDateTime.add(const Duration(days: 1));
+    }
+
+    final isScheduled = await NotificationHelper().schedulePrayerNotification(
+      notifId: notifId,
+      prayerName: prayer,
+      scheduledTime: tz.TZDateTime.from(prayerDateTime, tz.local),
+    );
+    if (!isScheduled) {
+      debugPrint('Notification failed to schedule for $prayer');
+    }
+    return isScheduled;
   }
 
   /// Applies [adjustments] (minutes per prayer) to the stored prayer

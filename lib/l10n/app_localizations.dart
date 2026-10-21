@@ -817,6 +817,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes} min'**
   String durationMinutes(int minutes);
+
+  /// No description provided for @imsak.
+  ///
+  /// In en, this message translates to:
+  /// **'Imsak'**
+  String get imsak;
+
+  /// No description provided for @sunrise.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise'**
+  String get sunrise;
+
+  /// No description provided for @prayerNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get prayerNow;
+
+  /// No description provided for @prayerStartsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'in {duration}'**
+  String prayerStartsIn(String duration);
+
+  /// No description provided for @backToToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to today'**
+  String get backToToday;
+
+  /// No description provided for @previousDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous day'**
+  String get previousDay;
+
+  /// No description provided for @nextDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Next day'**
+  String get nextDay;
+
+  /// No description provided for @chooseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose date'**
+  String get chooseDate;
+
+  /// No description provided for @prayerScheduleEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer times for this date are not available yet'**
+  String get prayerScheduleEmpty;
+
+  /// No description provided for @adhanOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhan notification on'**
+  String get adhanOn;
+
+  /// No description provided for @adhanOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhan notification off'**
+  String get adhanOff;
 }
 
 class _AppLocalizationsDelegate
