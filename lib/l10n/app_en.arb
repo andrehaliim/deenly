@@ -162,6 +162,15 @@
     "mosqueLocationUnavailable": "Could not get your location. Make sure GPS is on and location permission is granted.",
     "mosqueLoadFailed": "Failed to load nearby mosques.",
     "asmaulHusnaLoadFailed": "Failed to load Asmaul Husna.",
+    "doaLoadFailed": "Failed to load duas.",
+    "doaCount": "{count, plural, =1{1 dua} other{{count} duas}}",
+    "@doaCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
 
     "appTitle": "Deenly",
     "splashTagline": "A companion for the modern Muslim",

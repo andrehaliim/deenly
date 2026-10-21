@@ -287,6 +287,14 @@ class AppLocalizationsId extends AppLocalizations {
   String get asmaulHusnaLoadFailed => 'Gagal memuat Asmaul Husna.';
 
   @override
+  String get doaLoadFailed => 'Gagal memuat doa.';
+
+  @override
+  String doaCount(int count) {
+    return '$count doa';
+  }
+
+  @override
   String get appTitle => 'Deenly';
 
   @override

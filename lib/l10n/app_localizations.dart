@@ -614,6 +614,18 @@ abstract class AppLocalizations {
   /// **'Failed to load Asmaul Husna.'**
   String get asmaulHusnaLoadFailed;
 
+  /// No description provided for @doaLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load duas.'**
+  String get doaLoadFailed;
+
+  /// No description provided for @doaCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 dua} other{{count} duas}}'**
+  String doaCount(int count);
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

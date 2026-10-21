@@ -107,6 +107,15 @@
     "mosqueLocationUnavailable": "Tidak dapat mengambil lokasimu. Pastikan GPS aktif dan izin lokasi sudah diberikan.",
     "mosqueLoadFailed": "Gagal memuat masjid terdekat.",
     "asmaulHusnaLoadFailed": "Gagal memuat Asmaul Husna.",
+    "doaLoadFailed": "Gagal memuat doa.",
+    "doaCount": "{count} doa",
+    "@doaCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
 
     "appTitle": "Deenly",
     "splashTagline": "Teman ibadah Muslim modern",

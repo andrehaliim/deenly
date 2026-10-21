@@ -287,6 +287,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get asmaulHusnaLoadFailed => 'Failed to load Asmaul Husna.';
 
   @override
+  String get doaLoadFailed => 'Failed to load duas.';
+
+  @override
+  String doaCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count duas',
+      one: '1 dua',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get appTitle => 'Deenly';
 
   @override
