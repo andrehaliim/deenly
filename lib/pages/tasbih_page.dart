@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -331,6 +332,7 @@ class _CounterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final l10n = AppLocalizations.of(context);
     final onCard = colorScheme.onPrimary;
     final hasTarget = target != -1;
@@ -354,20 +356,10 @@ class _CounterButton extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [
-                            colorScheme.primary,
-                            Color.alphaBlend(
-                              colorScheme.secondary.withValues(alpha: 0.35),
-                              colorScheme.primary,
-                            ),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        gradient: appColors?.heroGradient,
                         boxShadow: [
                           BoxShadow(
-                            color: colorScheme.primary.withValues(alpha: 0.3),
+                            color: appColors?.heroShadow ?? colorScheme.shadow,
                             blurRadius: 24,
                             offset: const Offset(0, 8),
                           ),
@@ -518,6 +510,7 @@ class _TargetOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final radius = BorderRadius.circular(16);
 
     return AnimatedContainer(
@@ -529,7 +522,7 @@ class _TargetOption extends StatelessWidget {
         boxShadow: [
           if (isSelected)
             BoxShadow(
-              color: colorScheme.primary.withValues(alpha: 0.25),
+              color: appColors?.heroShadow ?? colorScheme.shadow,
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),

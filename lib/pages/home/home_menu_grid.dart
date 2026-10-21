@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/pages/asmaul_husna/asmaul_husna_page.dart';
@@ -17,7 +18,10 @@ class HomeMenuGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final menuSheet =
+        theme.extension<AppColors>()?.menuSheet ??
+        theme.colorScheme.surfaceContainerLowest;
     final l10n = AppLocalizations.of(context);
 
     /// Items without a page are not wired up yet, so taps do nothing.
@@ -56,7 +60,7 @@ class HomeMenuGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLowest,
+        color: menuSheet,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -101,6 +105,8 @@ class _MenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final colors = theme.extension<AppColors>();
+    final tile = colors?.menuTile ?? colorScheme.primaryContainer;
     final page = item.page;
 
     /// Tools without a page yet are dimmed so they don't read as broken.
@@ -119,8 +125,8 @@ class _MenuButton extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      colorScheme.primaryContainer,
-                      colorScheme.primaryContainer.withValues(alpha: 0.5),
+                      tile,
+                      tile.withValues(alpha: tile.a * 0.5),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -131,7 +137,7 @@ class _MenuButton extends StatelessWidget {
                 child: FaIcon(
                   item.icon,
                   size: 20,
-                  color: colorScheme.onPrimaryContainer,
+                  color: colors?.onMenuTile ?? colorScheme.onPrimaryContainer,
                 ),
               ),
               const SizedBox(height: 6),

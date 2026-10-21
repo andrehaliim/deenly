@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/doa_model.dart';
 import 'package:flutter/material.dart';
@@ -21,27 +22,17 @@ class DoaGroupCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final l10n = AppLocalizations.of(context);
     final borderRadius = BorderRadius.circular(20);
-
-    /// The gold is blended into primary instead of used as a stop on its
-    /// own, so light text stays readable across the whole card.
-    final gradientEnd = Color.alphaBlend(
-      colorScheme.secondary.withValues(alpha: 0.45),
-      colorScheme.primary,
-    );
 
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: borderRadius,
-        gradient: LinearGradient(
-          colors: [colorScheme.primary, gradientEnd],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: appColors?.heroGradient,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.25),
+            color: appColors?.heroShadow ?? colorScheme.shadow,
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),

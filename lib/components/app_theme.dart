@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -96,6 +97,39 @@ class AppTheme {
   static const _darkOutlineVariant = Color(0xFF3F4946);
   static const _darkError = Color(0xFFFFB4AB);
 
+  /// Deep teal for the large home card; [_darkPrimary] is too bright to
+  /// fill that much of a dark screen.
+  static const _darkHeroStart = Color(0xFF0F3B35);
+  static const _darkHeroEnd = Color(0xFF0A2A26);
+
+  static final _lightColors = AppColors(
+    heroStart: _lightPrimary,
+    heroEnd: Color.alphaBlend(
+      _lightSecondary.withValues(alpha: 0.35),
+      _lightPrimary,
+    ),
+    heroShadow: _lightPrimary.withValues(alpha: 0.3),
+    menuSheet: _lightSurfaceLowest,
+    menuTile: _primaryFixed,
+    onMenuTile: _lightPrimary,
+    navSelected: _lightPrimary,
+    onNavSelected: const Color(0xFFE8E8E8),
+  );
+
+  static final _darkColors = AppColors(
+    heroStart: _darkHeroStart,
+    heroEnd: Color.alphaBlend(
+      _darkSecondary.withValues(alpha: 0.12),
+      _darkHeroEnd,
+    ),
+    heroShadow: Colors.black.withValues(alpha: 0.4),
+    menuSheet: Colors.black.withValues(alpha: 0.28),
+    menuTile: _primaryFixedDim.withValues(alpha: 0.16),
+    onMenuTile: _primaryFixedDim,
+    navSelected: const Color(0xFF14524A),
+    onNavSelected: _primaryFixed,
+  );
+
   /// ========================================
   /// 🌞 LIGHT THEME
   /// ========================================
@@ -156,7 +190,7 @@ class AppTheme {
 
     scaffoldBackgroundColor: _lightSurface,
 
-    extensions: [_brandTextStyles(_lightPrimary)],
+    extensions: [_brandTextStyles(_lightPrimary), _lightColors],
 
     /// AppBar
     appBarTheme: const AppBarTheme(
@@ -246,7 +280,7 @@ class AppTheme {
 
     scaffoldBackgroundColor: _darkSurface,
 
-    extensions: [_brandTextStyles(_darkPrimary)],
+    extensions: [_brandTextStyles(_primaryFixedDim), _darkColors],
 
     appBarTheme: const AppBarTheme(
       backgroundColor: _darkSurface,

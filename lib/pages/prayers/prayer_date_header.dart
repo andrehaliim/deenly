@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
@@ -40,6 +41,7 @@ class PrayerDateHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final onCard = colorScheme.onPrimary;
     final l10n = AppLocalizations.of(context);
     final languageCode = context.watch<LocaleProvider>().locale?.languageCode;
@@ -50,17 +52,7 @@ class PrayerDateHeader extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            Color.alphaBlend(
-              colorScheme.secondary.withValues(alpha: 0.35),
-              colorScheme.primary,
-            ),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: appColors?.heroGradient,
         image: const DecorationImage(
           image: AssetImage('assets/images/background.jpg'),
           fit: BoxFit.cover,
@@ -68,7 +60,7 @@ class PrayerDateHeader extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.3),
+            color: appColors?.heroShadow ?? colorScheme.shadow,
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),

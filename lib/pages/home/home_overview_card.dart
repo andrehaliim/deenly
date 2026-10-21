@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/pages/home/home_menu_grid.dart';
 import 'package:flutter/material.dart';
 
@@ -20,24 +21,16 @@ class HomeOverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 0),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            Color.alphaBlend(
-              colorScheme.secondary.withValues(alpha: 0.35),
-              colorScheme.primary,
-            ),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: appColors?.heroGradient,
         image: const DecorationImage(
           image: AssetImage('assets/images/background.jpg'),
           fit: BoxFit.cover,
@@ -45,7 +38,7 @@ class HomeOverviewCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.3),
+            color: appColors?.heroShadow ?? colorScheme.shadow,
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),

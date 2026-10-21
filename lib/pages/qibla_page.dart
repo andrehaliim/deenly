@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -192,6 +193,7 @@ class _LocationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final l10n = AppLocalizations.of(context);
     final onCard = colorScheme.onPrimary;
     const radius = BorderRadius.all(Radius.circular(20));
@@ -199,20 +201,10 @@ class _LocationCard extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: radius,
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            Color.alphaBlend(
-              colorScheme.secondary.withValues(alpha: 0.35),
-              colorScheme.primary,
-            ),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: appColors?.heroGradient,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.3),
+            color: appColors?.heroShadow ?? colorScheme.shadow,
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -292,6 +284,7 @@ class _Compass extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final onDial = colorScheme.onPrimary;
     final dialSize = Size.square(dimension);
     const rotationDuration = Duration(milliseconds: 300);
@@ -326,17 +319,7 @@ class _Compass extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    colorScheme.primary,
-                    Color.alphaBlend(
-                      colorScheme.secondary.withValues(alpha: 0.35),
-                      colorScheme.primary,
-                    ),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: appColors?.heroGradient,
                 border: Border.all(
                   color: onDial.withValues(alpha: 0.15),
                   width: 4,

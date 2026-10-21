@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,23 +16,18 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppColors>();
+    final selected = colors?.navSelected ?? colorScheme.primary;
+    final onSelected = colors?.onNavSelected ?? colorScheme.onPrimary;
     final items = [
-      {
-        'icon': FontAwesomeIcons.house,
-        'label': AppLocalizations.of(context)!.menuHome,
-      },
+      {'icon': FontAwesomeIcons.house, 'label': l10n?.menuHome ?? ''},
       {
         'icon': FontAwesomeIcons.personPraying,
-        'label': AppLocalizations.of(context)!.menuPrayers,
+        'label': l10n?.menuPrayers ?? '',
       },
-      {
-        'icon': FontAwesomeIcons.bookQuran,
-        'label': AppLocalizations.of(context)!.menuQuran,
-      },
-      {
-        'icon': FontAwesomeIcons.gear,
-        'label': AppLocalizations.of(context)!.menuSetting,
-      },
+      {'icon': FontAwesomeIcons.bookQuran, 'label': l10n?.menuQuran ?? ''},
+      {'icon': FontAwesomeIcons.gear, 'label': l10n?.menuSetting ?? ''},
     ];
 
     return Container(
@@ -48,9 +44,7 @@ class CustomBottomNav extends StatelessWidget {
                 duration: const Duration(milliseconds: 250),
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.transparent,
+                  color: isSelected ? selected : Colors.transparent,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Column(
@@ -59,7 +53,7 @@ class CustomBottomNav extends StatelessWidget {
                     FaIcon(
                       items[index]['icon'] as FaIconData,
                       color: isSelected
-                          ? Theme.of(context).colorScheme.onPrimary
+                          ? onSelected
                           : Theme.of(context).colorScheme.onSurfaceVariant,
                       size: 22,
                     ),
@@ -69,7 +63,7 @@ class CustomBottomNav extends StatelessWidget {
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
-                            ? Theme.of(context).colorScheme.onPrimary
+                            ? onSelected
                             : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),

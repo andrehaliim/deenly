@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
@@ -458,6 +459,7 @@ class _PrayerContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColors>();
     final l10n = AppLocalizations.of(context);
 
     final foreground = isCurrent
@@ -471,19 +473,7 @@ class _PrayerContent extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         /// Same gradient as the hero cards, so "now" reads as one family.
-        gradient: isCurrent
-            ? LinearGradient(
-                colors: [
-                  colorScheme.primary,
-                  Color.alphaBlend(
-                    colorScheme.secondary.withValues(alpha: 0.35),
-                    colorScheme.primary,
-                  ),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
+        gradient: isCurrent ? appColors?.heroGradient : null,
         color: isCurrent
             ? null
             : isNext
@@ -498,7 +488,7 @@ class _PrayerContent extends StatelessWidget {
         boxShadow: isCurrent
             ? [
                 BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.3),
+                  color: appColors?.heroShadow ?? colorScheme.shadow,
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
