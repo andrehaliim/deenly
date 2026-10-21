@@ -442,6 +442,8 @@ class NotificationHelper {
       'Deenly Missed Prayer Reminders',
       importance: Importance.high,
       priority: Priority.high,
+      sound: const RawResourceAndroidNotificationSound('arabic_oud'),
+      playSound: true,
       actions: [
         AndroidNotificationAction(
           actionMarkDone,
