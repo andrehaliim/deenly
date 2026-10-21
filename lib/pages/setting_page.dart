@@ -234,6 +234,15 @@ class _SettingPageState extends State<SettingPage>
               title: 'List Pending Notification',
               onTap: NotificationHelper().getPendingNotifications,
             ),
+            SettingTile(
+              icon: Icons.notification_add_rounded,
+              title: 'Test Notif',
+              onTap: () => NotificationHelper().showNotification(
+                id: 9999,
+                title: 'Deenly',
+                body: 'Test notification',
+              ),
+            ),
           ],
         ),
       _SettingFooter(version: _version),
