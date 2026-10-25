@@ -65,6 +65,19 @@ class DrawerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Turns on the adhan, before-prayer and after-prayer notifications.
+  /// They are scheduled once the home page loads the prayer times.
+  Future<void> enableAllNotifications() async {
+    for (final prayer in prayers) {
+      await togglePrayer(prayer, true);
+    }
+    _isReminderEnabled = true;
+    await prefs.setBool('isReminderEnabled', true);
+    _isMissedReminderEnabled = true;
+    await prefs.setBool(NotificationHelper.keyMissedReminder, true);
+    notifyListeners();
+  }
+
   /// Turns the adhan notification of [prayer] on or off and schedules it.
   /// Returns false, leaving it off, when it could not be scheduled.
   Future<bool> setPrayerNotification(String prayer, bool value) async {

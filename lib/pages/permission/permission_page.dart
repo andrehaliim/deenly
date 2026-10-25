@@ -1,3 +1,4 @@
+import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/fade_page_route.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
@@ -10,6 +11,7 @@ import 'package:deenly/proxys/location_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 enum _PermissionStep { location, notification }
 
@@ -122,8 +124,10 @@ class _PermissionPageState extends State<PermissionPage>
   }
 
   Future<void> _requestNotification() async {
+    final drawerProvider = context.read<DrawerProvider>();
     setState(() => _isBusy = true);
-    await _notificationHelper.requestPermission();
+    final granted = await _notificationHelper.requestPermission();
+    if (granted) await drawerProvider.enableAllNotifications();
     await _notificationHelper.markPermissionAsked();
     _goToMain();
   }
