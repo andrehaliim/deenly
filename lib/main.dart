@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/components/audio_provider.dart';
+import 'package:deenly/components/calendar_provider.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
@@ -127,6 +128,7 @@ void main() async {
         ),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
         ChangeNotifierProvider(create: (_) => ZakatProvider()),
+        ChangeNotifierProvider(create: (_) => CalendarProvider()),
       ],
       child: const MyApp(),
     ),

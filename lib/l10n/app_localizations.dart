@@ -1279,6 +1279,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fill in the fields above to see the result.'**
   String get zakatFillHint;
+
+  /// No description provided for @hijriMuharram.
+  ///
+  /// In en, this message translates to:
+  /// **'Muharram'**
+  String get hijriMuharram;
+
+  /// No description provided for @hijriSafar.
+  ///
+  /// In en, this message translates to:
+  /// **'Safar'**
+  String get hijriSafar;
+
+  /// No description provided for @hijriRabiulAwal.
+  ///
+  /// In en, this message translates to:
+  /// **'Rabi\' al-Awwal'**
+  String get hijriRabiulAwal;
+
+  /// No description provided for @hijriRabiulAkhir.
+  ///
+  /// In en, this message translates to:
+  /// **'Rabi\' al-Thani'**
+  String get hijriRabiulAkhir;
+
+  /// No description provided for @hijriJumadilAwal.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumada al-Ula'**
+  String get hijriJumadilAwal;
+
+  /// No description provided for @hijriJumadilAkhir.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumada al-Akhirah'**
+  String get hijriJumadilAkhir;
+
+  /// No description provided for @hijriRajab.
+  ///
+  /// In en, this message translates to:
+  /// **'Rajab'**
+  String get hijriRajab;
+
+  /// No description provided for @hijriShaban.
+  ///
+  /// In en, this message translates to:
+  /// **'Sha\'ban'**
+  String get hijriShaban;
+
+  /// No description provided for @hijriRamadan.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan'**
+  String get hijriRamadan;
+
+  /// No description provided for @hijriShawwal.
+  ///
+  /// In en, this message translates to:
+  /// **'Shawwal'**
+  String get hijriShawwal;
+
+  /// No description provided for @hijriDhulQadah.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhu al-Qa\'dah'**
+  String get hijriDhulQadah;
+
+  /// No description provided for @hijriDhulHijjah.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhu al-Hijjah'**
+  String get hijriDhulHijjah;
+
+  /// No description provided for @calendarHijriDate.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} {month} {year} AH'**
+  String calendarHijriDate(int day, String month, int year);
+
+  /// No description provided for @calendarHijriMonthYear.
+  ///
+  /// In en, this message translates to:
+  /// **'{month} {year} AH'**
+  String calendarHijriMonthYear(String month, int year);
+
+  /// No description provided for @calendarToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get calendarToday;
+
+  /// No description provided for @calendarNextEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Next event'**
+  String get calendarNextEvent;
+
+  /// No description provided for @calendarDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day left} other{{count} days left}}'**
+  String calendarDaysLeft(int count);
+
+  /// No description provided for @calendarGregorian.
+  ///
+  /// In en, this message translates to:
+  /// **'Gregorian'**
+  String get calendarGregorian;
+
+  /// No description provided for @calendarHijri.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri'**
+  String get calendarHijri;
+
+  /// No description provided for @calendarPreviousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get calendarPreviousMonth;
+
+  /// No description provided for @calendarNextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get calendarNextMonth;
+
+  /// No description provided for @calendarMonthEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'This month\'s events'**
+  String get calendarMonthEvents;
+
+  /// No description provided for @calendarNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No special days this month.'**
+  String get calendarNoEvents;
+
+  /// No description provided for @calendarLegendHoliday.
+  ///
+  /// In en, this message translates to:
+  /// **'Islamic holiday'**
+  String get calendarLegendHoliday;
+
+  /// No description provided for @calendarLegendSunnahFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunnah fast'**
+  String get calendarLegendSunnahFast;
+
+  /// No description provided for @calendarLegendForbiddenFast.
+  ///
+  /// In en, this message translates to:
+  /// **'No fasting'**
+  String get calendarLegendForbiddenFast;
+
+  /// No description provided for @calendarAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri date adjustment'**
+  String get calendarAdjustment;
+
+  /// No description provided for @calendarAdjustmentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri dates are calculated (hisab) and may differ by 1–2 days from the official moon sighting (rukyat). Shift them to match your local announcement.'**
+  String get calendarAdjustmentHint;
+
+  /// No description provided for @calendarAdjustmentDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{No adjustment} =1{1 day} other{{days} days}}'**
+  String calendarAdjustmentDays(int days);
+
+  /// No description provided for @calendarNoPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'No special events on this day.'**
+  String get calendarNoPractice;
+
+  /// No description provided for @calendarMondayThursdayFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday & Thursday fast'**
+  String get calendarMondayThursdayFast;
+
+  /// No description provided for @calendarMondayThursdayFastDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Deeds are presented to Allah on Mondays and Thursdays, and the Prophet ﷺ loved to be fasting then (HR. Tirmidzi).'**
+  String get calendarMondayThursdayFastDesc;
+
+  /// No description provided for @calendarRamadanFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan fast'**
+  String get calendarRamadanFast;
+
+  /// No description provided for @calendarRamadanFastDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting every day of Ramadan is obligatory for every adult Muslim.'**
+  String get calendarRamadanFastDesc;
+
+  /// No description provided for @calendarPrayerTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer times'**
+  String get calendarPrayerTimes;
+
+  /// No description provided for @calendarPrayerUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer times for this date are not available yet.'**
+  String get calendarPrayerUnavailable;
 }
 
 class _AppLocalizationsDelegate

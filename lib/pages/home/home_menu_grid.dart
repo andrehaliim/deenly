@@ -2,6 +2,7 @@ import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/pages/asmaul_husna/asmaul_husna_page.dart';
+import 'package:deenly/pages/calendar/calendar_page.dart';
 import 'package:deenly/pages/doa/doa_page.dart';
 import 'package:deenly/pages/dzikir/dzikir_page.dart';
 import 'package:deenly/pages/mosque_page.dart';
@@ -58,7 +59,11 @@ class HomeMenuGrid extends StatelessWidget {
         l10n?.menuDzikir ?? '',
         page: (_) => const DzikirPage(),
       ),
-      _MenuItem(FontAwesomeIcons.calendarDays, l10n?.menuCalendar ?? ''),
+      _MenuItem(
+        FontAwesomeIcons.calendarDays,
+        l10n?.menuCalendar ?? '',
+        page: (_) => const CalendarPage(),
+      ),
       _MenuItem(
         FontAwesomeIcons.handHoldingDollar,
         l10n?.menuZakat ?? '',

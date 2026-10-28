@@ -674,4 +674,130 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get zakatFillHint => 'Isi data di atas untuk melihat hasil.';
+
+  @override
+  String get hijriMuharram => 'Muharram';
+
+  @override
+  String get hijriSafar => 'Safar';
+
+  @override
+  String get hijriRabiulAwal => 'Rabiul Awal';
+
+  @override
+  String get hijriRabiulAkhir => 'Rabiul Akhir';
+
+  @override
+  String get hijriJumadilAwal => 'Jumadil Awal';
+
+  @override
+  String get hijriJumadilAkhir => 'Jumadil Akhir';
+
+  @override
+  String get hijriRajab => 'Rajab';
+
+  @override
+  String get hijriShaban => 'Sya\'ban';
+
+  @override
+  String get hijriRamadan => 'Ramadhan';
+
+  @override
+  String get hijriShawwal => 'Syawal';
+
+  @override
+  String get hijriDhulQadah => 'Dzulqa\'dah';
+
+  @override
+  String get hijriDhulHijjah => 'Dzulhijjah';
+
+  @override
+  String calendarHijriDate(int day, String month, int year) {
+    return '$day $month $year H';
+  }
+
+  @override
+  String calendarHijriMonthYear(String month, int year) {
+    return '$month $year H';
+  }
+
+  @override
+  String get calendarToday => 'Hari ini';
+
+  @override
+  String get calendarNextEvent => 'Hari besar berikutnya';
+
+  @override
+  String calendarDaysLeft(int count) {
+    return '$count hari lagi';
+  }
+
+  @override
+  String get calendarGregorian => 'Masehi';
+
+  @override
+  String get calendarHijri => 'Hijriah';
+
+  @override
+  String get calendarPreviousMonth => 'Bulan sebelumnya';
+
+  @override
+  String get calendarNextMonth => 'Bulan berikutnya';
+
+  @override
+  String get calendarMonthEvents => 'Peristiwa bulan ini';
+
+  @override
+  String get calendarNoEvents => 'Tidak ada peristiwa khusus bulan ini.';
+
+  @override
+  String get calendarLegendHoliday => 'Hari besar Islam';
+
+  @override
+  String get calendarLegendSunnahFast => 'Puasa sunnah';
+
+  @override
+  String get calendarLegendForbiddenFast => 'Dilarang puasa';
+
+  @override
+  String get calendarAdjustment => 'Penyesuaian tanggal Hijriah';
+
+  @override
+  String get calendarAdjustmentHint =>
+      'Tanggal Hijriah dihitung secara hisab dan bisa berbeda 1–2 hari dengan hasil rukyat resmi. Geser agar sesuai dengan penetapan di daerahmu.';
+
+  @override
+  String calendarAdjustmentDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days hari',
+      zero: 'Tanpa penyesuaian',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get calendarNoPractice => 'Tidak ada peristiwa khusus di hari ini.';
+
+  @override
+  String get calendarMondayThursdayFast => 'Puasa Senin & Kamis';
+
+  @override
+  String get calendarMondayThursdayFastDesc =>
+      'Amal diperlihatkan kepada Allah setiap Senin dan Kamis, dan Nabi ﷺ senang saat itu beliau sedang berpuasa (HR. Tirmidzi).';
+
+  @override
+  String get calendarRamadanFast => 'Puasa Ramadhan';
+
+  @override
+  String get calendarRamadanFastDesc =>
+      'Puasa sebulan penuh di bulan Ramadhan wajib bagi setiap muslim yang baligh.';
+
+  @override
+  String get calendarPrayerTimes => 'Jadwal sholat';
+
+  @override
+  String get calendarPrayerUnavailable =>
+      'Jadwal sholat untuk tanggal ini belum tersedia.';
 }

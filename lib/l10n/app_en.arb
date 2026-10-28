@@ -425,5 +425,81 @@
             }
         }
     },
-    "zakatFillHint": "Fill in the fields above to see the result."
+    "zakatFillHint": "Fill in the fields above to see the result.",
+
+    "hijriMuharram": "Muharram",
+    "hijriSafar": "Safar",
+    "hijriRabiulAwal": "Rabi' al-Awwal",
+    "hijriRabiulAkhir": "Rabi' al-Thani",
+    "hijriJumadilAwal": "Jumada al-Ula",
+    "hijriJumadilAkhir": "Jumada al-Akhirah",
+    "hijriRajab": "Rajab",
+    "hijriShaban": "Sha'ban",
+    "hijriRamadan": "Ramadan",
+    "hijriShawwal": "Shawwal",
+    "hijriDhulQadah": "Dhu al-Qa'dah",
+    "hijriDhulHijjah": "Dhu al-Hijjah",
+    "calendarHijriDate": "{day} {month} {year} AH",
+    "@calendarHijriDate": {
+        "placeholders": {
+            "day": {
+                "type": "int"
+            },
+            "month": {
+                "type": "String",
+                "example": "Ramadan"
+            },
+            "year": {
+                "type": "int"
+            }
+        }
+    },
+    "calendarHijriMonthYear": "{month} {year} AH",
+    "@calendarHijriMonthYear": {
+        "placeholders": {
+            "month": {
+                "type": "String",
+                "example": "Ramadan"
+            },
+            "year": {
+                "type": "int"
+            }
+        }
+    },
+    "calendarToday": "Today",
+    "calendarNextEvent": "Next event",
+    "calendarDaysLeft": "{count, plural, =1{1 day left} other{{count} days left}}",
+    "@calendarDaysLeft": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "calendarGregorian": "Gregorian",
+    "calendarHijri": "Hijri",
+    "calendarPreviousMonth": "Previous month",
+    "calendarNextMonth": "Next month",
+    "calendarMonthEvents": "This month's events",
+    "calendarNoEvents": "No special days this month.",
+    "calendarLegendHoliday": "Islamic holiday",
+    "calendarLegendSunnahFast": "Sunnah fast",
+    "calendarLegendForbiddenFast": "No fasting",
+    "calendarAdjustment": "Hijri date adjustment",
+    "calendarAdjustmentHint": "Hijri dates are calculated (hisab) and may differ by 1–2 days from the official moon sighting (rukyat). Shift them to match your local announcement.",
+    "calendarAdjustmentDays": "{days, plural, =0{No adjustment} =1{1 day} other{{days} days}}",
+    "@calendarAdjustmentDays": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "calendarNoPractice": "No special events on this day.",
+    "calendarMondayThursdayFast": "Monday & Thursday fast",
+    "calendarMondayThursdayFastDesc": "Deeds are presented to Allah on Mondays and Thursdays, and the Prophet ﷺ loved to be fasting then (HR. Tirmidzi).",
+    "calendarRamadanFast": "Ramadan fast",
+    "calendarRamadanFastDesc": "Fasting every day of Ramadan is obligatory for every adult Muslim.",
+    "calendarPrayerTimes": "Prayer times",
+    "calendarPrayerUnavailable": "Prayer times for this date are not available yet."
 }

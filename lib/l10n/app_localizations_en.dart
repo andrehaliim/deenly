@@ -680,4 +680,137 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get zakatFillHint => 'Fill in the fields above to see the result.';
+
+  @override
+  String get hijriMuharram => 'Muharram';
+
+  @override
+  String get hijriSafar => 'Safar';
+
+  @override
+  String get hijriRabiulAwal => 'Rabi\' al-Awwal';
+
+  @override
+  String get hijriRabiulAkhir => 'Rabi\' al-Thani';
+
+  @override
+  String get hijriJumadilAwal => 'Jumada al-Ula';
+
+  @override
+  String get hijriJumadilAkhir => 'Jumada al-Akhirah';
+
+  @override
+  String get hijriRajab => 'Rajab';
+
+  @override
+  String get hijriShaban => 'Sha\'ban';
+
+  @override
+  String get hijriRamadan => 'Ramadan';
+
+  @override
+  String get hijriShawwal => 'Shawwal';
+
+  @override
+  String get hijriDhulQadah => 'Dhu al-Qa\'dah';
+
+  @override
+  String get hijriDhulHijjah => 'Dhu al-Hijjah';
+
+  @override
+  String calendarHijriDate(int day, String month, int year) {
+    return '$day $month $year AH';
+  }
+
+  @override
+  String calendarHijriMonthYear(String month, int year) {
+    return '$month $year AH';
+  }
+
+  @override
+  String get calendarToday => 'Today';
+
+  @override
+  String get calendarNextEvent => 'Next event';
+
+  @override
+  String calendarDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get calendarGregorian => 'Gregorian';
+
+  @override
+  String get calendarHijri => 'Hijri';
+
+  @override
+  String get calendarPreviousMonth => 'Previous month';
+
+  @override
+  String get calendarNextMonth => 'Next month';
+
+  @override
+  String get calendarMonthEvents => 'This month\'s events';
+
+  @override
+  String get calendarNoEvents => 'No special days this month.';
+
+  @override
+  String get calendarLegendHoliday => 'Islamic holiday';
+
+  @override
+  String get calendarLegendSunnahFast => 'Sunnah fast';
+
+  @override
+  String get calendarLegendForbiddenFast => 'No fasting';
+
+  @override
+  String get calendarAdjustment => 'Hijri date adjustment';
+
+  @override
+  String get calendarAdjustmentHint =>
+      'Hijri dates are calculated (hisab) and may differ by 1–2 days from the official moon sighting (rukyat). Shift them to match your local announcement.';
+
+  @override
+  String calendarAdjustmentDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+      zero: 'No adjustment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get calendarNoPractice => 'No special events on this day.';
+
+  @override
+  String get calendarMondayThursdayFast => 'Monday & Thursday fast';
+
+  @override
+  String get calendarMondayThursdayFastDesc =>
+      'Deeds are presented to Allah on Mondays and Thursdays, and the Prophet ﷺ loved to be fasting then (HR. Tirmidzi).';
+
+  @override
+  String get calendarRamadanFast => 'Ramadan fast';
+
+  @override
+  String get calendarRamadanFastDesc =>
+      'Fasting every day of Ramadan is obligatory for every adult Muslim.';
+
+  @override
+  String get calendarPrayerTimes => 'Prayer times';
+
+  @override
+  String get calendarPrayerUnavailable =>
+      'Prayer times for this date are not available yet.';
 }
