@@ -1003,6 +1003,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark it once you have, so your progress is recorded'**
   String get notificationMissedBody;
+
+  /// No description provided for @zakatNisabToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s nisab'**
+  String get zakatNisabToday;
+
+  /// No description provided for @zakatNisabInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Equal to 85 g of gold · {price}/g'**
+  String zakatNisabInfo(String price);
+
+  /// No description provided for @zakatPriceStale.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update the gold price, showing the last saved price.'**
+  String get zakatPriceStale;
+
+  /// No description provided for @zakatPriceDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold price unavailable, showing the BAZNAS default nisab.'**
+  String get zakatPriceDefault;
+
+  /// No description provided for @zakatCalculators.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat Calculator'**
+  String get zakatCalculators;
+
+  /// No description provided for @zakatFitrah.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat Fitrah'**
+  String get zakatFitrah;
+
+  /// No description provided for @zakatFitrahDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Due for every person before Eid al-Fitr'**
+  String get zakatFitrahDesc;
+
+  /// No description provided for @zakatIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Zakat'**
+  String get zakatIncome;
+
+  /// No description provided for @zakatIncomeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'From salary and other monthly income'**
+  String get zakatIncomeDesc;
+
+  /// No description provided for @zakatMaal.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat Maal'**
+  String get zakatMaal;
+
+  /// No description provided for @zakatMaalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings, deposits and investments'**
+  String get zakatMaalDesc;
+
+  /// No description provided for @zakatGoldSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold & Silver Zakat'**
+  String get zakatGoldSilver;
+
+  /// No description provided for @zakatGoldSilverDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold and silver you keep'**
+  String get zakatGoldSilverDesc;
+
+  /// No description provided for @zakatDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Results are estimates. For certainty, consult BAZNAS or an official zakat institution (LAZ).'**
+  String get zakatDisclaimer;
+
+  /// No description provided for @zakatPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of people'**
+  String get zakatPeople;
+
+  /// No description provided for @zakatPayWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with'**
+  String get zakatPayWith;
+
+  /// No description provided for @zakatRice.
+  ///
+  /// In en, this message translates to:
+  /// **'Rice'**
+  String get zakatRice;
+
+  /// No description provided for @zakatMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get zakatMoney;
+
+  /// No description provided for @zakatFitrahPerPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount per person'**
+  String get zakatFitrahPerPerson;
+
+  /// No description provided for @zakatKg.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} kg'**
+  String zakatKg(String amount);
+
+  /// No description provided for @zakatPeopleTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'{people} people × {amount}'**
+  String zakatPeopleTimes(int people, String amount);
+
+  /// No description provided for @zakatMonthlyIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly income'**
+  String get zakatMonthlyIncome;
+
+  /// No description provided for @zakatOtherIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Other monthly income (bonus, etc.)'**
+  String get zakatOtherIncome;
+
+  /// No description provided for @zakatIncomeNisabNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly nisab: {nisab} (85 g of gold ÷ 12)'**
+  String zakatIncomeNisabNote(String nisab);
+
+  /// No description provided for @zakatSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get zakatSavings;
+
+  /// No description provided for @zakatDeposits.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposits'**
+  String get zakatDeposits;
+
+  /// No description provided for @zakatInvestments.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments (stocks, mutual funds, etc.)'**
+  String get zakatInvestments;
+
+  /// No description provided for @zakatDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts due'**
+  String get zakatDebts;
+
+  /// No description provided for @zakatHaul.
+  ///
+  /// In en, this message translates to:
+  /// **'Held for one year (haul)'**
+  String get zakatHaul;
+
+  /// No description provided for @zakatHaulHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat is due once the wealth has been held for one lunar year.'**
+  String get zakatHaulHint;
+
+  /// No description provided for @zakatGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get zakatGold;
+
+  /// No description provided for @zakatSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver'**
+  String get zakatSilver;
+
+  /// No description provided for @zakatGoldGrams.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold kept'**
+  String get zakatGoldGrams;
+
+  /// No description provided for @zakatSilverGrams.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver kept'**
+  String get zakatSilverGrams;
+
+  /// No description provided for @zakatGramSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'g'**
+  String get zakatGramSuffix;
+
+  /// No description provided for @zakatResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get zakatResult;
+
+  /// No description provided for @zakatStatusObligatory.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat is due'**
+  String get zakatStatusObligatory;
+
+  /// No description provided for @zakatStatusBelowNisab.
+  ///
+  /// In en, this message translates to:
+  /// **'Below nisab'**
+  String get zakatStatusBelowNisab;
+
+  /// No description provided for @zakatStatusNotHaul.
+  ///
+  /// In en, this message translates to:
+  /// **'Haul not reached yet'**
+  String get zakatStatusNotHaul;
+
+  /// No description provided for @zakatAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat to pay'**
+  String get zakatAmount;
+
+  /// No description provided for @zakatTotalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Total income'**
+  String get zakatTotalIncome;
+
+  /// No description provided for @zakatTotalWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Total wealth'**
+  String get zakatTotalWealth;
+
+  /// No description provided for @zakatNisab.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab'**
+  String get zakatNisab;
+
+  /// No description provided for @zakatFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'Formula'**
+  String get zakatFormula;
+
+  /// No description provided for @zakatRateFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'{base} × 2.5%'**
+  String zakatRateFormula(String base);
+
+  /// No description provided for @zakatFillHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the fields above to see the result.'**
+  String get zakatFillHint;
 }
 
 class _AppLocalizationsDelegate

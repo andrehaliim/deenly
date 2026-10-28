@@ -22,6 +22,7 @@ class DatabaseHelper {
   static const String tableAsmaulHusna = 'asmaul_husna';
   static const String tableDzikirCategory = 'dzikir_category';
   static const String tableDzikir = 'dzikir';
+  static const String tableGoldPrice = 'gold_price';
 
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
@@ -42,7 +43,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 14,
+      version: 15,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -123,6 +124,7 @@ class DatabaseHelper {
     await _createDoaTables(db);
     await _createAsmaulHusnaTable(db);
     await _createDzikirTables(db);
+    await _createGoldPriceTable(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -244,6 +246,10 @@ class DatabaseHelper {
     if (oldVersion < 14) {
       await _createDzikirTables(db);
     }
+
+    if (oldVersion < 15) {
+      await _createGoldPriceTable(db);
+    }
   }
 
   /// One row per prayer marked as done; a missing row means not done.
@@ -358,6 +364,20 @@ class DatabaseHelper {
     await db.execute('''
       CREATE INDEX IF NOT EXISTS idx_dzikir_category_id
       ON $tableDzikir(category_id)
+    ''');
+  }
+
+  /// Holds a single row (id 1): only the latest fetched price is kept,
+  /// as the zakat calculators never look at older prices.
+  Future<void> _createGoldPriceTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $tableGoldPrice(
+        id INTEGER PRIMARY KEY,
+        gold_per_gram REAL NOT NULL,
+        silver_per_gram REAL NOT NULL,
+        source TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
     ''');
   }
 

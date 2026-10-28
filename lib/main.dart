@@ -10,6 +10,7 @@ import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/components/workmanager_helper.dart';
+import 'package:deenly/components/zakat_provider.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
@@ -125,6 +126,7 @@ void main() async {
           },
         ),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => ZakatProvider()),
       ],
       child: const MyApp(),
     ),

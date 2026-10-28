@@ -7,6 +7,7 @@ import 'package:deenly/pages/dzikir/dzikir_page.dart';
 import 'package:deenly/pages/mosque_page.dart';
 import 'package:deenly/pages/qibla_page.dart';
 import 'package:deenly/pages/tasbih_page.dart';
+import 'package:deenly/pages/zakat/zakat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -58,7 +59,11 @@ class HomeMenuGrid extends StatelessWidget {
         page: (_) => const DzikirPage(),
       ),
       _MenuItem(FontAwesomeIcons.calendarDays, l10n?.menuCalendar ?? ''),
-      _MenuItem(FontAwesomeIcons.handHoldingDollar, l10n?.menuZakat ?? ''),
+      _MenuItem(
+        FontAwesomeIcons.handHoldingDollar,
+        l10n?.menuZakat ?? '',
+        page: (_) => const ZakatPage(),
+      ),
     ];
 
     return Container(

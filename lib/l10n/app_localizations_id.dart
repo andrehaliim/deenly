@@ -522,4 +522,156 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get notificationMissedBody =>
       'Tandai jika sudah, supaya progresmu tercatat';
+
+  @override
+  String get zakatNisabToday => 'Nisab hari ini';
+
+  @override
+  String zakatNisabInfo(String price) {
+    return 'Setara 85 gr emas · $price/gr';
+  }
+
+  @override
+  String get zakatPriceStale =>
+      'Gagal memperbarui harga emas, memakai harga terakhir.';
+
+  @override
+  String get zakatPriceDefault =>
+      'Harga emas belum tersedia, memakai nisab default BAZNAS.';
+
+  @override
+  String get zakatCalculators => 'Kalkulator Zakat';
+
+  @override
+  String get zakatFitrah => 'Zakat Fitrah';
+
+  @override
+  String get zakatFitrahDesc => 'Wajib bagi setiap jiwa sebelum Idul Fitri';
+
+  @override
+  String get zakatIncome => 'Zakat Penghasilan';
+
+  @override
+  String get zakatIncomeDesc => 'Dari gaji dan pendapatan bulanan lainnya';
+
+  @override
+  String get zakatMaal => 'Zakat Maal';
+
+  @override
+  String get zakatMaalDesc => 'Tabungan, deposito, dan investasi';
+
+  @override
+  String get zakatGoldSilver => 'Zakat Emas & Perak';
+
+  @override
+  String get zakatGoldSilverDesc => 'Emas dan perak yang disimpan';
+
+  @override
+  String get zakatDisclaimer =>
+      'Hasil perhitungan bersifat estimasi. Untuk kepastian, rujuk BAZNAS atau Lembaga Amil Zakat (LAZ) resmi.';
+
+  @override
+  String get zakatPeople => 'Jumlah jiwa';
+
+  @override
+  String get zakatPayWith => 'Bayar dengan';
+
+  @override
+  String get zakatRice => 'Beras';
+
+  @override
+  String get zakatMoney => 'Uang';
+
+  @override
+  String get zakatFitrahPerPerson => 'Nominal per jiwa';
+
+  @override
+  String zakatKg(String amount) {
+    return '$amount kg';
+  }
+
+  @override
+  String zakatPeopleTimes(int people, String amount) {
+    return '$people jiwa × $amount';
+  }
+
+  @override
+  String get zakatMonthlyIncome => 'Penghasilan per bulan';
+
+  @override
+  String get zakatOtherIncome => 'Penghasilan lain per bulan (bonus, dll.)';
+
+  @override
+  String zakatIncomeNisabNote(String nisab) {
+    return 'Nisab bulanan: $nisab (85 gr emas ÷ 12)';
+  }
+
+  @override
+  String get zakatSavings => 'Tabungan';
+
+  @override
+  String get zakatDeposits => 'Deposito';
+
+  @override
+  String get zakatInvestments => 'Investasi (saham, reksa dana, dll.)';
+
+  @override
+  String get zakatDebts => 'Utang jatuh tempo';
+
+  @override
+  String get zakatHaul => 'Sudah dimiliki 1 tahun (haul)';
+
+  @override
+  String get zakatHaulHint =>
+      'Zakat wajib setelah harta dimiliki selama satu tahun hijriah.';
+
+  @override
+  String get zakatGold => 'Emas';
+
+  @override
+  String get zakatSilver => 'Perak';
+
+  @override
+  String get zakatGoldGrams => 'Emas yang disimpan';
+
+  @override
+  String get zakatSilverGrams => 'Perak yang disimpan';
+
+  @override
+  String get zakatGramSuffix => 'gr';
+
+  @override
+  String get zakatResult => 'Hasil Perhitungan';
+
+  @override
+  String get zakatStatusObligatory => 'Wajib zakat';
+
+  @override
+  String get zakatStatusBelowNisab => 'Belum mencapai nisab';
+
+  @override
+  String get zakatStatusNotHaul => 'Belum mencapai haul';
+
+  @override
+  String get zakatAmount => 'Zakat yang harus dibayar';
+
+  @override
+  String get zakatTotalIncome => 'Total penghasilan';
+
+  @override
+  String get zakatTotalWealth => 'Total harta';
+
+  @override
+  String get zakatNisab => 'Nisab';
+
+  @override
+  String get zakatFormula => 'Rumus';
+
+  @override
+  String zakatRateFormula(String base) {
+    return '$base × 2,5%';
+  }
+
+  @override
+  String get zakatFillHint => 'Isi data di atas untuk melihat hasil.';
 }

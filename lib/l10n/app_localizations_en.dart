@@ -528,4 +528,156 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationMissedBody =>
       'Mark it once you have, so your progress is recorded';
+
+  @override
+  String get zakatNisabToday => 'Today\'s nisab';
+
+  @override
+  String zakatNisabInfo(String price) {
+    return 'Equal to 85 g of gold · $price/g';
+  }
+
+  @override
+  String get zakatPriceStale =>
+      'Could not update the gold price, showing the last saved price.';
+
+  @override
+  String get zakatPriceDefault =>
+      'Gold price unavailable, showing the BAZNAS default nisab.';
+
+  @override
+  String get zakatCalculators => 'Zakat Calculator';
+
+  @override
+  String get zakatFitrah => 'Zakat Fitrah';
+
+  @override
+  String get zakatFitrahDesc => 'Due for every person before Eid al-Fitr';
+
+  @override
+  String get zakatIncome => 'Income Zakat';
+
+  @override
+  String get zakatIncomeDesc => 'From salary and other monthly income';
+
+  @override
+  String get zakatMaal => 'Zakat Maal';
+
+  @override
+  String get zakatMaalDesc => 'Savings, deposits and investments';
+
+  @override
+  String get zakatGoldSilver => 'Gold & Silver Zakat';
+
+  @override
+  String get zakatGoldSilverDesc => 'Gold and silver you keep';
+
+  @override
+  String get zakatDisclaimer =>
+      'Results are estimates. For certainty, consult BAZNAS or an official zakat institution (LAZ).';
+
+  @override
+  String get zakatPeople => 'Number of people';
+
+  @override
+  String get zakatPayWith => 'Pay with';
+
+  @override
+  String get zakatRice => 'Rice';
+
+  @override
+  String get zakatMoney => 'Money';
+
+  @override
+  String get zakatFitrahPerPerson => 'Amount per person';
+
+  @override
+  String zakatKg(String amount) {
+    return '$amount kg';
+  }
+
+  @override
+  String zakatPeopleTimes(int people, String amount) {
+    return '$people people × $amount';
+  }
+
+  @override
+  String get zakatMonthlyIncome => 'Monthly income';
+
+  @override
+  String get zakatOtherIncome => 'Other monthly income (bonus, etc.)';
+
+  @override
+  String zakatIncomeNisabNote(String nisab) {
+    return 'Monthly nisab: $nisab (85 g of gold ÷ 12)';
+  }
+
+  @override
+  String get zakatSavings => 'Savings';
+
+  @override
+  String get zakatDeposits => 'Deposits';
+
+  @override
+  String get zakatInvestments => 'Investments (stocks, mutual funds, etc.)';
+
+  @override
+  String get zakatDebts => 'Debts due';
+
+  @override
+  String get zakatHaul => 'Held for one year (haul)';
+
+  @override
+  String get zakatHaulHint =>
+      'Zakat is due once the wealth has been held for one lunar year.';
+
+  @override
+  String get zakatGold => 'Gold';
+
+  @override
+  String get zakatSilver => 'Silver';
+
+  @override
+  String get zakatGoldGrams => 'Gold kept';
+
+  @override
+  String get zakatSilverGrams => 'Silver kept';
+
+  @override
+  String get zakatGramSuffix => 'g';
+
+  @override
+  String get zakatResult => 'Result';
+
+  @override
+  String get zakatStatusObligatory => 'Zakat is due';
+
+  @override
+  String get zakatStatusBelowNisab => 'Below nisab';
+
+  @override
+  String get zakatStatusNotHaul => 'Haul not reached yet';
+
+  @override
+  String get zakatAmount => 'Zakat to pay';
+
+  @override
+  String get zakatTotalIncome => 'Total income';
+
+  @override
+  String get zakatTotalWealth => 'Total wealth';
+
+  @override
+  String get zakatNisab => 'Nisab';
+
+  @override
+  String get zakatFormula => 'Formula';
+
+  @override
+  String zakatRateFormula(String base) {
+    return '$base × 2.5%';
+  }
+
+  @override
+  String get zakatFillHint => 'Fill in the fields above to see the result.';
 }
