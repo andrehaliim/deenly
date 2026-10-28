@@ -22,7 +22,7 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   static const _introDuration = Duration(milliseconds: 1600);
-  static const _totalSteps = 6;
+  static const _totalSteps = 7;
 
   final HadithProxy _hadithProxy = HadithProxy();
   final LocationProxy _locationProxy = LocationProxy();
@@ -70,31 +70,35 @@ class _SplashPageState extends State<SplashPage>
   }
 
   Future<Widget> _loadData() async {
-    debugPrint('🔄 [0/6] Starting _loadData...');
+    debugPrint('🔄 [0/7] Starting _loadData...');
 
     await _hadithProxy.load();
     _completeStep();
-    debugPrint('✅ [1/6] Hadith loaded');
+    debugPrint('✅ [1/7] Hadith loaded');
 
     await DatabaseHelper.instance.seedSurahIfNeeded();
     _completeStep();
-    debugPrint('✅ [2/6] Surah seeded');
+    debugPrint('✅ [2/7] Surah seeded');
 
     await DatabaseHelper.instance.seedJuzIfNeeded();
     _completeStep();
-    debugPrint('✅ [3/6] Juz seeded');
+    debugPrint('✅ [3/7] Juz seeded');
 
     await DatabaseHelper.instance.seedDoaIfNeeded();
     _completeStep();
-    debugPrint('✅ [4/6] Doa seeded');
+    debugPrint('✅ [4/7] Doa seeded');
 
     await DatabaseHelper.instance.seedAsmaulHusnaIfNeeded();
     _completeStep();
-    debugPrint('✅ [5/6] Asmaul Husna seeded');
+    debugPrint('✅ [5/7] Asmaul Husna seeded');
+
+    await DatabaseHelper.instance.seedDzikirIfNeeded();
+    _completeStep();
+    debugPrint('✅ [6/7] Dzikir seeded');
 
     final nextPage = await _resolveNextPage();
     _completeStep();
-    debugPrint('✅ [6/6] Permission status checked');
+    debugPrint('✅ [7/7] Permission status checked');
 
     return nextPage;
   }

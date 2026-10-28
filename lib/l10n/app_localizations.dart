@@ -626,6 +626,48 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 dua} other{{count} duas}}'**
   String doaCount(int count);
 
+  /// No description provided for @dzikirLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load dhikr.'**
+  String get dzikirLoadFailed;
+
+  /// No description provided for @dzikirCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} dhikr'**
+  String dzikirCount(int count);
+
+  /// No description provided for @dzikirTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}x'**
+  String dzikirTimes(int count);
+
+  /// No description provided for @dzikirProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} done'**
+  String dzikirProgress(int done, int total);
+
+  /// No description provided for @dzikirTapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a card to count'**
+  String get dzikirTapHint;
+
+  /// No description provided for @dzikirAllDone.
+  ///
+  /// In en, this message translates to:
+  /// **'All dhikr completed'**
+  String get dzikirAllDone;
+
+  /// No description provided for @dzikirVirtue.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtue'**
+  String get dzikirVirtue;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

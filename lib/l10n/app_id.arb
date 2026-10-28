@@ -116,6 +116,37 @@
             }
         }
     },
+    "dzikirLoadFailed": "Gagal memuat dzikir.",
+    "dzikirCount": "{count} dzikir",
+    "@dzikirCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dzikirTimes": "{count}x",
+    "@dzikirTimes": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dzikirProgress": "{done} dari {total} selesai",
+    "@dzikirProgress": {
+        "placeholders": {
+            "done": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "dzikirTapHint": "Ketuk kartu untuk menghitung",
+    "dzikirAllDone": "Semua dzikir selesai",
+    "dzikirVirtue": "Keutamaan",
 
     "appTitle": "Deenly",
     "splashTagline": "Teman ibadah Muslim modern",

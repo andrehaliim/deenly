@@ -171,6 +171,37 @@
             }
         }
     },
+    "dzikirLoadFailed": "Failed to load dhikr.",
+    "dzikirCount": "{count} dhikr",
+    "@dzikirCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dzikirTimes": "{count}x",
+    "@dzikirTimes": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dzikirProgress": "{done} of {total} done",
+    "@dzikirProgress": {
+        "placeholders": {
+            "done": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "dzikirTapHint": "Tap a card to count",
+    "dzikirAllDone": "All dhikr completed",
+    "dzikirVirtue": "Virtue",
 
     "appTitle": "Deenly",
     "splashTagline": "A companion for the modern Muslim",

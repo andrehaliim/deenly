@@ -295,6 +295,33 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get dzikirLoadFailed => 'Gagal memuat dzikir.';
+
+  @override
+  String dzikirCount(int count) {
+    return '$count dzikir';
+  }
+
+  @override
+  String dzikirTimes(int count) {
+    return '${count}x';
+  }
+
+  @override
+  String dzikirProgress(int done, int total) {
+    return '$done dari $total selesai';
+  }
+
+  @override
+  String get dzikirTapHint => 'Ketuk kartu untuk menghitung';
+
+  @override
+  String get dzikirAllDone => 'Semua dzikir selesai';
+
+  @override
+  String get dzikirVirtue => 'Keutamaan';
+
+  @override
   String get appTitle => 'Deenly';
 
   @override

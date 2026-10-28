@@ -301,6 +301,33 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get dzikirLoadFailed => 'Failed to load dhikr.';
+
+  @override
+  String dzikirCount(int count) {
+    return '$count dhikr';
+  }
+
+  @override
+  String dzikirTimes(int count) {
+    return '${count}x';
+  }
+
+  @override
+  String dzikirProgress(int done, int total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String get dzikirTapHint => 'Tap a card to count';
+
+  @override
+  String get dzikirAllDone => 'All dhikr completed';
+
+  @override
+  String get dzikirVirtue => 'Virtue';
+
+  @override
   String get appTitle => 'Deenly';
 
   @override

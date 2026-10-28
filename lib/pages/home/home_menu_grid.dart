@@ -3,6 +3,7 @@ import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/pages/asmaul_husna/asmaul_husna_page.dart';
 import 'package:deenly/pages/doa/doa_page.dart';
+import 'package:deenly/pages/dzikir/dzikir_page.dart';
 import 'package:deenly/pages/mosque_page.dart';
 import 'package:deenly/pages/qibla_page.dart';
 import 'package:deenly/pages/tasbih_page.dart';
@@ -51,7 +52,11 @@ class HomeMenuGrid extends StatelessWidget {
         l10n?.menuAsmaulHusna ?? '',
         page: (_) => const AsmaulHusnaPage(),
       ),
-      _MenuItem(FontAwesomeIcons.bookOpen, l10n?.menuDzikir ?? ''),
+      _MenuItem(
+        FontAwesomeIcons.bookOpen,
+        l10n?.menuDzikir ?? '',
+        page: (_) => const DzikirPage(),
+      ),
       _MenuItem(FontAwesomeIcons.calendarDays, l10n?.menuCalendar ?? ''),
       _MenuItem(FontAwesomeIcons.handHoldingDollar, l10n?.menuZakat ?? ''),
     ];

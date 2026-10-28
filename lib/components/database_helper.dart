@@ -20,6 +20,8 @@ class DatabaseHelper {
   static const String tableDoaGroup = 'doa_group';
   static const String tableDoa = 'doa';
   static const String tableAsmaulHusna = 'asmaul_husna';
+  static const String tableDzikirCategory = 'dzikir_category';
+  static const String tableDzikir = 'dzikir';
 
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
@@ -40,7 +42,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 13,
+      version: 14,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -120,6 +122,7 @@ class DatabaseHelper {
 
     await _createDoaTables(db);
     await _createAsmaulHusnaTable(db);
+    await _createDzikirTables(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -237,6 +240,10 @@ class DatabaseHelper {
       await _createPrayerLogTable(db);
       await _migratePrayerLogFromPrefs(db);
     }
+
+    if (oldVersion < 14) {
+      await _createDzikirTables(db);
+    }
   }
 
   /// One row per prayer marked as done; a missing row means not done.
@@ -314,6 +321,43 @@ class DatabaseHelper {
     await db.execute('''
       CREATE INDEX IF NOT EXISTS idx_doa_group_id
       ON $tableDoa(group_id)
+    ''');
+  }
+
+  /// Same layout as the doa tables; the dzikir id is also the reading order
+  /// within a category.
+  Future<void> _createDzikirTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $tableDzikirCategory(
+        id INTEGER PRIMARY KEY,
+        name_indonesian TEXT NOT NULL,
+        name_english TEXT NOT NULL,
+        sort_order INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $tableDzikir(
+        id INTEGER PRIMARY KEY,
+        category_id INTEGER NOT NULL REFERENCES $tableDzikirCategory(id),
+        name_indonesian TEXT NOT NULL,
+        name_english TEXT NOT NULL,
+        text_arabic TEXT NOT NULL,
+        text_latin TEXT,
+        text_indonesian TEXT,
+        text_english TEXT,
+        count INTEGER NOT NULL,
+        note_indonesian TEXT,
+        note_english TEXT,
+        virtue_indonesian TEXT,
+        virtue_english TEXT,
+        source TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE INDEX IF NOT EXISTS idx_dzikir_category_id
+      ON $tableDzikir(category_id)
     ''');
   }
 
@@ -564,5 +608,71 @@ class DatabaseHelper {
     final Map<String, dynamic> data = jsonDecode(jsonString);
     final List<dynamic> names = data['data'];
     return names.cast<Map<String, dynamic>>();
+  }
+
+  Future<void> seedDzikirIfNeeded() async {
+    final alreadySeeded = await _isDzikirSeeded();
+    if (alreadySeeded) return;
+
+    final db = await database;
+    final dzikirs = await _loadDzikirJson();
+
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+
+      /// Like doa.json, categories are numbered in order of first
+      /// appearance, which is also their display order.
+      final Map<String, int> categoryIds = {};
+      for (final dzikir in dzikirs) {
+        final categoryId = categoryIds.putIfAbsent(dzikir['grup'], () {
+          final id = categoryIds.length + 1;
+          batch.insert(tableDzikirCategory, {
+            'id': id,
+            'name_indonesian': dzikir['grup'],
+            'name_english': dzikir['grup_en'],
+            'sort_order': id,
+          }, conflictAlgorithm: ConflictAlgorithm.replace);
+          return id;
+        });
+
+        batch.insert(tableDzikir, {
+          'id': dzikir['id'],
+          'category_id': categoryId,
+          'name_indonesian': dzikir['nama'],
+          'name_english': dzikir['nama_en'],
+          'text_arabic': dzikir['ar'],
+          'text_latin': dzikir['tr'],
+          'text_indonesian': dzikir['idn'],
+          'text_english': dzikir['en'],
+          'count': dzikir['jumlah'],
+          'note_indonesian': dzikir['catatan'],
+          'note_english': dzikir['catatan_en'],
+          'virtue_indonesian': dzikir['keutamaan'],
+          'virtue_english': dzikir['keutamaan_en'],
+          'source': dzikir['sumber'],
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+
+      await batch.commit(noResult: true);
+    });
+  }
+
+  Future<bool> _isDzikirSeeded() async {
+    final db = await database;
+    final result = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM $tableDzikir'),
+    );
+    return (result ?? 0) > 0;
+  }
+
+  Future<List<Map<String, dynamic>>> _loadDzikirJson() async {
+    final jsonString = await rootBundle.loadString('assets/jsons/dzikir.json');
+    return compute(_parseDzikirJson, jsonString);
+  }
+
+  static List<Map<String, dynamic>> _parseDzikirJson(String jsonString) {
+    final Map<String, dynamic> data = jsonDecode(jsonString);
+    final List<dynamic> dzikirs = data['data'];
+    return dzikirs.cast<Map<String, dynamic>>();
   }
 }
