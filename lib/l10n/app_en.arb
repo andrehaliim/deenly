@@ -337,18 +337,34 @@
     },
     "notificationMissedBody": "Mark it once you have, so your progress is recorded",
 
-    "zakatNisabToday": "Today's nisab",
-    "zakatNisabInfo": "Equal to 85 g of gold · {price}/g",
+    "zakatNisabYearly": "Yearly nisab",
+    "zakatNisabInfo": "Equal to 85 g of gold · {decree}",
     "@zakatNisabInfo": {
         "placeholders": {
-            "price": {
+            "decree": {
                 "type": "String",
-                "example": "Rp 2.350.000"
+                "example": "BAZNAS Chairman Decree No. 15 of 2026"
             }
         }
     },
+    "zakatDecree": "BAZNAS Chairman Decree No. {number} of {year}",
+    "@zakatDecree": {
+        "placeholders": {
+            "number": {
+                "type": "String",
+                "example": "15"
+            },
+            "year": {
+                "type": "String",
+                "example": "2026"
+            }
+        }
+    },
+    "zakatGoldPricePerGram": "Gold price per gram",
+    "zakatSilverPricePerGram": "Silver price per gram",
+    "zakatMetalPriceNote": "Prices are prefilled with the international spot price. Change them if the price where you live differs.",
     "zakatPriceStale": "Could not update the gold price, showing the last saved price.",
-    "zakatPriceDefault": "Gold price unavailable, showing the BAZNAS default nisab.",
+    "zakatPriceDefault": "Gold price unavailable, showing the default price.",
     "zakatCalculators": "Zakat Calculator",
     "zakatFitrah": "Zakat Fitrah",
     "zakatFitrahDesc": "Due for every person before Eid al-Fitr",
@@ -364,6 +380,27 @@
     "zakatRice": "Rice",
     "zakatMoney": "Money",
     "zakatFitrahPerPerson": "Amount per person",
+    "zakatFitrahNote": "Per {decree}. Adjust to your local zakat office's rate if it differs.",
+    "@zakatFitrahNote": {
+        "placeholders": {
+            "decree": {
+                "type": "String",
+                "example": "BAZNAS Chairman Decree No. 14 of 2026"
+            }
+        }
+    },
+    "zakatRiceUnit": "Measure",
+    "zakatKilogram": "Kilogram",
+    "zakatLiterUnit": "Liter",
+    "zakatLiter": "{amount} L",
+    "@zakatLiter": {
+        "placeholders": {
+            "amount": {
+                "type": "String",
+                "example": "3,5"
+            }
+        }
+    },
     "zakatKg": "{amount} kg",
     "@zakatKg": {
         "placeholders": {
@@ -487,6 +524,11 @@
     "calendarLegendForbiddenFast": "No fasting",
     "calendarAdjustment": "Hijri date adjustment",
     "calendarAdjustmentHint": "Hijri dates are calculated (hisab) and may differ by 1–2 days from the official moon sighting (rukyat). Shift them to match your local announcement.",
+    "calendarAdjustmentOfficialNote": "Months already set by the official announcement (sidang isbat) follow that date and are not shifted.",
+    "updateRequiredTitle": "Update required",
+    "updateRequiredMessage": "This version of Deenly is no longer supported. Please update the app to keep using it.",
+    "updateRequiredButton": "Update now",
+    "updateRequiredOpenFailed": "Could not open the update page.",
     "calendarAdjustmentDays": "{days, plural, =0{No adjustment} =1{1 day} other{{days} days}}",
     "@calendarAdjustmentDays": {
         "placeholders": {

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:deenly/components/app_config_provider.dart';
 import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/components/audio_provider.dart';
 import 'package:deenly/components/calendar_provider.dart';
@@ -127,8 +128,25 @@ void main() async {
           },
         ),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
-        ChangeNotifierProvider(create: (_) => ZakatProvider()),
-        ChangeNotifierProvider(create: (_) => CalendarProvider()),
+        ChangeNotifierProvider(create: (_) => AppConfigProvider()),
+        ChangeNotifierProxyProvider<AppConfigProvider, ZakatProvider>(
+          create: (_) => ZakatProvider(),
+          update: (_, appConfig, zakatProvider) {
+            final provider = zakatProvider ?? ZakatProvider();
+            provider.updateConfig(appConfig.config?.zakat);
+            return provider;
+          },
+        ),
+        ChangeNotifierProxyProvider<AppConfigProvider, CalendarProvider>(
+          create: (_) => CalendarProvider(),
+          update: (_, appConfig, calendarProvider) {
+            final provider = calendarProvider ?? CalendarProvider();
+            provider.updateMonthStarts(
+              appConfig.config?.hijriMonthStarts ?? const {},
+            );
+            return provider;
+          },
+        ),
       ],
       child: const MyApp(),
     ),

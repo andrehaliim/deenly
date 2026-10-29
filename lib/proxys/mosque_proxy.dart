@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' hide log;
 
+import 'package:deenly/components/app_http.dart';
 import 'package:deenly/models/mosque_model.dart';
 import 'package:deenly/proxys/location_proxy.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,9 +12,6 @@ class MosqueProxy {
   static const String _baseUrl = 'https://nominatim.openstreetmap.org/search';
   static const int _radiusMeters = 2000;
   static const int _maxRetries = 3;
-  static const String _userAgent =
-      'DeenlyApp/1.0 (+https://play.google.com/store/apps/details'
-      '?id=com.andrehaliim.deenly)';
 
   Future<List<MosqueModel>> fetchMosques() async {
     final currentPosition = await LocationProxy().getLocation();
@@ -135,7 +133,10 @@ class MosqueProxy {
         final response = await http
             .get(
               uri,
-              headers: {'User-Agent': _userAgent, 'Accept-Language': 'en'},
+              headers: {
+                'User-Agent': AppHttp.userAgent,
+                'Accept-Language': 'en',
+              },
             )
             .timeout(const Duration(seconds: 10));
 

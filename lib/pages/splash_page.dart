@@ -1,3 +1,4 @@
+import 'package:deenly/components/app_config_provider.dart';
 import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/fade_page_route.dart';
 import 'package:deenly/components/notification_helper.dart';
@@ -7,10 +8,12 @@ import 'package:deenly/pages/permission/permission_page.dart';
 import 'package:deenly/pages/splash/splash_loader_widget.dart';
 import 'package:deenly/pages/splash/splash_logo_widget.dart';
 import 'package:deenly/pages/splash/splash_text_widget.dart';
+import 'package:deenly/pages/update/update_required_page.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
 import 'package:deenly/proxys/location_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -22,7 +25,7 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   static const _introDuration = Duration(milliseconds: 1600);
-  static const _totalSteps = 7;
+  static const _totalSteps = 8;
 
   final HadithProxy _hadithProxy = HadithProxy();
   final LocationProxy _locationProxy = LocationProxy();
@@ -70,35 +73,49 @@ class _SplashPageState extends State<SplashPage>
   }
 
   Future<Widget> _loadData() async {
-    debugPrint('🔄 [0/7] Starting _loadData...');
+    debugPrint('🔄 [0/8] Starting _loadData...');
+
+    // Fetched alongside the local steps, so it rarely adds any wait.
+    final appConfig = context.read<AppConfigProvider>();
+    final configLoaded = appConfig.load();
 
     await _hadithProxy.load();
     _completeStep();
-    debugPrint('✅ [1/7] Hadith loaded');
+    debugPrint('✅ [1/8] Hadith loaded');
 
     await DatabaseHelper.instance.seedSurahIfNeeded();
     _completeStep();
-    debugPrint('✅ [2/7] Surah seeded');
+    debugPrint('✅ [2/8] Surah seeded');
 
     await DatabaseHelper.instance.seedJuzIfNeeded();
     _completeStep();
-    debugPrint('✅ [3/7] Juz seeded');
+    debugPrint('✅ [3/8] Juz seeded');
 
     await DatabaseHelper.instance.seedDoaIfNeeded();
     _completeStep();
-    debugPrint('✅ [4/7] Doa seeded');
+    debugPrint('✅ [4/8] Doa seeded');
 
     await DatabaseHelper.instance.seedAsmaulHusnaIfNeeded();
     _completeStep();
-    debugPrint('✅ [5/7] Asmaul Husna seeded');
+    debugPrint('✅ [5/8] Asmaul Husna seeded');
 
     await DatabaseHelper.instance.seedDzikirIfNeeded();
     _completeStep();
-    debugPrint('✅ [6/7] Dzikir seeded');
+    debugPrint('✅ [6/8] Dzikir seeded');
+
+    await configLoaded;
+    _completeStep();
+    debugPrint('✅ [7/8] App config loaded');
+
+    final updateUrl = appConfig.config?.updateUrl;
+    if (appConfig.requiresUpdate && updateUrl != null) {
+      _completeStep();
+      return UpdateRequiredPage(updateUrl: updateUrl);
+    }
 
     final nextPage = await _resolveNextPage();
     _completeStep();
-    debugPrint('✅ [7/7] Permission status checked');
+    debugPrint('✅ [8/8] Permission status checked');
 
     return nextPage;
   }

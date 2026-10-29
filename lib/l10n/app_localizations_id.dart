@@ -524,12 +524,27 @@ class AppLocalizationsId extends AppLocalizations {
       'Tandai jika sudah, supaya progresmu tercatat';
 
   @override
-  String get zakatNisabToday => 'Nisab hari ini';
+  String get zakatNisabYearly => 'Nisab per tahun';
 
   @override
-  String zakatNisabInfo(String price) {
-    return 'Setara 85 gr emas · $price/gr';
+  String zakatNisabInfo(String decree) {
+    return 'Setara 85 gr emas · $decree';
   }
+
+  @override
+  String zakatDecree(String number, String year) {
+    return 'SK Ketua BAZNAS No. $number Tahun $year';
+  }
+
+  @override
+  String get zakatGoldPricePerGram => 'Harga emas per gram';
+
+  @override
+  String get zakatSilverPricePerGram => 'Harga perak per gram';
+
+  @override
+  String get zakatMetalPriceNote =>
+      'Harga awal mengikuti harga spot internasional. Ubah jika harga di tempatmu berbeda.';
 
   @override
   String get zakatPriceStale =>
@@ -537,7 +552,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get zakatPriceDefault =>
-      'Harga emas belum tersedia, memakai nisab default BAZNAS.';
+      'Harga emas belum tersedia, memakai harga default.';
 
   @override
   String get zakatCalculators => 'Kalkulator Zakat';
@@ -584,6 +599,25 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get zakatFitrahPerPerson => 'Nominal per jiwa';
+
+  @override
+  String zakatFitrahNote(String decree) {
+    return 'Sesuai $decree. Sesuaikan jika ketetapan BAZNAS daerahmu berbeda.';
+  }
+
+  @override
+  String get zakatRiceUnit => 'Takaran';
+
+  @override
+  String get zakatKilogram => 'Kilogram';
+
+  @override
+  String get zakatLiterUnit => 'Liter';
+
+  @override
+  String zakatLiter(String amount) {
+    return '$amount liter';
+  }
 
   @override
   String zakatKg(String amount) {
@@ -765,6 +799,24 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get calendarAdjustmentHint =>
       'Tanggal Hijriah dihitung secara hisab dan bisa berbeda 1–2 hari dengan hasil rukyat resmi. Geser agar sesuai dengan penetapan di daerahmu.';
+
+  @override
+  String get calendarAdjustmentOfficialNote =>
+      'Bulan yang sudah ditetapkan lewat sidang isbat mengikuti tanggal resmi dan tidak ikut digeser.';
+
+  @override
+  String get updateRequiredTitle => 'Perlu pembaruan';
+
+  @override
+  String get updateRequiredMessage =>
+      'Versi Deenly ini sudah tidak didukung. Perbarui aplikasi untuk melanjutkan.';
+
+  @override
+  String get updateRequiredButton => 'Perbarui sekarang';
+
+  @override
+  String get updateRequiredOpenFailed =>
+      'Tidak bisa membuka halaman pembaruan.';
 
   @override
   String calendarAdjustmentDays(int days) {

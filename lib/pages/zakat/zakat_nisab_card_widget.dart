@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-/// Hero card with today's nisab (85 g of gold) in Rupiah, and a note
-/// when the price shown is not today's.
+/// Hero card with the yearly nisab (85 g of gold) in Rupiah, as set by
+/// the BAZNAS chairman's decree.
 class ZakatNisabCard extends StatelessWidget {
   const ZakatNisabCard({super.key});
 
@@ -18,18 +18,9 @@ class ZakatNisabCard extends StatelessWidget {
     final appColors = theme.extension<AppColors>();
     final l10n = AppLocalizations.of(context);
     final provider = context.watch<ZakatProvider>();
-    final price = provider.price;
     final nisab = provider.nisab;
+    final decree = provider.nisabDecree;
     final onHero = colorScheme.onPrimary;
-
-    final String? note;
-    if (provider.isDefaultPrice) {
-      note = l10n?.zakatPriceDefault;
-    } else if (provider.isStale) {
-      note = l10n?.zakatPriceStale;
-    } else {
-      note = null;
-    }
 
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -61,7 +52,7 @@ class ZakatNisabCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n?.zakatNisabToday ?? '',
+                  l10n?.zakatNisabYearly ?? '',
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: onHero.withValues(alpha: 0.85),
@@ -93,62 +84,18 @@ class ZakatNisabCard extends StatelessWidget {
                           ),
                         ),
                 ),
-                if (price != null) ...[
+                if (l10n != null && decree != null) ...[
                   const SizedBox(height: 4),
                   Text(
-                    l10n?.zakatNisabInfo(
-                          RupiahFormat.currency(price.goldPerGram),
-                        ) ??
-                        '',
+                    l10n.zakatNisabInfo(
+                      l10n.zakatDecree('${decree.number}', '${decree.year}'),
+                    ),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: onHero.withValues(alpha: 0.85),
                     ),
                   ),
                 ],
-                if (note != null) ...[
-                  const SizedBox(height: 10),
-                  _PriceNote(message: note),
-                ],
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PriceNote extends StatelessWidget {
-  final String message;
-
-  const _PriceNote({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: colorScheme.onPrimary.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.info_outline_rounded,
-            size: 16,
-            color: colorScheme.secondaryFixed,
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              message,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: colorScheme.onPrimary,
-              ),
             ),
           ),
         ],

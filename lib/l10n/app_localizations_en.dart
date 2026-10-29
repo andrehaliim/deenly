@@ -530,12 +530,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Mark it once you have, so your progress is recorded';
 
   @override
-  String get zakatNisabToday => 'Today\'s nisab';
+  String get zakatNisabYearly => 'Yearly nisab';
 
   @override
-  String zakatNisabInfo(String price) {
-    return 'Equal to 85 g of gold · $price/g';
+  String zakatNisabInfo(String decree) {
+    return 'Equal to 85 g of gold · $decree';
   }
+
+  @override
+  String zakatDecree(String number, String year) {
+    return 'BAZNAS Chairman Decree No. $number of $year';
+  }
+
+  @override
+  String get zakatGoldPricePerGram => 'Gold price per gram';
+
+  @override
+  String get zakatSilverPricePerGram => 'Silver price per gram';
+
+  @override
+  String get zakatMetalPriceNote =>
+      'Prices are prefilled with the international spot price. Change them if the price where you live differs.';
 
   @override
   String get zakatPriceStale =>
@@ -543,7 +558,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get zakatPriceDefault =>
-      'Gold price unavailable, showing the BAZNAS default nisab.';
+      'Gold price unavailable, showing the default price.';
 
   @override
   String get zakatCalculators => 'Zakat Calculator';
@@ -590,6 +605,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get zakatFitrahPerPerson => 'Amount per person';
+
+  @override
+  String zakatFitrahNote(String decree) {
+    return 'Per $decree. Adjust to your local zakat office\'s rate if it differs.';
+  }
+
+  @override
+  String get zakatRiceUnit => 'Measure';
+
+  @override
+  String get zakatKilogram => 'Kilogram';
+
+  @override
+  String get zakatLiterUnit => 'Liter';
+
+  @override
+  String zakatLiter(String amount) {
+    return '$amount L';
+  }
 
   @override
   String zakatKg(String amount) {
@@ -777,6 +811,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get calendarAdjustmentHint =>
       'Hijri dates are calculated (hisab) and may differ by 1–2 days from the official moon sighting (rukyat). Shift them to match your local announcement.';
+
+  @override
+  String get calendarAdjustmentOfficialNote =>
+      'Months already set by the official announcement (sidang isbat) follow that date and are not shifted.';
+
+  @override
+  String get updateRequiredTitle => 'Update required';
+
+  @override
+  String get updateRequiredMessage =>
+      'This version of Deenly is no longer supported. Please update the app to keep using it.';
+
+  @override
+  String get updateRequiredButton => 'Update now';
+
+  @override
+  String get updateRequiredOpenFailed => 'Could not open the update page.';
 
   @override
   String calendarAdjustmentDays(int days) {

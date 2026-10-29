@@ -22,7 +22,7 @@ class SurahDetailModel {
         textId: json['textId'],
       );
 
-      factory SurahDetailModel.fromDatabase(Map<String, dynamic> json) =>
+  factory SurahDetailModel.fromDatabase(Map<String, dynamic> json) =>
       SurahDetailModel(
         chapterNo: json['chapter_no'],
         verseNo: json['verse_no'],

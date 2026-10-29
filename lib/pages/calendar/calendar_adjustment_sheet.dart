@@ -47,6 +47,15 @@ class CalendarAdjustmentSheet extends StatelessWidget {
               color: colorScheme.onSurfaceVariant,
             ),
           ),
+          if (provider.hasOfficialMonthStarts) ...[
+            const SizedBox(height: 6),
+            Text(
+              l10n?.calendarAdjustmentOfficialNote ?? '',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,

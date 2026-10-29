@@ -27,14 +27,6 @@ class HijriDateModel {
     return HijriDateModel(year, safeMonth, day);
   }
 
-  /// Number of days in the given Hijri month (29 or 30).
-  static int daysInMonth(int year, int month) {
-    final next = month == 12
-        ? _julianDayOfHijri(year + 1, 1, 1)
-        : _julianDayOfHijri(year, month + 1, 1);
-    return next - _julianDayOfHijri(year, month, 1);
-  }
-
   /// Gregorian date that this Hijri date falls on, undoing [adjustment].
   DateTime toGregorian({int adjustment = 0}) {
     final julianDay = _julianDayOfHijri(year, month, day) - adjustment;

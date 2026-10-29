@@ -3,6 +3,7 @@ import 'package:deenly/models/event_occurrence_model.dart';
 import 'package:deenly/models/hijri_date_model.dart';
 import 'package:deenly/models/islamic_event_model.dart';
 import 'package:deenly/proxys/calendar_proxy.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CalendarProvider extends ChangeNotifier {
@@ -17,6 +18,7 @@ class CalendarProvider extends ChangeNotifier {
 
   List<IslamicEventModel> _events = const [];
   int _adjustment = 0;
+  Map<int, DateTime> _monthStarts = const {};
   bool _isHijriPrimary = false;
   bool _isLoaded = false;
   EventOccurrenceModel? _nextEvent;
@@ -29,6 +31,10 @@ class CalendarProvider extends ChangeNotifier {
   );
 
   int get adjustment => _adjustment;
+
+  /// Whether some months follow an official start date, which the user's
+  /// [adjustment] does not shift.
+  bool get hasOfficialMonthStarts => _monthStarts.isNotEmpty;
   bool get isHijriPrimary => _isHijriPrimary;
   bool get isLoaded => _isLoaded;
   EventOccurrenceModel? get nextEvent => _nextEvent;
@@ -59,8 +65,51 @@ class CalendarProvider extends ChangeNotifier {
     showToday();
   }
 
-  HijriDateModel hijriOf(DateTime date) =>
-      HijriDateModel.fromGregorian(date, adjustment: _adjustment);
+  /// Called by the provider tree with the official month starts from the
+  /// app config, keyed by month index (`year * 12 + month - 1`).
+  void updateMonthStarts(Map<int, DateTime> starts) {
+    if (mapEquals(starts, _monthStarts)) return;
+    _monthStarts = starts;
+    if (_isLoaded) _nextEvent = _findNextEvent();
+    Future.microtask(notifyListeners);
+  }
+
+  /// Official month starts can move a date into the month before or after
+  /// the calculated one, so those neighbours are checked too.
+  HijriDateModel hijriOf(DateTime date) {
+    final day = DateTime(date.year, date.month, date.day);
+    final calculated = HijriDateModel.fromGregorian(
+      day,
+      adjustment: _adjustment,
+    );
+    final calculatedIndex = _monthIndex(calculated);
+    for (
+      var index = calculatedIndex - 1;
+      index <= calculatedIndex + 1;
+      index++
+    ) {
+      final start = _startOf(index);
+      if (day.isBefore(start) || !day.isBefore(_startOf(index + 1))) continue;
+      return HijriDateModel(
+        index ~/ 12,
+        index % 12 + 1,
+        _daysBetween(start, day) + 1,
+      );
+    }
+    return calculated;
+  }
+
+  /// First Gregorian day of the Hijri month at [index]: the official date
+  /// when there is one, else the calculated date with the user's
+  /// adjustment.
+  DateTime _startOf(int index) {
+    return _monthStarts[index] ??
+        HijriDateModel(
+          index ~/ 12,
+          index % 12 + 1,
+          1,
+        ).toGregorian(adjustment: _adjustment);
+  }
 
   CalendarDayModel dayOf(DateTime date) {
     final hijri = hijriOf(date);
@@ -103,8 +152,9 @@ class CalendarProvider extends ChangeNotifier {
     final DateTime start;
     final int length;
     if (_isHijriPrimary) {
-      start = _hijriMonth.toGregorian(adjustment: _adjustment);
-      length = HijriDateModel.daysInMonth(_hijriMonth.year, _hijriMonth.month);
+      final index = _monthIndex(_hijriMonth);
+      start = _startOf(index);
+      length = _daysBetween(start, _startOf(index + 1));
     } else {
       start = _gregorianMonth;
       length = DateUtils.getDaysInMonth(start.year, start.month);
@@ -201,6 +251,14 @@ class CalendarProvider extends ChangeNotifier {
   }
 
   static DateTime _monthOf(DateTime date) => DateTime(date.year, date.month);
+
+  static int _monthIndex(HijriDateModel date) =>
+      date.year * 12 + date.month - 1;
+
+  static int _daysBetween(DateTime from, DateTime to) {
+    final start = DateTime.utc(from.year, from.month, from.day);
+    return DateTime.utc(to.year, to.month, to.day).difference(start).inDays;
+  }
 
   static HijriDateModel _hijriMonthOf(HijriDateModel date) =>
       HijriDateModel(date.year, date.month, 1);

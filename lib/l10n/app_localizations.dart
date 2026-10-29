@@ -1004,17 +1004,41 @@ abstract class AppLocalizations {
   /// **'Mark it once you have, so your progress is recorded'**
   String get notificationMissedBody;
 
-  /// No description provided for @zakatNisabToday.
+  /// No description provided for @zakatNisabYearly.
   ///
   /// In en, this message translates to:
-  /// **'Today\'s nisab'**
-  String get zakatNisabToday;
+  /// **'Yearly nisab'**
+  String get zakatNisabYearly;
 
   /// No description provided for @zakatNisabInfo.
   ///
   /// In en, this message translates to:
-  /// **'Equal to 85 g of gold · {price}/g'**
-  String zakatNisabInfo(String price);
+  /// **'Equal to 85 g of gold · {decree}'**
+  String zakatNisabInfo(String decree);
+
+  /// No description provided for @zakatDecree.
+  ///
+  /// In en, this message translates to:
+  /// **'BAZNAS Chairman Decree No. {number} of {year}'**
+  String zakatDecree(String number, String year);
+
+  /// No description provided for @zakatGoldPricePerGram.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold price per gram'**
+  String get zakatGoldPricePerGram;
+
+  /// No description provided for @zakatSilverPricePerGram.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver price per gram'**
+  String get zakatSilverPricePerGram;
+
+  /// No description provided for @zakatMetalPriceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices are prefilled with the international spot price. Change them if the price where you live differs.'**
+  String get zakatMetalPriceNote;
 
   /// No description provided for @zakatPriceStale.
   ///
@@ -1025,7 +1049,7 @@ abstract class AppLocalizations {
   /// No description provided for @zakatPriceDefault.
   ///
   /// In en, this message translates to:
-  /// **'Gold price unavailable, showing the BAZNAS default nisab.'**
+  /// **'Gold price unavailable, showing the default price.'**
   String get zakatPriceDefault;
 
   /// No description provided for @zakatCalculators.
@@ -1117,6 +1141,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Amount per person'**
   String get zakatFitrahPerPerson;
+
+  /// No description provided for @zakatFitrahNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Per {decree}. Adjust to your local zakat office\'s rate if it differs.'**
+  String zakatFitrahNote(String decree);
+
+  /// No description provided for @zakatRiceUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Measure'**
+  String get zakatRiceUnit;
+
+  /// No description provided for @zakatKilogram.
+  ///
+  /// In en, this message translates to:
+  /// **'Kilogram'**
+  String get zakatKilogram;
+
+  /// No description provided for @zakatLiterUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Liter'**
+  String get zakatLiterUnit;
+
+  /// No description provided for @zakatLiter.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} L'**
+  String zakatLiter(String amount);
 
   /// No description provided for @zakatKg.
   ///
@@ -1447,6 +1501,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hijri dates are calculated (hisab) and may differ by 1–2 days from the official moon sighting (rukyat). Shift them to match your local announcement.'**
   String get calendarAdjustmentHint;
+
+  /// No description provided for @calendarAdjustmentOfficialNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Months already set by the official announcement (sidang isbat) follow that date and are not shifted.'**
+  String get calendarAdjustmentOfficialNote;
+
+  /// No description provided for @updateRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update required'**
+  String get updateRequiredTitle;
+
+  /// No description provided for @updateRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This version of Deenly is no longer supported. Please update the app to keep using it.'**
+  String get updateRequiredMessage;
+
+  /// No description provided for @updateRequiredButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get updateRequiredButton;
+
+  /// No description provided for @updateRequiredOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the update page.'**
+  String get updateRequiredOpenFailed;
 
   /// No description provided for @calendarAdjustmentDays.
   ///
