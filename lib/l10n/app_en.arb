@@ -365,6 +365,20 @@
     "zakatMetalPriceNote": "Prices are prefilled with the international spot price. Change them if the price where you live differs.",
     "zakatPriceStale": "Could not update the gold price, showing the last saved price.",
     "zakatPriceDefault": "Gold price unavailable, showing the default price.",
+    "zakatPriceSource": "Prefilled from {source}, updated {date}.",
+    "@zakatPriceSource": {
+        "placeholders": {
+            "source": {
+                "type": "String",
+                "example": "gold-api.com"
+            },
+            "date": {
+                "type": "String",
+                "example": "Oct 29, 2026 08:15"
+            }
+        }
+    },
+    "zakatPriceSourceDefault": "the app's default price",
     "zakatCalculators": "Zakat Calculator",
     "zakatFitrah": "Zakat Fitrah",
     "zakatFitrahDesc": "Due for every person before Eid al-Fitr",
@@ -374,6 +388,38 @@
     "zakatMaalDesc": "Savings, deposits and investments",
     "zakatGoldSilver": "Gold & Silver Zakat",
     "zakatGoldSilverDesc": "Gold and silver you keep",
+    "zakatTrade": "Trade Zakat",
+    "zakatTradeDesc": "Business capital, profit and receivables",
+    "zakatTradeCapital": "Capital (cash and inventory)",
+    "zakatTradeProfit": "Profit",
+    "zakatTradeReceivables": "Receivables likely to be paid",
+    "zakatTotalTradeAssets": "Total business assets",
+    "zakatFidyah": "Fidyah",
+    "zakatFidyahDesc": "For missed fasts that cannot be made up",
+    "zakatFidyahDays": "Missed fasting days",
+    "zakatFidyahPerDay": "Amount per day",
+    "zakatFidyahNote": "Per day for one person, per {decree}. Adjust to your local zakat office's rate if it differs.",
+    "@zakatFidyahNote": {
+        "placeholders": {
+            "decree": {
+                "type": "String",
+                "example": "BAZNAS Chairman Decree No. 14 of 2026"
+            }
+        }
+    },
+    "zakatFidyahAmount": "Fidyah to pay",
+    "zakatDaysTimes": "{days} days × {amount}",
+    "@zakatDaysTimes": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            },
+            "amount": {
+                "type": "String",
+                "example": "Rp 65.000"
+            }
+        }
+    },
     "zakatDisclaimer": "Results are estimates. For certainty, consult BAZNAS or an official zakat institution (LAZ).",
     "zakatPeople": "Number of people",
     "zakatPayWith": "Pay with",

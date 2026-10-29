@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 
 /// The status, the amount to pay and how it was worked out. [rows] are
 /// label/value pairs shown above the amount, e.g. total wealth and nisab.
+/// Without a [status], e.g. for fidyah, no status chip is shown.
 class ZakatResultCard extends StatelessWidget {
   final String? title;
-  final ZakatStatus status;
+  final ZakatStatus? status;
+  final String? amountLabel;
   final String amount;
   final String formula;
   final List<(String, String)> rows;
@@ -14,7 +16,8 @@ class ZakatResultCard extends StatelessWidget {
   const ZakatResultCard({
     super.key,
     this.title,
-    required this.status,
+    this.status,
+    this.amountLabel,
     required this.amount,
     required this.formula,
     this.rows = const [],
@@ -25,7 +28,8 @@ class ZakatResultCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
-    final isObligatory = status == ZakatStatus.obligatory;
+    final status = this.status;
+    final isObligatory = status == null || status == ZakatStatus.obligatory;
     final labelStyle = theme.textTheme.bodySmall?.copyWith(
       color: colorScheme.onSurfaceVariant,
     );
@@ -61,7 +65,7 @@ class ZakatResultCard extends StatelessWidget {
                   color: colorScheme.onSurface,
                 ),
               ),
-              _StatusChip(status: status),
+              if (status != null) _StatusChip(status: status),
             ],
           ),
           const SizedBox(height: 12),
@@ -84,7 +88,7 @@ class ZakatResultCard extends StatelessWidget {
               ),
             ),
           if (rows.isNotEmpty) const Divider(height: 20),
-          Text(l10n?.zakatAmount ?? '', style: labelStyle),
+          Text(amountLabel ?? l10n?.zakatAmount ?? '', style: labelStyle),
           const SizedBox(height: 4),
           FittedBox(
             fit: BoxFit.scaleDown,

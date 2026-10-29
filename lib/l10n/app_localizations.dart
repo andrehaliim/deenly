@@ -1052,6 +1052,18 @@ abstract class AppLocalizations {
   /// **'Gold price unavailable, showing the default price.'**
   String get zakatPriceDefault;
 
+  /// No description provided for @zakatPriceSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefilled from {source}, updated {date}.'**
+  String zakatPriceSource(String source, String date);
+
+  /// No description provided for @zakatPriceSourceDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'the app\'s default price'**
+  String get zakatPriceSourceDefault;
+
   /// No description provided for @zakatCalculators.
   ///
   /// In en, this message translates to:
@@ -1105,6 +1117,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Gold and silver you keep'**
   String get zakatGoldSilverDesc;
+
+  /// No description provided for @zakatTrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade Zakat'**
+  String get zakatTrade;
+
+  /// No description provided for @zakatTradeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Business capital, profit and receivables'**
+  String get zakatTradeDesc;
+
+  /// No description provided for @zakatTradeCapital.
+  ///
+  /// In en, this message translates to:
+  /// **'Capital (cash and inventory)'**
+  String get zakatTradeCapital;
+
+  /// No description provided for @zakatTradeProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Profit'**
+  String get zakatTradeProfit;
+
+  /// No description provided for @zakatTradeReceivables.
+  ///
+  /// In en, this message translates to:
+  /// **'Receivables likely to be paid'**
+  String get zakatTradeReceivables;
+
+  /// No description provided for @zakatTotalTradeAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Total business assets'**
+  String get zakatTotalTradeAssets;
+
+  /// No description provided for @zakatFidyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Fidyah'**
+  String get zakatFidyah;
+
+  /// No description provided for @zakatFidyahDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'For missed fasts that cannot be made up'**
+  String get zakatFidyahDesc;
+
+  /// No description provided for @zakatFidyahDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed fasting days'**
+  String get zakatFidyahDays;
+
+  /// No description provided for @zakatFidyahPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount per day'**
+  String get zakatFidyahPerDay;
+
+  /// No description provided for @zakatFidyahNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Per day for one person, per {decree}. Adjust to your local zakat office\'s rate if it differs.'**
+  String zakatFidyahNote(String decree);
+
+  /// No description provided for @zakatFidyahAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Fidyah to pay'**
+  String get zakatFidyahAmount;
+
+  /// No description provided for @zakatDaysTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days × {amount}'**
+  String zakatDaysTimes(int days, String amount);
 
   /// No description provided for @zakatDisclaimer.
   ///

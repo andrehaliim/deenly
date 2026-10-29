@@ -555,6 +555,14 @@ class AppLocalizationsId extends AppLocalizations {
       'Harga emas belum tersedia, memakai harga default.';
 
   @override
+  String zakatPriceSource(String source, String date) {
+    return 'Harga awal dari $source, diperbarui $date.';
+  }
+
+  @override
+  String get zakatPriceSourceDefault => 'harga default aplikasi';
+
+  @override
   String get zakatCalculators => 'Kalkulator Zakat';
 
   @override
@@ -580,6 +588,49 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get zakatGoldSilverDesc => 'Emas dan perak yang disimpan';
+
+  @override
+  String get zakatTrade => 'Zakat Perdagangan';
+
+  @override
+  String get zakatTradeDesc => 'Modal usaha, laba dan piutang';
+
+  @override
+  String get zakatTradeCapital => 'Modal (kas dan stok barang)';
+
+  @override
+  String get zakatTradeProfit => 'Laba';
+
+  @override
+  String get zakatTradeReceivables => 'Piutang yang lancar';
+
+  @override
+  String get zakatTotalTradeAssets => 'Total aset usaha';
+
+  @override
+  String get zakatFidyah => 'Fidyah';
+
+  @override
+  String get zakatFidyahDesc => 'Pengganti puasa yang tidak bisa diqadha';
+
+  @override
+  String get zakatFidyahDays => 'Jumlah hari puasa yang ditinggalkan';
+
+  @override
+  String get zakatFidyahPerDay => 'Nominal per hari';
+
+  @override
+  String zakatFidyahNote(String decree) {
+    return 'Per hari untuk satu orang, sesuai $decree. Sesuaikan jika ketetapan BAZNAS daerahmu berbeda.';
+  }
+
+  @override
+  String get zakatFidyahAmount => 'Fidyah yang dibayar';
+
+  @override
+  String zakatDaysTimes(int days, String amount) {
+    return '$days hari × $amount';
+  }
 
   @override
   String get zakatDisclaimer =>

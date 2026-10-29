@@ -1,11 +1,13 @@
 import 'package:deenly/components/zakat_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/pages/zakat/zakat_disclaimer_widget.dart';
+import 'package:deenly/pages/zakat/zakat_fidyah_page.dart';
 import 'package:deenly/pages/zakat/zakat_fitrah_page.dart';
 import 'package:deenly/pages/zakat/zakat_gold_page.dart';
 import 'package:deenly/pages/zakat/zakat_income_page.dart';
 import 'package:deenly/pages/zakat/zakat_maal_page.dart';
 import 'package:deenly/pages/zakat/zakat_nisab_card_widget.dart';
+import 'package:deenly/pages/zakat/zakat_trade_page.dart';
 import 'package:deenly/pages/zakat/zakat_type_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -80,6 +82,20 @@ class _ZakatPageState extends State<ZakatPage> {
             title: l10n?.zakatGoldSilver ?? '',
             description: l10n?.zakatGoldSilverDesc ?? '',
             onTap: () => _open((_) => const ZakatGoldPage()),
+          ),
+          const SizedBox(height: 12),
+          ZakatTypeCard(
+            icon: FontAwesomeIcons.store,
+            title: l10n?.zakatTrade ?? '',
+            description: l10n?.zakatTradeDesc ?? '',
+            onTap: () => _open((_) => const ZakatTradePage()),
+          ),
+          const SizedBox(height: 12),
+          ZakatTypeCard(
+            icon: FontAwesomeIcons.handHoldingHeart,
+            title: l10n?.zakatFidyah ?? '',
+            description: l10n?.zakatFidyahDesc ?? '',
+            onTap: () => _open((_) => const ZakatFidyahPage()),
           ),
           const SizedBox(height: 24),
           const ZakatDisclaimer(),

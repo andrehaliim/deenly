@@ -7,6 +7,7 @@ import 'package:deenly/pages/zakat/zakat_fill_hint_widget.dart';
 import 'package:deenly/pages/zakat/zakat_haul_switch_widget.dart';
 import 'package:deenly/pages/zakat/zakat_nisab_result_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 /// Gold and silver each have their own nisab (85 g and 595 g), so they
@@ -72,6 +73,22 @@ class _ZakatGoldPageState extends State<ZakatGoldPage> {
     } else {
       priceNote = null;
     }
+    final String? sourceNote;
+    final price = provider.price;
+    if (l10n != null && price != null) {
+      final languageCode = Localizations.localeOf(context).languageCode;
+
+      /// The default price only carries a date, so its time is left out.
+      final dateFormat = provider.isDefaultPrice
+          ? DateFormat.yMMMd(languageCode)
+          : DateFormat.yMMMd(languageCode).add_Hm();
+      sourceNote = l10n.zakatPriceSource(
+        provider.isDefaultPrice ? l10n.zakatPriceSourceDefault : price.source,
+        dateFormat.format(price.updatedAt),
+      );
+    } else {
+      sourceNote = null;
+    }
     final gramSuffix = l10n?.zakatGramSuffix ?? '';
     final goldResult = provider.calculateGold(
       RupiahFormat.parseDecimal(_gold.text),
@@ -135,7 +152,7 @@ class _ZakatGoldPageState extends State<ZakatGoldPage> {
           onChanged: _onChanged,
         ),
         Text(
-          [l10n?.zakatMetalPriceNote ?? '', ?priceNote].join('\n'),
+          [l10n?.zakatMetalPriceNote ?? '', ?sourceNote, ?priceNote].join('\n'),
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),

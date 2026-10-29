@@ -561,6 +561,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Gold price unavailable, showing the default price.';
 
   @override
+  String zakatPriceSource(String source, String date) {
+    return 'Prefilled from $source, updated $date.';
+  }
+
+  @override
+  String get zakatPriceSourceDefault => 'the app\'s default price';
+
+  @override
   String get zakatCalculators => 'Zakat Calculator';
 
   @override
@@ -586,6 +594,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get zakatGoldSilverDesc => 'Gold and silver you keep';
+
+  @override
+  String get zakatTrade => 'Trade Zakat';
+
+  @override
+  String get zakatTradeDesc => 'Business capital, profit and receivables';
+
+  @override
+  String get zakatTradeCapital => 'Capital (cash and inventory)';
+
+  @override
+  String get zakatTradeProfit => 'Profit';
+
+  @override
+  String get zakatTradeReceivables => 'Receivables likely to be paid';
+
+  @override
+  String get zakatTotalTradeAssets => 'Total business assets';
+
+  @override
+  String get zakatFidyah => 'Fidyah';
+
+  @override
+  String get zakatFidyahDesc => 'For missed fasts that cannot be made up';
+
+  @override
+  String get zakatFidyahDays => 'Missed fasting days';
+
+  @override
+  String get zakatFidyahPerDay => 'Amount per day';
+
+  @override
+  String zakatFidyahNote(String decree) {
+    return 'Per day for one person, per $decree. Adjust to your local zakat office\'s rate if it differs.';
+  }
+
+  @override
+  String get zakatFidyahAmount => 'Fidyah to pay';
+
+  @override
+  String zakatDaysTimes(int days, String amount) {
+    return '$days days × $amount';
+  }
 
   @override
   String get zakatDisclaimer =>

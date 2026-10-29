@@ -7,6 +7,10 @@ class ZakatConfigModel {
   final BaznasDecreeModel nisabDecree;
   final int fitrahPerPerson;
   final BaznasDecreeModel fitrahDecree;
+
+  /// Set by the same decree as [fitrahPerPerson]; 0 when an older config
+  /// without it is cached.
+  final int fidyahPerDay;
   final double goldPricePerGram;
   final double silverPricePerGram;
   final DateTime priceUpdatedAt;
@@ -16,6 +20,7 @@ class ZakatConfigModel {
     required this.nisabDecree,
     required this.fitrahPerPerson,
     required this.fitrahDecree,
+    required this.fidyahPerDay,
     required this.goldPricePerGram,
     required this.silverPricePerGram,
     required this.priceUpdatedAt,
@@ -31,6 +36,7 @@ class ZakatConfigModel {
       fitrahDecree: BaznasDecreeModel.fromJson(
         json['fitrah_decree'] as Map<String, dynamic>,
       ),
+      fidyahPerDay: (json['fidyah_per_day'] as num?)?.toInt() ?? 0,
       goldPricePerGram: (json['gold_price_per_gram'] as num).toDouble(),
       silverPricePerGram: (json['silver_price_per_gram'] as num).toDouble(),
       priceUpdatedAt: DateTime.parse(json['price_updated_at'] as String),

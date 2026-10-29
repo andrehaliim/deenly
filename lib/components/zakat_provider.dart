@@ -23,6 +23,7 @@ class ZakatProvider extends ChangeNotifier {
 
   GoldPriceModel? get price => _price;
   int get fitrahPerPerson => _config?.fitrahPerPerson ?? 0;
+  int get fidyahPerDay => _config?.fidyahPerDay ?? 0;
   bool get isLoading => _isLoading;
 
   /// True when today's price could not be fetched and an older cached
@@ -133,6 +134,22 @@ class ZakatProvider extends ChangeNotifier {
       nisab: nisab,
       haul: haul,
     );
+  }
+
+  /// Trade zakat uses the same nisab and rate as zakat maal, on the
+  /// business assets (capital, profit, receivables) minus debts due.
+  ZakatResultModel? calculateTrade({
+    required double assets,
+    required double debts,
+    required bool haul,
+  }) {
+    return calculateMaal(assets: assets, debts: debts, haul: haul);
+  }
+
+  /// Fidyah is a fixed amount per missed fasting day, with no nisab.
+  double calculateFidyah(int days, {required double perDay}) {
+    if (days <= 0 || perDay <= 0) return 0;
+    return days * perDay;
   }
 
   /// [pricePerGram] comes from the user, prefilled with [price], since the
