@@ -4,18 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Takes the hadith's place at the bottom of the home overview card while
-/// a dzikir window is open, leading straight to that dzikir.
+/// Takes turns with the hadith at the bottom of the home overview card
+/// while a dzikir window is open, leading straight to that dzikir.
 class HomeDzikirReminder extends StatelessWidget {
   final DzikirPeriod period;
   final String endTime;
   final VoidCallback onStart;
+
+  /// Whether the parent gives this a bounded height to fill; the verse
+  /// then shows as many lines as fit in it.
+  final bool fillsHeight;
 
   const HomeDzikirReminder({
     super.key,
     required this.period,
     required this.endTime,
     required this.onStart,
+    required this.fillsHeight,
   });
 
   @override
@@ -71,39 +76,90 @@ class HomeDzikirReminder extends StatelessWidget {
               color: onCard.withValues(alpha: 0.75),
             ),
           ),
-          const SizedBox(height: 8),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(text: l10n?.dzikirReminderVerse ?? ''),
-                TextSpan(
-                  text: ' ${l10n?.dzikirReminderVerseSource ?? ''}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.normal,
+          Flexible(
+            flex: fillsHeight ? 1 : 0,
+            child: _FittedVerse(
+              verse: TextSpan(
+                children: [
+                  TextSpan(text: l10n?.dzikirReminderVerse ?? ''),
+                  TextSpan(
+                    text: ' ${l10n?.dzikirReminderVerseSource ?? ''}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.normal,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            style: GoogleFonts.notoSerif(
-              textStyle: theme.textTheme.bodyMedium,
-              color: onCard.withValues(alpha: 0.92),
-              fontStyle: FontStyle.italic,
-              height: 1.5,
+                ],
+              ),
+              style: GoogleFonts.notoSerif(
+                textStyle: theme.textTheme.bodyMedium,
+                color: onCard.withValues(alpha: 0.92),
+                fontStyle: FontStyle.italic,
+                height: 1.5,
+              ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           FilledButton.icon(
             onPressed: onStart,
             style: FilledButton.styleFrom(
               backgroundColor: accent,
               foregroundColor: colorScheme.onSecondaryFixed,
+              visualDensity: VisualDensity.compact,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             icon: const Icon(Icons.play_arrow_rounded),
             label: Text(l10n?.dzikirReminderStart ?? ''),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// The verse, cut to as many lines as fit when the height is bounded and
+/// left out when not even one does, so the card never overflows.
+class _FittedVerse extends StatelessWidget {
+  static const double _topGap = 8;
+
+  final InlineSpan verse;
+  final TextStyle style;
+
+  const _FittedVerse({required this.verse, required this.style});
+
+  double _lineHeight(BuildContext context) {
+    final painter = TextPainter(
+      text: TextSpan(text: ' ', style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout();
+    final height = painter.height;
+    painter.dispose();
+    return height;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int? maxLines;
+        if (constraints.hasBoundedHeight) {
+          final lines =
+              (constraints.maxHeight - _topGap) ~/ _lineHeight(context);
+          if (lines < 1) return const SizedBox.shrink();
+          maxLines = lines;
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(top: _topGap),
+          child: Text.rich(
+            verse,
+            style: style,
+            maxLines: maxLines,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      },
     );
   }
 }

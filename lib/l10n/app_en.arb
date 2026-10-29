@@ -199,8 +199,11 @@
             }
         }
     },
-    "dzikirTapHint": "Tap a card to count",
+    "dzikirTapHint": "Tap to count, hold to reset",
     "dzikirAllDone": "All dhikr completed",
+    "dzikirRestart": "Start over",
+    "dzikirRestartConfirm": "All counts in this category will be reset.",
+    "dzikirItemReset": "Count reset",
     "dzikirVirtue": "Virtue",
     "dzikirReminderMorning": "Time for morning dhikr",
     "dzikirReminderEvening": "Time for evening dhikr",

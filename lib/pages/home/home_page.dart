@@ -17,6 +17,7 @@ import 'package:deenly/pages/home/home_overview_card.dart';
 import 'package:deenly/pages/home/home_prayer_error.dart';
 import 'package:deenly/pages/home/home_prayer_info.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
+import 'package:deenly/pages/home/home_rotating_footer.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/proxys/dzikir_proxy.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
@@ -269,27 +270,40 @@ class HomePageState extends State<HomePage>
 
         /// Collapsed, the page is exactly one screen and the footer fills
         /// what the prayer card and menu leave, down to the bottom nav.
-        final isHadithExpanded = _isHadithExpanded && dzikirPeriod == null;
         final fillsHeight =
-            !isHadithExpanded && constraints.maxHeight >= minFillHeight;
+            !_isHadithExpanded && constraints.maxHeight >= minFillHeight;
 
-        /// During a dzikir window the reminder takes the hadith's place;
-        /// otherwise the hadith is optional and hidden if loading failed.
+        /// The hadith is optional: hide it if loading failed.
+        final Widget? hadith = _isGettingHadithData
+            ? const HomeHadithSkeleton()
+            : hadithModel != null
+            ? HomeHadithWidget(
+                hadithModel: hadithModel,
+                isExpanded: _isHadithExpanded,
+                fillsHeight: fillsHeight,
+                onToggleExpanded: () =>
+                    setState(() => _isHadithExpanded = !_isHadithExpanded),
+              )
+            : null;
+
+        /// During a dzikir window the reminder shows first, then takes
+        /// turns with the hadith; reading the full hadith holds it.
         final Widget? footer = switch ((dzikirPeriod, prayerModel)) {
-          (final period?, final prayer?) => HomeDzikirReminder(
-            period: period,
-            endTime: period.endTime(prayer),
-            onStart: () => _openDzikir(period),
-          ),
-          _ when _isGettingHadithData => const HomeHadithSkeleton(),
-          _ when hadithModel != null => HomeHadithWidget(
-            hadithModel: hadithModel,
-            isExpanded: _isHadithExpanded,
+          (final period?, final prayer?) => HomeRotatingFooter(
+            key: ValueKey(period),
+            isPaused: _isHadithExpanded,
             fillsHeight: fillsHeight,
-            onToggleExpanded: () =>
-                setState(() => _isHadithExpanded = !_isHadithExpanded),
+            children: [
+              HomeDzikirReminder(
+                period: period,
+                endTime: period.endTime(prayer),
+                onStart: () => _openDzikir(period),
+                fillsHeight: fillsHeight,
+              ),
+              ?hadith,
+            ],
           ),
-          _ => null,
+          _ => hadith,
         };
 
         return SingleChildScrollView(

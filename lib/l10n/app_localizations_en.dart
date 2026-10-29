@@ -319,10 +319,20 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dzikirTapHint => 'Tap a card to count';
+  String get dzikirTapHint => 'Tap to count, hold to reset';
 
   @override
   String get dzikirAllDone => 'All dhikr completed';
+
+  @override
+  String get dzikirRestart => 'Start over';
+
+  @override
+  String get dzikirRestartConfirm =>
+      'All counts in this category will be reset.';
+
+  @override
+  String get dzikirItemReset => 'Count reset';
 
   @override
   String get dzikirVirtue => 'Virtue';

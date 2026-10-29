@@ -653,7 +653,7 @@ abstract class AppLocalizations {
   /// No description provided for @dzikirTapHint.
   ///
   /// In en, this message translates to:
-  /// **'Tap a card to count'**
+  /// **'Tap to count, hold to reset'**
   String get dzikirTapHint;
 
   /// No description provided for @dzikirAllDone.
@@ -661,6 +661,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All dhikr completed'**
   String get dzikirAllDone;
+
+  /// No description provided for @dzikirRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start over'**
+  String get dzikirRestart;
+
+  /// No description provided for @dzikirRestartConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'All counts in this category will be reset.'**
+  String get dzikirRestartConfirm;
+
+  /// No description provided for @dzikirItemReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Count reset'**
+  String get dzikirItemReset;
 
   /// No description provided for @dzikirVirtue.
   ///

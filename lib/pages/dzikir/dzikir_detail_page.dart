@@ -77,6 +77,60 @@ class _DzikirDetailPageState extends State<DzikirDetailPage> {
     }
   }
 
+  bool get _hasProgress {
+    final dzikirs = _dzikirs ?? [];
+    for (var i = 0; i < dzikirs.length; i++) {
+      if (_remaining[i] < dzikirs[i].count) return true;
+    }
+    return false;
+  }
+
+  void _onReset(int index) {
+    final dzikirs = _dzikirs;
+    if (dzikirs == null) return;
+    setState(() => _remaining[index] = dzikirs[index].count);
+    _vibrate(50);
+    _showSnackBar(AppLocalizations.of(context)?.dzikirItemReset ?? '');
+  }
+
+  void _restart() {
+    final dzikirs = _dzikirs;
+    if (dzikirs == null) return;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    setState(() {
+      _remaining = [for (final dzikir in dzikirs) dzikir.count];
+    });
+    _scrollTo(0);
+  }
+
+  Future<void> _confirmRestart() async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n?.dzikirRestart ?? ''),
+        content: Text(l10n?.dzikirRestartConfirm ?? ''),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n?.cancel ?? ''),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n?.dzikirRestart ?? ''),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) _restart();
+  }
+
+  void _showSnackBar(String message, {SnackBarAction? action}) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message), action: action));
+  }
+
   void _vibrate(int duration) async {
     if (await Vibration.hasVibrator() == true) {
       Vibration.vibrate(duration: duration);
@@ -99,9 +153,13 @@ class _DzikirDetailPageState extends State<DzikirDetailPage> {
 
   void _showAllDone() {
     final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(l10n?.dzikirAllDone ?? '')));
+    _showSnackBar(
+      l10n?.dzikirAllDone ?? '',
+      action: SnackBarAction(
+        label: l10n?.dzikirRestart ?? '',
+        onPressed: _restart,
+      ),
+    );
   }
 
   @override
@@ -136,6 +194,7 @@ class _DzikirDetailPageState extends State<DzikirDetailPage> {
                         isActive: i == activeIndex,
                         languageCode: languageCode,
                         onTap: () => _onCount(i),
+                        onReset: () => _onReset(i),
                       ),
                     ),
                 ],
@@ -156,6 +215,14 @@ class _DzikirDetailPageState extends State<DzikirDetailPage> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.restart_alt_rounded),
+            tooltip: AppLocalizations.of(context)?.dzikirRestart,
+            color: theme.colorScheme.primary,
+            onPressed: _hasProgress ? _confirmRestart : null,
+          ),
+        ],
       ),
       body: SafeArea(top: false, child: body),
     );

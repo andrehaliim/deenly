@@ -144,8 +144,11 @@
             }
         }
     },
-    "dzikirTapHint": "Ketuk kartu untuk menghitung",
+    "dzikirTapHint": "Ketuk untuk hitung, tahan untuk reset",
     "dzikirAllDone": "Semua dzikir selesai",
+    "dzikirRestart": "Ulangi dari awal",
+    "dzikirRestartConfirm": "Semua hitungan di kategori ini akan direset.",
+    "dzikirItemReset": "Hitungan direset",
     "dzikirVirtue": "Keutamaan",
     "dzikirReminderMorning": "Waktunya Dzikir Pagi",
     "dzikirReminderEvening": "Waktunya Dzikir Petang",

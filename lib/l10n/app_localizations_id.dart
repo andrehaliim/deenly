@@ -313,10 +313,20 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get dzikirTapHint => 'Ketuk kartu untuk menghitung';
+  String get dzikirTapHint => 'Ketuk untuk hitung, tahan untuk reset';
 
   @override
   String get dzikirAllDone => 'Semua dzikir selesai';
+
+  @override
+  String get dzikirRestart => 'Ulangi dari awal';
+
+  @override
+  String get dzikirRestartConfirm =>
+      'Semua hitungan di kategori ini akan direset.';
+
+  @override
+  String get dzikirItemReset => 'Hitungan direset';
 
   @override
   String get dzikirVirtue => 'Keutamaan';

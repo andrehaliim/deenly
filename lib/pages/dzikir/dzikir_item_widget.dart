@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// One dzikir as a tappable card: title, remaining count, Arabic text,
 /// transliteration, translation and its virtue. Each tap counts one
-/// recitation; a finished card is dimmed.
+/// recitation and a long press starts its count over; a finished card is
+/// dimmed.
 class DzikirItem extends StatelessWidget {
   final DzikirModel dzikir;
   final int number;
@@ -13,6 +14,7 @@ class DzikirItem extends StatelessWidget {
   final bool isActive;
   final String languageCode;
   final VoidCallback onTap;
+  final VoidCallback onReset;
 
   const DzikirItem({
     super.key,
@@ -22,6 +24,7 @@ class DzikirItem extends StatelessWidget {
     required this.isActive,
     required this.languageCode,
     required this.onTap,
+    required this.onReset,
   });
 
   @override
@@ -50,6 +53,7 @@ class DzikirItem extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: isDone ? null : onTap,
+          onLongPress: remaining < dzikir.count ? onReset : null,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
             child: Column(
