@@ -322,6 +322,27 @@ class AppLocalizationsId extends AppLocalizations {
   String get dzikirVirtue => 'Keutamaan';
 
   @override
+  String get dzikirReminderMorning => 'Waktunya Dzikir Pagi';
+
+  @override
+  String get dzikirReminderEvening => 'Waktunya Dzikir Petang';
+
+  @override
+  String get dzikirReminderStart => 'Mulai Dzikir';
+
+  @override
+  String get dzikirReminderVerse =>
+      '“Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.”';
+
+  @override
+  String get dzikirReminderVerseSource => '(QS. Ar-Ra\'d: 28)';
+
+  @override
+  String dzikirReminderUntil(String time) {
+    return 'Sampai pukul $time';
+  }
+
+  @override
   String get appTitle => 'Deenly';
 
   @override

@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/models/dzikir_period_model.dart';
 import 'package:deenly/models/hadith_model.dart';
 import 'package:deenly/models/prayer_model.dart';
+import 'package:deenly/pages/dzikir/dzikir_detail_page.dart';
 import 'package:deenly/pages/home/home_approximate_notice.dart';
 import 'package:deenly/pages/home/home_city_picker_dialog.dart';
+import 'package:deenly/pages/home/home_dzikir_reminder.dart';
 import 'package:deenly/pages/home/home_hadith_skeleton.dart';
 import 'package:deenly/pages/home/home_hadith_widget.dart';
 import 'package:deenly/pages/home/home_overview_card.dart';
@@ -13,6 +18,7 @@ import 'package:deenly/pages/home/home_prayer_error.dart';
 import 'package:deenly/pages/home/home_prayer_info.dart';
 import 'package:deenly/pages/home/home_prayer_skeleton.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
+import 'package:deenly/proxys/dzikir_proxy.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
 import 'package:deenly/proxys/prayer_log_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
@@ -41,6 +47,8 @@ class HomePageState extends State<HomePage>
   HadithModel? _hadithModel;
   ({int completed, int total, int streak})? _progress;
   bool _isHadithExpanded = false;
+  DzikirPeriod? _dzikirPeriod;
+  Timer? _dzikirTicker;
 
   /// Shortest viewport, before text scaling, that fits the prayer card,
   /// menu and a couple of hadith lines; shorter screens scroll instead of
@@ -49,6 +57,9 @@ class HomePageState extends State<HomePage>
 
   /// Room the approximate location notice takes above the card.
   static const double _noticeHeight = 110;
+
+  /// How often to check whether a dzikir window opened or closed.
+  static const Duration _dzikirCheckInterval = Duration(seconds: 30);
 
   static const double _sectionSpacing = 16;
   static const double _bottomPadding = 16;
@@ -65,6 +76,41 @@ class HomePageState extends State<HomePage>
     loadPrayerData(true);
     _loadHadithData();
     loadProgress();
+    _dzikirTicker = Timer.periodic(
+      _dzikirCheckInterval,
+      (_) => _updateDzikirPeriod(),
+    );
+  }
+
+  void _updateDzikirPeriod() {
+    final prayerModel = _prayerModel;
+    final period = prayerModel == null
+        ? null
+        : DzikirPeriod.at(prayerModel, DateTime.now());
+    if (period == _dzikirPeriod || !mounted) return;
+    setState(() => _dzikirPeriod = period);
+  }
+
+  Future<void> _openDzikir(DzikirPeriod period) async {
+    try {
+      final categories = await DzikirProxy().getCategories();
+      final category = categories
+          .where((category) => category.id == period.categoryId)
+          .firstOrNull;
+      if (category == null || !mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => DzikirDetailPage(category: category)),
+      );
+    } catch (e, st) {
+      debugPrint('Opening dzikir failed: $e\n$st');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)?.dzikirLoadFailed ?? ''),
+        ),
+      );
+    }
   }
 
   /// Re-read when coming back to this tab, since prayers are marked on the
@@ -91,6 +137,7 @@ class HomePageState extends State<HomePage>
 
   @override
   void dispose() {
+    _dzikirTicker?.cancel();
     _entranceController.dispose();
     super.dispose();
   }
@@ -136,6 +183,7 @@ class HomePageState extends State<HomePage>
     } catch (e, st) {
       debugPrint('Reading cached prayer data failed: $e\n$st');
     }
+    _updateDzikirPeriod();
   }
 
   Future<void> _updateWidgetAndNotifications(PrayerModel prayerModel) async {
@@ -214,6 +262,7 @@ class HomePageState extends State<HomePage>
 
     final showNotice =
         !_isGettingPrayerData && prayerModel != null && _isApproximate;
+    final dzikirPeriod = _isGettingPrayerData ? null : _dzikirPeriod;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -221,23 +270,30 @@ class HomePageState extends State<HomePage>
             MediaQuery.textScalerOf(context).scale(_minFillHeight) +
             (showNotice ? _noticeHeight : 0);
 
-        /// Collapsed, the page is exactly one screen and the hadith fills
+        /// Collapsed, the page is exactly one screen and the footer fills
         /// what the prayer card and menu leave, down to the bottom nav.
+        final isHadithExpanded = _isHadithExpanded && dzikirPeriod == null;
         final fillsHeight =
-            !_isHadithExpanded && constraints.maxHeight >= minFillHeight;
+            !isHadithExpanded && constraints.maxHeight >= minFillHeight;
 
-        /// The hadith is optional: hide it if loading failed.
-        final Widget? hadithFooter = _isGettingHadithData
-            ? const HomeHadithSkeleton()
-            : hadithModel != null
-            ? HomeHadithWidget(
-                hadithModel: hadithModel,
-                isExpanded: _isHadithExpanded,
-                fillsHeight: fillsHeight,
-                onToggleExpanded: () =>
-                    setState(() => _isHadithExpanded = !_isHadithExpanded),
-              )
-            : null;
+        /// During a dzikir window the reminder takes the hadith's place;
+        /// otherwise the hadith is optional and hidden if loading failed.
+        final Widget? footer = switch ((dzikirPeriod, prayerModel)) {
+          (final period?, final prayer?) => HomeDzikirReminder(
+            period: period,
+            endTime: period.endTime(prayer),
+            onStart: () => _openDzikir(period),
+          ),
+          _ when _isGettingHadithData => const HomeHadithSkeleton(),
+          _ when hadithModel != null => HomeHadithWidget(
+            hadithModel: hadithModel,
+            isExpanded: _isHadithExpanded,
+            fillsHeight: fillsHeight,
+            onToggleExpanded: () =>
+                setState(() => _isHadithExpanded = !_isHadithExpanded),
+          ),
+          _ => null,
+        };
 
         return SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: _bottomPadding),
@@ -264,7 +320,7 @@ class HomePageState extends State<HomePage>
                     index: showNotice ? 1 : 0,
                     child: HomeOverviewCard(
                       header: prayerHeader,
-                      footer: hadithFooter,
+                      footer: footer,
                       fillsHeight: fillsHeight,
                     ),
                   ),

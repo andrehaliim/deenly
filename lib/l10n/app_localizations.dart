@@ -668,6 +668,42 @@ abstract class AppLocalizations {
   /// **'Virtue'**
   String get dzikirVirtue;
 
+  /// No description provided for @dzikirReminderMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for morning dhikr'**
+  String get dzikirReminderMorning;
+
+  /// No description provided for @dzikirReminderEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for evening dhikr'**
+  String get dzikirReminderEvening;
+
+  /// No description provided for @dzikirReminderStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start dhikr'**
+  String get dzikirReminderStart;
+
+  /// No description provided for @dzikirReminderVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'“Verily, in the remembrance of Allah do hearts find rest.”'**
+  String get dzikirReminderVerse;
+
+  /// No description provided for @dzikirReminderVerseSource.
+  ///
+  /// In en, this message translates to:
+  /// **'(QS. Ar-Ra\'d: 28)'**
+  String get dzikirReminderVerseSource;
+
+  /// No description provided for @dzikirReminderUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Until {time}'**
+  String dzikirReminderUntil(String time);
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

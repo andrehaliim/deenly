@@ -147,6 +147,12 @@
     "dzikirTapHint": "Ketuk kartu untuk menghitung",
     "dzikirAllDone": "Semua dzikir selesai",
     "dzikirVirtue": "Keutamaan",
+    "dzikirReminderMorning": "Waktunya Dzikir Pagi",
+    "dzikirReminderEvening": "Waktunya Dzikir Petang",
+    "dzikirReminderStart": "Mulai Dzikir",
+    "dzikirReminderVerse": "“Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.”",
+    "dzikirReminderVerseSource": "(QS. Ar-Ra'd: 28)",
+    "dzikirReminderUntil": "Sampai pukul {time}",
 
     "appTitle": "Deenly",
     "splashTagline": "Teman ibadah Muslim modern",

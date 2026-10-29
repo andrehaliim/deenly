@@ -202,6 +202,20 @@
     "dzikirTapHint": "Tap a card to count",
     "dzikirAllDone": "All dhikr completed",
     "dzikirVirtue": "Virtue",
+    "dzikirReminderMorning": "Time for morning dhikr",
+    "dzikirReminderEvening": "Time for evening dhikr",
+    "dzikirReminderStart": "Start dhikr",
+    "dzikirReminderVerse": "“Verily, in the remembrance of Allah do hearts find rest.”",
+    "dzikirReminderVerseSource": "(QS. Ar-Ra'd: 28)",
+    "dzikirReminderUntil": "Until {time}",
+    "@dzikirReminderUntil": {
+        "placeholders": {
+            "time": {
+                "type": "String",
+                "example": "05:48"
+            }
+        }
+    },
 
     "appTitle": "Deenly",
     "splashTagline": "A companion for the modern Muslim",
