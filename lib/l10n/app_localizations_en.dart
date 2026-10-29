@@ -572,6 +572,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zakatCalculators => 'Zakat Calculator';
 
   @override
+  String get zakatGuide => 'Zakat Guide';
+
+  @override
+  String get zakatGuideLoadFailed => 'Could not load the zakat guide.';
+
+  @override
+  String zakatGuideSource(String name) {
+    return 'Source: $name';
+  }
+
+  @override
+  String zakatVerseReference(String surah, int number, int ayah) {
+    return 'Surah $surah ($number): $ayah';
+  }
+
+  @override
   String get zakatFitrah => 'Zakat Fitrah';
 
   @override

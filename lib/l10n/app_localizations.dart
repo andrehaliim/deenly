@@ -1070,6 +1070,30 @@ abstract class AppLocalizations {
   /// **'Zakat Calculator'**
   String get zakatCalculators;
 
+  /// No description provided for @zakatGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat Guide'**
+  String get zakatGuide;
+
+  /// No description provided for @zakatGuideLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the zakat guide.'**
+  String get zakatGuideLoadFailed;
+
+  /// No description provided for @zakatGuideSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {name}'**
+  String zakatGuideSource(String name);
+
+  /// No description provided for @zakatVerseReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Surah {surah} ({number}): {ayah}'**
+  String zakatVerseReference(String surah, int number, int ayah);
+
   /// No description provided for @zakatFitrah.
   ///
   /// In en, this message translates to:

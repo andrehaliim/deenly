@@ -8,6 +8,7 @@ import 'package:deenly/pages/dzikir/dzikir_page.dart';
 import 'package:deenly/pages/mosque_page.dart';
 import 'package:deenly/pages/qibla_page.dart';
 import 'package:deenly/pages/tasbih_page.dart';
+import 'package:deenly/pages/zakat/zakat_guide_button_widget.dart';
 import 'package:deenly/pages/zakat/zakat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -68,6 +69,7 @@ class HomeMenuGrid extends StatelessWidget {
         FontAwesomeIcons.handHoldingDollar,
         l10n?.menuZakat ?? '',
         page: (_) => const ZakatPage(),
+        actions: const [ZakatGuideButton()],
       ),
     ];
 
@@ -98,8 +100,9 @@ class _MenuItem {
   final FaIconData icon;
   final String label;
   final WidgetBuilder? page;
+  final List<Widget> actions;
 
-  const _MenuItem(this.icon, this.label, {this.page});
+  const _MenuItem(this.icon, this.label, {this.page, this.actions = const []});
 }
 
 class _MenuButton extends StatelessWidget {
@@ -111,7 +114,11 @@ class _MenuButton extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => _MenuPageScaffold(title: item.label, page: page),
+        builder: (context) => _MenuPageScaffold(
+          title: item.label,
+          page: page,
+          actions: item.actions,
+        ),
       ),
     );
   }
@@ -180,8 +187,13 @@ class _MenuButton extends StatelessWidget {
 class _MenuPageScaffold extends StatelessWidget {
   final String title;
   final WidgetBuilder page;
+  final List<Widget> actions;
 
-  const _MenuPageScaffold({required this.title, required this.page});
+  const _MenuPageScaffold({
+    required this.title,
+    required this.page,
+    required this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +206,7 @@ class _MenuPageScaffold extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        actions: actions,
       ),
       body: SafeArea(top: false, child: page(context)),
     );

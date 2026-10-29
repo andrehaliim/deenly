@@ -1,0 +1,173 @@
+{
+  "source": {
+    "name": "BAZNAS",
+    "url": "https://baznas.go.id/zakat"
+  },
+  "sections": [
+    {
+      "id": "definition",
+      "title_id": "Pengertian Zakat",
+      "title_en": "What Is Zakat",
+      "body_id": "Zakat berasal dari kata \"zaka\" yang berarti suci, baik, berkah, tumbuh dan berkembang. Secara istilah, zakat adalah bagian tertentu dari harta yang wajib dikeluarkan oleh setiap muslim yang telah memenuhi syarat, untuk diberikan kepada golongan yang berhak menerimanya. Zakat termasuk rukun Islam. Orang yang membayar zakat disebut muzaki, sedangkan penerimanya disebut mustahik.",
+      "body_en": "Zakat comes from the word \"zaka\", meaning pure, good, blessed and growing. In Islamic law, it is a set portion of wealth that every Muslim who meets the conditions must give to those entitled to receive it. Zakat is one of the pillars of Islam. The one who pays it is called a muzaki, and the one who receives it a mustahik.",
+      "verses": [
+        {
+          "surah": 9,
+          "ayah": 103,
+          "surah_name_id": "At-Taubah",
+          "surah_name_en": "At-Tawbah",
+          "ar": "خُذۡ مِنۡ أَمۡوَ ٰلِهِمۡ صَدَقَةࣰ تُطَهِّرُهُمۡ وَتُزَكِّیهِم بِهَا وَصَلِّ عَلَیۡهِمۡۖ إِنَّ صَلَوٰتَكَ سَكَنࣱ لَّهُمۡۗ وَٱللَّهُ سَمِیعٌ عَلِیمٌ",
+          "translation_id": "Ambillah zakat dari harta mereka, guna membersihkan dan menyucikan mereka, dan berdoalah untuk mereka. Sesungguhnya doamu itu (menumbuhkan) ketenteraman jiwa bagi mereka. Allah Maha Mendengar, Maha Mengetahui.",
+          "translation_en": "Take, [O, Muhammad], from their wealth a charity by which you purify them and cause them increase, and invoke [Allah's blessings] upon them. Indeed, your invocations are reassurance for them. And Allah is Hearing and Knowing."
+        }
+      ]
+    },
+    {
+      "id": "requirements",
+      "title_id": "Syarat Wajib Zakat",
+      "title_en": "Conditions for Zakat",
+      "groups": [
+        {
+          "title_id": "Zakat Mal",
+          "title_en": "Zakat on Wealth",
+          "items": [
+            {
+              "title_id": "Halal",
+              "title_en": "Lawful",
+              "desc_id": "Hartanya halal dan diperoleh dengan cara yang halal.",
+              "desc_en": "The wealth is lawful and was obtained lawfully."
+            },
+            {
+              "title_id": "Milik penuh",
+              "title_en": "Fully owned",
+              "desc_id": "Harta sepenuhnya dimiliki dan dikuasai oleh pemiliknya.",
+              "desc_en": "The wealth is fully owned and controlled by its owner."
+            },
+            {
+              "title_id": "Berkembang",
+              "title_en": "Productive",
+              "desc_id": "Harta dapat tumbuh atau menghasilkan, misalnya uang, emas, barang dagangan atau hasil usaha.",
+              "desc_en": "The wealth can grow or yield returns, such as money, gold, trade goods or business income."
+            },
+            {
+              "title_id": "Mencapai nisab",
+              "title_en": "Reaches the nisab",
+              "desc_id": "Jumlahnya mencapai batas minimal (nisab) sesuai jenis hartanya.",
+              "desc_en": "The amount reaches the minimum threshold (nisab) for its type of wealth."
+            },
+            {
+              "title_id": "Mencapai haul",
+              "title_en": "Held for one year",
+              "desc_id": "Harta telah dimiliki selama satu tahun hijriah.",
+              "desc_en": "The wealth has been held for one lunar year."
+            },
+            {
+              "title_id": "Bebas utang jatuh tempo",
+              "title_en": "Free of short-term debt",
+              "desc_id": "Pemilik tidak sedang menanggung utang jangka pendek yang harus segera dilunasi.",
+              "desc_en": "The owner has no short-term debt that must be paid off soon."
+            }
+          ],
+          "note_id": "Syarat haul tidak berlaku untuk zakat pertanian, perkebunan, kehutanan, perikanan, penghasilan dan jasa, serta rikaz (harta temuan). Zakatnya dikeluarkan saat panen atau saat harta diterima.",
+          "note_en": "The one-year condition does not apply to zakat on farming, plantations, forestry, fisheries, income and services, or rikaz (found treasure). These are paid at harvest or when the wealth is received."
+        },
+        {
+          "title_id": "Zakat Fitrah",
+          "title_en": "Zakat al-Fitr",
+          "items": [
+            {
+              "title_id": "Beragama Islam",
+              "title_en": "Muslim",
+              "desc_id": "Wajib bagi setiap muslim, laki-laki maupun perempuan, dewasa maupun anak-anak.",
+              "desc_en": "Due from every Muslim, male or female, adult or child."
+            },
+            {
+              "title_id": "Hidup di bulan Ramadan",
+              "title_en": "Alive during Ramadan",
+              "desc_id": "Masih hidup saat bulan Ramadan, sampai menjelang Idul Fitri.",
+              "desc_en": "Alive during Ramadan, up to the eve of Eid al-Fitr."
+            },
+            {
+              "title_id": "Ada kelebihan kebutuhan pokok",
+              "title_en": "Has more than basic needs",
+              "desc_id": "Memiliki kelebihan makanan pokok untuk malam dan hari raya Idul Fitri.",
+              "desc_en": "Has more staple food than needed for the night and day of Eid al-Fitr."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "asnaf",
+      "title_id": "8 Golongan Penerima Zakat (Asnaf)",
+      "title_en": "8 Groups Entitled to Zakat (Asnaf)",
+      "body_id": "Allah menetapkan delapan golongan yang berhak menerima zakat dalam QS. At-Taubah ayat 60.",
+      "body_en": "Allah sets out eight groups entitled to receive zakat in Surah At-Tawbah, verse 60.",
+      "verses": [
+        {
+          "surah": 9,
+          "ayah": 60,
+          "surah_name_id": "At-Taubah",
+          "surah_name_en": "At-Tawbah",
+          "ar": "۞ إِنَّمَا ٱلصَّدَقَـٰتُ لِلۡفُقَرَاۤءِ وَٱلۡمَسَـٰكِینِ وَٱلۡعَـٰمِلِینَ عَلَیۡهَا وَٱلۡمُؤَلَّفَةِ قُلُوبُهُمۡ وَفِی ٱلرِّقَابِ وَٱلۡغَـٰرِمِینَ وَفِی سَبِیلِ ٱللَّهِ وَٱبۡنِ ٱلسَّبِیلِۖ فَرِیضَةࣰ مِّنَ ٱللَّهِۗ وَٱللَّهُ عَلِیمٌ حَكِیمࣱ",
+          "translation_id": "Sesungguhnya zakat itu hanyalah untuk orang-orang fakir, orang miskin, amil zakat, orang yang dilunakkan hatinya (mualaf), untuk (memerdekakan) hamba sahaya, untuk (membebaskan) orang yang berhutang, untuk jalan Allah dan untuk orang yang sedang dalam perjalanan, sebagai kewajiban dari Allah. Allah Maha Mengetahui, Mahabijaksana.",
+          "translation_en": "Zakah expenditures are only for the poor and for the needy and for those employed to collect [zakah] and for bringing hearts together [for Islam] and for freeing captives [or slaves] and for those in debt and for the cause of Allah and for the [stranded] traveler - an obligation [imposed] by Allah. And Allah is Knowing and Wise."
+        }
+      ],
+      "groups": [
+        {
+          "items": [
+            {
+              "title_id": "Fakir",
+              "title_en": "Fakir (the poor)",
+              "desc_id": "Orang yang hampir tidak memiliki apa pun, sehingga tidak mampu memenuhi kebutuhan pokoknya.",
+              "desc_en": "Those who own almost nothing and cannot meet their basic needs."
+            },
+            {
+              "title_id": "Miskin",
+              "title_en": "Miskin (the needy)",
+              "desc_id": "Orang yang memiliki harta, tetapi tidak cukup untuk memenuhi kebutuhan dasar hidupnya.",
+              "desc_en": "Those who own something, but not enough to meet their basic needs."
+            },
+            {
+              "title_id": "Amil",
+              "title_en": "Amil (zakat workers)",
+              "desc_id": "Orang yang bertugas mengumpulkan dan menyalurkan zakat.",
+              "desc_en": "Those whose job is to collect and distribute zakat."
+            },
+            {
+              "title_id": "Mualaf",
+              "title_en": "Mualaf (new Muslims)",
+              "desc_id": "Orang yang baru masuk Islam dan perlu dikuatkan iman serta pemahaman agamanya.",
+              "desc_en": "Those new to Islam who need support to strengthen their faith and understanding."
+            },
+            {
+              "title_id": "Riqab",
+              "title_en": "Riqab (freeing slaves)",
+              "desc_id": "Hamba sahaya yang ingin memerdekakan dirinya.",
+              "desc_en": "Slaves seeking to free themselves."
+            },
+            {
+              "title_id": "Gharimin",
+              "title_en": "Gharimin (those in debt)",
+              "desc_id": "Orang yang berutang untuk memenuhi kebutuhan hidup dan menjaga kehormatannya, dan tidak mampu melunasinya.",
+              "desc_en": "Those who went into debt to meet their needs and protect their dignity, and cannot repay it."
+            },
+            {
+              "title_id": "Fisabilillah",
+              "title_en": "Fisabilillah (in Allah's cause)",
+              "desc_id": "Orang yang berjuang di jalan Allah, misalnya dalam kegiatan dakwah.",
+              "desc_en": "Those striving in the cause of Allah, such as in dakwah."
+            },
+            {
+              "title_id": "Ibnu Sabil",
+              "title_en": "Ibnu Sabil (travelers)",
+              "desc_id": "Orang yang kehabisan bekal dalam perjalanan yang bukan untuk maksiat.",
+              "desc_en": "Travelers who run out of means on a journey that is not for wrongdoing."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

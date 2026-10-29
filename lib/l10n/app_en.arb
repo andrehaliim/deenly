@@ -380,6 +380,32 @@
     },
     "zakatPriceSourceDefault": "the app's default price",
     "zakatCalculators": "Zakat Calculator",
+    "zakatGuide": "Zakat Guide",
+    "zakatGuideLoadFailed": "Could not load the zakat guide.",
+    "zakatGuideSource": "Source: {name}",
+    "@zakatGuideSource": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "BAZNAS"
+            }
+        }
+    },
+    "zakatVerseReference": "Surah {surah} ({number}): {ayah}",
+    "@zakatVerseReference": {
+        "placeholders": {
+            "surah": {
+                "type": "String",
+                "example": "At-Tawbah"
+            },
+            "number": {
+                "type": "int"
+            },
+            "ayah": {
+                "type": "int"
+            }
+        }
+    },
     "zakatFitrah": "Zakat Fitrah",
     "zakatFitrahDesc": "Due for every person before Eid al-Fitr",
     "zakatIncome": "Income Zakat",
