@@ -1,8 +1,14 @@
 {
-  "source": {
-    "name": "BAZNAS",
-    "url": "https://baznas.go.id/zakat"
-  },
+  "sources": [
+    {
+      "name": "BAZNAS",
+      "url": "https://baznas.go.id/zakat"
+    },
+    {
+      "name": "BAZNAS Provinsi Lampung",
+      "url": "https://lampung.baznas.go.id/artikel/show/waktu-terbaik-bayar-zakat-fitrah-inilah-batasan-dan-syariatnya/40881"
+    }
+  ],
   "sections": [
     {
       "id": "definition",
@@ -92,6 +98,49 @@
               "title_en": "Has more than basic needs",
               "desc_id": "Memiliki kelebihan makanan pokok untuk malam dan hari raya Idul Fitri.",
               "desc_en": "Has more staple food than needed for the night and day of Eid al-Fitr."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fitrah_time",
+      "title_id": "Waktu Membayar Zakat Fitrah",
+      "title_en": "When to Pay Zakat al-Fitr",
+      "body_id": "Para ulama membagi waktu membayar zakat fitrah menjadi lima, dari yang paling dianjurkan sampai yang dilarang.",
+      "body_en": "Scholars divide the time for paying zakat al-fitr into five, from the most recommended to the forbidden.",
+      "groups": [
+        {
+          "items": [
+            {
+              "title_id": "Waktu wajib",
+              "title_en": "Obligatory time",
+              "desc_id": "Mulai saat matahari terbenam di hari terakhir Ramadan (malam Idulfitri). Setiap muslim yang masih hidup pada saat itu wajib membayar zakat fitrah.",
+              "desc_en": "Starts at sunset on the last day of Ramadan (the eve of Eid al-Fitr). Every Muslim alive at that moment must pay zakat al-fitr."
+            },
+            {
+              "title_id": "Waktu paling utama (afdal)",
+              "title_en": "Best time (afdal)",
+              "desc_id": "Setelah terbit fajar di hari Idulfitri sampai sebelum salat Id, supaya penerima bisa memakainya tepat di hari raya.",
+              "desc_en": "From dawn on the day of Eid al-Fitr until before the Eid prayer, so recipients can use it on the day of Eid itself."
+            },
+            {
+              "title_id": "Waktu yang dibolehkan",
+              "title_en": "Permitted time",
+              "desc_id": "Sejak awal Ramadan menurut mazhab Syafi'i, dan inilah yang umum dipraktikkan di Indonesia melalui BAZNAS. Sebagian ulama hanya membolehkannya dua atau tiga hari sebelum Idulfitri.",
+              "desc_en": "From the start of Ramadan according to the Shafi'i school, which is the common practice in Indonesia through BAZNAS. Some scholars only allow it two or three days before Eid al-Fitr."
+            },
+            {
+              "title_id": "Waktu makruh",
+              "title_en": "Disliked time (makruh)",
+              "desc_id": "Setelah salat Id tanpa alasan yang dibenarkan, karena tujuan membantu fakir miskin merayakan hari raya jadi kurang tercapai.",
+              "desc_en": "After the Eid prayer without a valid reason, since it falls short of helping the poor celebrate Eid."
+            },
+            {
+              "title_id": "Waktu haram",
+              "title_en": "Forbidden time",
+              "desc_id": "Setelah hari raya berlalu tanpa alasan yang dibenarkan. Pelakunya berdosa, dan pembayarannya hanya dihitung sebagai sedekah biasa, bukan zakat fitrah.",
+              "desc_en": "After the day of Eid has passed without a valid reason. This is sinful, and the payment counts only as ordinary charity, not as zakat al-fitr."
             }
           ]
         }

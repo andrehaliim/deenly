@@ -1,37 +1,15 @@
-/// A text kept in both app languages, read from a pair of JSON keys with
-/// the `_id` and `_en` suffixes.
-class LocalizedText {
-  final String indonesian;
-  final String english;
-
-  const LocalizedText({required this.indonesian, required this.english});
-
-  static LocalizedText? maybeFromJson(Map<String, dynamic> json, String key) {
-    final indonesian = json['${key}_id'];
-    final english = json['${key}_en'];
-    if (indonesian is! String || english is! String) return null;
-    return LocalizedText(indonesian: indonesian, english: english);
-  }
-
-  String of(String languageCode) => languageCode == 'id' ? indonesian : english;
-}
+import 'package:deenly/models/localized_text_model.dart';
+import 'package:deenly/models/zakat_source_model.dart';
 
 class ZakatGuideModel {
-  final String sourceName;
-  final String sourceUrl;
+  final List<ZakatSourceModel> sources;
   final List<ZakatGuideSectionModel> sections;
 
-  const ZakatGuideModel({
-    required this.sourceName,
-    required this.sourceUrl,
-    required this.sections,
-  });
+  const ZakatGuideModel({required this.sources, required this.sections});
 
   factory ZakatGuideModel.fromJson(Map<String, dynamic> json) {
-    final source = json['source'] as Map<String, dynamic>;
     return ZakatGuideModel(
-      sourceName: source['name'] as String,
-      sourceUrl: source['url'] as String,
+      sources: ZakatSourceModel.listFromJson(json['sources']),
       sections: (json['sections'] as List<dynamic>)
           .map(
             (e) => ZakatGuideSectionModel.fromJson(e as Map<String, dynamic>),

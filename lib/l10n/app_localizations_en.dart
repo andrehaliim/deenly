@@ -578,6 +578,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zakatGuideLoadFailed => 'Could not load the zakat guide.';
 
   @override
+  String get zakatNiat => 'Niyyah & Dua';
+
+  @override
+  String get zakatNiatLoadFailed => 'Could not load the zakat intentions.';
+
+  @override
   String zakatGuideSource(String name) {
     return 'Source: $name';
   }

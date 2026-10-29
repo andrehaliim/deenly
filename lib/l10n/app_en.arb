@@ -382,6 +382,8 @@
     "zakatCalculators": "Zakat Calculator",
     "zakatGuide": "Zakat Guide",
     "zakatGuideLoadFailed": "Could not load the zakat guide.",
+    "zakatNiat": "Niyyah & Dua",
+    "zakatNiatLoadFailed": "Could not load the zakat intentions.",
     "zakatGuideSource": "Source: {name}",
     "@zakatGuideSource": {
         "placeholders": {

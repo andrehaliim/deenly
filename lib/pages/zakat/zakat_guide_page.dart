@@ -1,14 +1,15 @@
 import 'package:deenly/components/app_theme.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/zakat_guide_model.dart';
-import 'package:deenly/pages/zakat/zakat_guide_error_widget.dart';
 import 'package:deenly/pages/zakat/zakat_guide_section_widget.dart';
+import 'package:deenly/pages/zakat/zakat_load_error_widget.dart';
+import 'package:deenly/pages/zakat/zakat_source_link_widget.dart';
 import 'package:deenly/proxys/zakat_guide_proxy.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-/// Basic zakat knowledge (meaning, conditions and recipients) read from
-/// the bundled guide, ending with a link to its source.
+/// Basic zakat knowledge (meaning, conditions, when to pay zakat al-fitr
+/// and recipients) read from the bundled guide, ending with links to its
+/// sources.
 class ZakatGuidePage extends StatefulWidget {
   const ZakatGuidePage({super.key});
 
@@ -43,26 +44,6 @@ class _ZakatGuidePageState extends State<ZakatGuidePage> {
     });
   }
 
-  Future<void> _openSource(String url) async {
-    bool opened;
-    try {
-      opened = await launchUrl(
-        Uri.parse(url),
-        mode: LaunchMode.externalApplication,
-      );
-    } catch (e) {
-      opened = false;
-    }
-
-    if (!opened && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)?.couldNotOpenLink ?? ''),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -74,7 +55,10 @@ class _ZakatGuidePageState extends State<ZakatGuidePage> {
     if (_isLoading) {
       body = const Center(child: CircularProgressIndicator());
     } else if (guide == null) {
-      body = ZakatGuideError(onRetry: _loadGuide);
+      body = ZakatLoadError(
+        message: l10n?.zakatGuideLoadFailed ?? '',
+        onRetry: _loadGuide,
+      );
     } else {
       body = ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -83,10 +67,8 @@ class _ZakatGuidePageState extends State<ZakatGuidePage> {
             ZakatGuideSection(section: section, languageCode: languageCode),
             const SizedBox(height: 16),
           ],
-          _GuideSource(
-            name: guide.sourceName,
-            onTap: () => _openSource(guide.sourceUrl),
-          ),
+          for (final source in guide.sources)
+            ZakatSourceLink(name: source.name, url: source.url),
         ],
       );
     }
@@ -103,34 +85,6 @@ class _ZakatGuidePageState extends State<ZakatGuidePage> {
         centerTitle: true,
       ),
       body: SafeArea(top: false, child: body),
-    );
-  }
-}
-
-class _GuideSource extends StatelessWidget {
-  final String name;
-  final VoidCallback onTap;
-
-  const _GuideSource({required this.name, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final l10n = AppLocalizations.of(context);
-
-    return Center(
-      child: TextButton.icon(
-        onPressed: onTap,
-        icon: const Icon(Icons.open_in_new_rounded, size: 16),
-        label: Text(
-          l10n?.zakatGuideSource(name) ?? name,
-          style: theme.textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: colorScheme.primary,
-          ),
-        ),
-      ),
     );
   }
 }

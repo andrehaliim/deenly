@@ -1,10 +1,17 @@
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
-class ZakatGuideError extends StatelessWidget {
+/// Shown when bundled zakat content (the guide or the niats) fails to
+/// load, with a [message] naming what failed.
+class ZakatLoadError extends StatelessWidget {
+  final String message;
   final VoidCallback onRetry;
 
-  const ZakatGuideError({super.key, required this.onRetry});
+  const ZakatLoadError({
+    super.key,
+    required this.message,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +26,7 @@ class ZakatGuideError extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              l10n?.zakatGuideLoadFailed ?? '',
+              message,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,

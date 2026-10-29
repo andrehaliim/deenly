@@ -1082,6 +1082,18 @@ abstract class AppLocalizations {
   /// **'Could not load the zakat guide.'**
   String get zakatGuideLoadFailed;
 
+  /// No description provided for @zakatNiat.
+  ///
+  /// In en, this message translates to:
+  /// **'Niyyah & Dua'**
+  String get zakatNiat;
+
+  /// No description provided for @zakatNiatLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the zakat intentions.'**
+  String get zakatNiatLoadFailed;
+
   /// No description provided for @zakatGuideSource.
   ///
   /// In en, this message translates to:

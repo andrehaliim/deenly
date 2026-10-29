@@ -219,6 +219,8 @@
     "zakatCalculators": "Kalkulator Zakat",
     "zakatGuide": "Panduan Zakat",
     "zakatGuideLoadFailed": "Gagal memuat panduan zakat.",
+    "zakatNiat": "Niat & Doa",
+    "zakatNiatLoadFailed": "Gagal memuat niat zakat.",
     "zakatGuideSource": "Sumber: {name}",
     "zakatVerseReference": "QS. {surah} ({number}): {ayah}",
     "zakatFitrah": "Zakat Fitrah",

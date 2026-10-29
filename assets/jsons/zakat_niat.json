@@ -1,0 +1,110 @@
+{
+  "sources": [
+    {
+      "name": "MUI",
+      "url": "https://mui.or.id/baca/bimbingan/niat-zakat-fitrah-lengkap-arab-latin-dan-artinya-69b51c7f9bcee"
+    },
+    {
+      "name": "BAZNAS Kota Manado",
+      "url": "https://kotamanado.baznas.go.id/artikel/show/niat-zakat-fitrah-dan-zakat-mal/39290"
+    }
+  ],
+  "data": [
+    {
+      "id": "fitrah_self",
+      "grup": "Niat Zakat Fitrah",
+      "grup_en": "Zakat al-Fitr Intentions",
+      "nama": "Untuk Diri Sendiri",
+      "nama_en": "For Oneself",
+      "ar": "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ الْفِطْرِ عَنْ نَفْسِي فَرْضًا لِلّٰهِ تَعَالَى",
+      "tr": "Nawaitu an ukhrija zakaatal fithri 'an nafsii fardhan lillaahi ta'aalaa.",
+      "idn": "Aku niat mengeluarkan zakat fitrah untuk diriku sendiri, fardu karena Allah Ta'ala.",
+      "en": "I intend to give zakat al-fitr for myself, as an obligation for the sake of Allah the Exalted."
+    },
+    {
+      "id": "fitrah_wife",
+      "grup": "Niat Zakat Fitrah",
+      "grup_en": "Zakat al-Fitr Intentions",
+      "nama": "Untuk Istri",
+      "nama_en": "For One's Wife",
+      "ar": "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ الْفِطْرِ عَنْ زَوْجَتِي فَرْضًا لِلّٰهِ تَعَالَى",
+      "tr": "Nawaitu an ukhrija zakaatal fithri 'an zaujatii fardhan lillaahi ta'aalaa.",
+      "idn": "Aku niat mengeluarkan zakat fitrah untuk istriku, fardu karena Allah Ta'ala.",
+      "en": "I intend to give zakat al-fitr for my wife, as an obligation for the sake of Allah the Exalted."
+    },
+    {
+      "id": "fitrah_son",
+      "grup": "Niat Zakat Fitrah",
+      "grup_en": "Zakat al-Fitr Intentions",
+      "nama": "Untuk Anak Laki-laki",
+      "nama_en": "For One's Son",
+      "ar": "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ الْفِطْرِ عَنْ وَلَدِي ... فَرْضًا لِلّٰهِ تَعَالَى",
+      "tr": "Nawaitu an ukhrija zakaatal fithri 'an waladii ... fardhan lillaahi ta'aalaa.",
+      "idn": "Aku niat mengeluarkan zakat fitrah untuk anak laki-lakiku ..., fardu karena Allah Ta'ala.",
+      "en": "I intend to give zakat al-fitr for my son ..., as an obligation for the sake of Allah the Exalted.",
+      "catatan": "Sebutkan nama anak pada bagian \"...\".",
+      "catatan_en": "Say the child's name in place of \"...\"."
+    },
+    {
+      "id": "fitrah_daughter",
+      "grup": "Niat Zakat Fitrah",
+      "grup_en": "Zakat al-Fitr Intentions",
+      "nama": "Untuk Anak Perempuan",
+      "nama_en": "For One's Daughter",
+      "ar": "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ الْفِطْرِ عَنْ بِنْتِي ... فَرْضًا لِلّٰهِ تَعَالَى",
+      "tr": "Nawaitu an ukhrija zakaatal fithri 'an bintii ... fardhan lillaahi ta'aalaa.",
+      "idn": "Aku niat mengeluarkan zakat fitrah untuk anak perempuanku ..., fardu karena Allah Ta'ala.",
+      "en": "I intend to give zakat al-fitr for my daughter ..., as an obligation for the sake of Allah the Exalted.",
+      "catatan": "Sebutkan nama anak pada bagian \"...\".",
+      "catatan_en": "Say the child's name in place of \"...\"."
+    },
+    {
+      "id": "fitrah_family",
+      "grup": "Niat Zakat Fitrah",
+      "grup_en": "Zakat al-Fitr Intentions",
+      "nama": "Untuk Diri Sendiri dan Keluarga",
+      "nama_en": "For Oneself and One's Family",
+      "ar": "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ الْفِطْرِ عَنِّي وَعَنْ جَمِيْعِ مَا يَلْزَمُنِيْ نَفَقَتُهُمْ شَرْعًا فَرْضًا لِلّٰهِ تَعَالَى",
+      "tr": "Nawaitu an ukhrija zakaatal fithri 'annii wa 'an jamii'i maa yalzamunii nafaqatuhum syar'an fardhan lillaahi ta'aalaa.",
+      "idn": "Aku niat mengeluarkan zakat fitrah untuk diriku dan seluruh orang yang nafkahnya menjadi tanggunganku secara syariat, fardu karena Allah Ta'ala.",
+      "en": "I intend to give zakat al-fitr for myself and for everyone whose support is my duty under Islamic law, as an obligation for the sake of Allah the Exalted."
+    },
+    {
+      "id": "fitrah_represented",
+      "grup": "Niat Zakat Fitrah",
+      "grup_en": "Zakat al-Fitr Intentions",
+      "nama": "Untuk Orang yang Diwakilkan",
+      "nama_en": "On Someone Else's Behalf",
+      "ar": "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ الْفِطْرِ عَنْ ... فَرْضًا لِلّٰهِ تَعَالَى",
+      "tr": "Nawaitu an ukhrija zakaatal fithri 'an ... fardhan lillaahi ta'aalaa.",
+      "idn": "Aku niat mengeluarkan zakat fitrah untuk ..., fardu karena Allah Ta'ala.",
+      "en": "I intend to give zakat al-fitr for ..., as an obligation for the sake of Allah the Exalted.",
+      "catatan": "Sebutkan nama orang yang diwakilkan pada bagian \"...\".",
+      "catatan_en": "Say the name of the person you are paying for in place of \"...\"."
+    },
+    {
+      "id": "maal",
+      "grup": "Niat Zakat Mal",
+      "grup_en": "Zakat on Wealth Intention",
+      "nama": "Niat Zakat Mal",
+      "nama_en": "Intention for Zakat on Wealth",
+      "ar": "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ مَالِي فَرْضًا لِلَّهِ تَعَالَى",
+      "tr": "Nawaitu an ukhrija zakaata maalii fardhan lillaahi ta'aalaa.",
+      "idn": "Aku niat mengeluarkan zakat hartaku, fardu karena Allah Ta'ala.",
+      "en": "I intend to give the zakat on my wealth, as an obligation for the sake of Allah the Exalted."
+    },
+    {
+      "id": "receive",
+      "grup": "Doa Menerima Zakat",
+      "grup_en": "Prayer When Receiving Zakat",
+      "nama": "Doa Menerima Zakat",
+      "nama_en": "Prayer When Receiving Zakat",
+      "ar": "أَجَرَكَ اللهُ فِيْمَا أَعْطَيْتَ وَبَارَكَ فِيْمَا أَبْقَيْتَ وَجَعَلَهُ لَكَ طَهُوْرًا",
+      "tr": "Ajarakallaahu fiimaa a'thaita wa baaraka fiimaa abqaita wa ja'alahu laka thahuuraa.",
+      "idn": "Semoga Allah memberikan pahala atas apa yang engkau berikan, memberkahi harta yang engkau simpan, dan menjadikannya pembersih bagimu.",
+      "en": "May Allah reward you for what you have given, bless what you have kept, and make it a purification for you.",
+      "catatan": "Dibaca oleh penerima atau amil zakat untuk mendoakan pemberi zakat.",
+      "catatan_en": "Said by the recipient or the zakat collector as a prayer for the giver."
+    }
+  ]
+}
