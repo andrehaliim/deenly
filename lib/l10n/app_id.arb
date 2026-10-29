@@ -209,6 +209,9 @@
     "jumuah": "Jumat",
     "notificationMarkDone": "Sudah shalat",
     "settingMissedTitle": "Pengingat jika belum shalat",
+    "settingDzikirTitle": "Pengingat dzikir pagi & petang",
+    "notificationDzikirMorningBody": "Luangkan beberapa menit untuk dzikir pagi sebelum matahari terbit",
+    "notificationDzikirEveningBody": "Luangkan beberapa menit untuk dzikir petang sebelum Maghrib",
     "notificationMissedTitle": "Sudah shalat {prayer}?",
     "notificationMissedBody": "Tandai jika sudah, supaya progresmu tercatat",
 

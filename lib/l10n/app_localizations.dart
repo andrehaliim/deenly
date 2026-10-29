@@ -1028,6 +1028,24 @@ abstract class AppLocalizations {
   /// **'Reminder if not prayed yet'**
   String get settingMissedTitle;
 
+  /// No description provided for @settingDzikirTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning & evening dhikr reminder'**
+  String get settingDzikirTitle;
+
+  /// No description provided for @notificationDzikirMorningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a few minutes for morning dhikr before sunrise'**
+  String get notificationDzikirMorningBody;
+
+  /// No description provided for @notificationDzikirEveningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a few minutes for evening dhikr before Maghrib'**
+  String get notificationDzikirEveningBody;
+
   /// No description provided for @notificationMissedTitle.
   ///
   /// In en, this message translates to:

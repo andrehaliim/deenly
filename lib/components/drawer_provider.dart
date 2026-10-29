@@ -34,6 +34,9 @@ class DrawerProvider extends ChangeNotifier {
   bool _isMissedReminderEnabled = false;
   bool get isMissedReminderEnabled => _isMissedReminderEnabled;
 
+  bool _isDzikirReminderEnabled = false;
+  bool get isDzikirReminderEnabled => _isDzikirReminderEnabled;
+
   DrawerProvider(this.prefs, Map<String, int> adjustments) {
     _adjustments.addAll(adjustments);
     _loadSettings();
@@ -56,6 +59,8 @@ class DrawerProvider extends ChangeNotifier {
     _isReminderEnabled = prefs.getBool('isReminderEnabled') ?? false;
     _isMissedReminderEnabled =
         prefs.getBool(NotificationHelper.keyMissedReminder) ?? false;
+    _isDzikirReminderEnabled =
+        prefs.getBool(NotificationHelper.keyDzikirReminder) ?? false;
   }
 
   Future<void> togglePrayer(String prayer, bool value) async {
@@ -65,8 +70,9 @@ class DrawerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Turns on the adhan, before-prayer and after-prayer notifications.
-  /// They are scheduled once the home page loads the prayer times.
+  /// Turns on the adhan, before-prayer, after-prayer and dzikir
+  /// notifications. They are scheduled once the home page loads the prayer
+  /// times.
   Future<void> enableAllNotifications() async {
     for (final prayer in prayers) {
       await togglePrayer(prayer, true);
@@ -75,6 +81,8 @@ class DrawerProvider extends ChangeNotifier {
     await prefs.setBool('isReminderEnabled', true);
     _isMissedReminderEnabled = true;
     await prefs.setBool(NotificationHelper.keyMissedReminder, true);
+    _isDzikirReminderEnabled = true;
+    await prefs.setBool(NotificationHelper.keyDzikirReminder, true);
     notifyListeners();
   }
 
@@ -157,6 +165,29 @@ class DrawerProvider extends ChangeNotifier {
         return false;
       }
       await NotificationHelper().scheduleMissedReminders(prayerModel);
+    }
+
+    notifyListeners();
+    return true;
+  }
+
+  /// Turns the morning and evening dzikir reminders on or off. Returns
+  /// false, leaving them off, when there are no prayer times to use.
+  Future<bool> toggleDzikirReminder(bool value) async {
+    _isDzikirReminderEnabled = value;
+    await prefs.setBool(NotificationHelper.keyDzikirReminder, value);
+
+    if (!value) {
+      await NotificationHelper().disableDzikirReminders();
+    } else {
+      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+      if (prayerModel == null) {
+        _isDzikirReminderEnabled = false;
+        await prefs.setBool(NotificationHelper.keyDzikirReminder, false);
+        notifyListeners();
+        return false;
+      }
+      await NotificationHelper().scheduleDzikirReminders(prayerModel);
     }
 
     notifyListeners();

@@ -100,9 +100,10 @@ class _SettingPageState extends State<SettingPage>
                 ),
                 trailing: SettingSwitch(
                   value: isIndonesian,
-                  onChanged: (value) {
-                    localeProvider.setLocale(Locale(value ? 'id' : 'en'));
-                  },
+                  onChanged: (value) => _onLanguageChanged(
+                    localeProvider,
+                    Locale(value ? 'id' : 'en'),
+                  ),
                 ),
               );
             },
@@ -171,6 +172,28 @@ class _SettingPageState extends State<SettingPage>
               value: drawerProvider.isMissedReminderEnabled,
               onChanged: (value) async {
                 final success = await drawerProvider.toggleMissedReminder(
+                  value,
+                );
+                if (!success && mounted) {
+                  _showSnackBar(
+                    AppLocalizations.of(context)?.reminderEnableFailed ?? '',
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+      SettingSection(
+        title: l10n?.settingDzikirTitle ?? '',
+        children: [
+          SettingTile(
+            icon: Icons.auto_awesome_rounded,
+            title: l10n?.settingBeforeValue ?? '',
+            trailing: SettingSwitch(
+              value: drawerProvider.isDzikirReminderEnabled,
+              onChanged: (value) async {
+                final success = await drawerProvider.toggleDzikirReminder(
                   value,
                 );
                 if (!success && mounted) {
@@ -291,6 +314,22 @@ class _SettingPageState extends State<SettingPage>
       _showSnackBar(
         AppLocalizations.of(context)?.notificationScheduleFailed ?? '',
       );
+    }
+  }
+
+  /// Scheduled notifications keep the language they were scheduled in, so
+  /// they are scheduled again once the new language is saved.
+  Future<void> _onLanguageChanged(
+    LocaleProvider localeProvider,
+    Locale locale,
+  ) async {
+    await localeProvider.setLocale(locale);
+    try {
+      final prayerModel = await PrayerProxy().getTodayPrayer();
+      if (prayerModel == null) return;
+      await NotificationHelper().rescheduleAll(prayerModel);
+    } catch (e, st) {
+      debugPrint('Rescheduling notifications failed: $e\n$st');
     }
   }
 

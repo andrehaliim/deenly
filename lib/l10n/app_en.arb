@@ -341,6 +341,9 @@
     "jumuah": "Jumu'ah",
     "notificationMarkDone": "I have prayed",
     "settingMissedTitle": "Reminder if not prayed yet",
+    "settingDzikirTitle": "Morning & evening dhikr reminder",
+    "notificationDzikirMorningBody": "Take a few minutes for morning dhikr before sunrise",
+    "notificationDzikirEveningBody": "Take a few minutes for evening dhikr before Maghrib",
     "notificationMissedTitle": "Have you prayed {prayer}?",
     "@notificationMissedTitle": {
         "placeholders": {

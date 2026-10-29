@@ -3,6 +3,7 @@ import 'dart:ui' show DartPluginRegistrant, PlatformDispatcher;
 
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/models/dzikir_period_model.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_log_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
@@ -41,6 +42,19 @@ class NotificationHelper {
   /// Isha has no end, so it comes [_missedReminderLead] after it began.
   static const Duration _missedReminderLead = Duration(minutes: 30);
   static const Duration _missedReminderMinDelay = Duration(minutes: 15);
+
+  static const String keyDzikirReminder = 'isDzikirReminderEnabled';
+
+  /// Ids of the morning and evening dzikir reminders, after the missed
+  /// prayer reminders (101-105).
+  static const Map<DzikirPeriod, int> _dzikirReminderIds = {
+    DzikirPeriod.morning: 201,
+    DzikirPeriod.evening: 202,
+  };
+
+  /// A dzikir reminder comes this long after its window opens (Fajr or
+  /// Asr), leaving time to pray first.
+  static const Duration _dzikirReminderDelay = Duration(minutes: 15);
 
   /// Time each prayer ends, as a [PrayerModel.toJson] key.
   static const Map<String, String> _prayerEnds = {
@@ -259,6 +273,15 @@ class NotificationHelper {
     }
   }
 
+  /// Schedules every enabled notification afresh. Their text is fixed when
+  /// scheduled, so this also runs after the app language changes.
+  Future<void> rescheduleAll(PrayerModel prayerModel) async {
+    await scheduleAllPrayerNotifications(prayerModel);
+    await scheduleReminderNotifications(prayerModel);
+    await scheduleMissedReminders(prayerModel);
+    await scheduleDzikirReminders(prayerModel);
+  }
+
   Future<bool> scheduleReminderNotification({
     required int notifId,
     required String prayerName,
@@ -466,6 +489,70 @@ class NotificationHelper {
       payload: _adhanPayload(scheduledTime, prayer),
     );
     debugPrint('Missed reminder scheduled for $prayer at $scheduledTime');
+  }
+
+  /// Schedules the morning and evening dzikir reminders, when enabled. One
+  /// whose time already passed today is moved to tomorrow.
+  Future<void> scheduleDzikirReminders(PrayerModel prayerModel) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(keyDzikirReminder) != true) return;
+
+    final l10n = await _loadL10n();
+    for (final period in DzikirPeriod.values) {
+      final start = _todayAt(period.startTime(prayerModel));
+      final id = _dzikirReminderIds[period];
+      if (start == null || id == null) continue;
+
+      var time = start.add(_dzikirReminderDelay);
+      if (!time.isAfter(DateTime.now())) {
+        time = time.add(const Duration(days: 1));
+      }
+      await _scheduleDzikirReminder(id, period, time, l10n);
+    }
+  }
+
+  Future<void> disableDzikirReminders() async {
+    for (final id in _dzikirReminderIds.values) {
+      await cancelNotification(id);
+    }
+  }
+
+  Future<void> _scheduleDzikirReminder(
+    int id,
+    DzikirPeriod period,
+    DateTime time,
+    AppLocalizations l10n,
+  ) async {
+    final scheduledTime = tz.TZDateTime.from(time, tz.local);
+    final (title, body) = switch (period) {
+      DzikirPeriod.morning => (
+        l10n.dzikirReminderMorning,
+        l10n.notificationDzikirMorningBody,
+      ),
+      DzikirPeriod.evening => (
+        l10n.dzikirReminderEvening,
+        l10n.notificationDzikirEveningBody,
+      ),
+    };
+
+    const androidNotificationDetails = AndroidNotificationDetails(
+      'deenly_dzikir_channel',
+      'Deenly Dzikir Reminders',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: const NotificationDetails(
+        android: androidNotificationDetails,
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      scheduledDate: scheduledTime,
+    );
+    debugPrint('Dzikir reminder scheduled for ${period.name} at $time');
   }
 
   /// Loads the strings for the user's chosen app language, falling back to

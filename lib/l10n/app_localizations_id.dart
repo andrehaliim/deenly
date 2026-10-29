@@ -536,6 +536,17 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingMissedTitle => 'Pengingat jika belum shalat';
 
   @override
+  String get settingDzikirTitle => 'Pengingat dzikir pagi & petang';
+
+  @override
+  String get notificationDzikirMorningBody =>
+      'Luangkan beberapa menit untuk dzikir pagi sebelum matahari terbit';
+
+  @override
+  String get notificationDzikirEveningBody =>
+      'Luangkan beberapa menit untuk dzikir petang sebelum Maghrib';
+
+  @override
   String notificationMissedTitle(String prayer) {
     return 'Sudah shalat $prayer?';
   }

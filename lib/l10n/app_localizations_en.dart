@@ -542,6 +542,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingMissedTitle => 'Reminder if not prayed yet';
 
   @override
+  String get settingDzikirTitle => 'Morning & evening dhikr reminder';
+
+  @override
+  String get notificationDzikirMorningBody =>
+      'Take a few minutes for morning dhikr before sunrise';
+
+  @override
+  String get notificationDzikirEveningBody =>
+      'Take a few minutes for evening dhikr before Maghrib';
+
+  @override
   String notificationMissedTitle(String prayer) {
     return 'Have you prayed $prayer?';
   }
