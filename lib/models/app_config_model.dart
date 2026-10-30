@@ -29,7 +29,11 @@ class AppConfigModel {
       if (month < 1 || month > 12) {
         throw FormatException('Invalid Hijri month: $key');
       }
-      starts[year * 12 + month - 1] = DateTime.parse(value as String);
+
+      /// Only the calendar date counts: a time or UTC offset would move the
+      /// start to another local day.
+      final date = DateTime.parse((value as String).split('T').first);
+      starts[year * 12 + month - 1] = DateTime(date.year, date.month, date.day);
     });
 
     return AppConfigModel(

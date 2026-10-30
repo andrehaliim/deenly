@@ -89,15 +89,80 @@ class HijriCalendarHelper {
 
   /// First Gregorian day of the Hijri month at [index]: the official date
   /// when there is one, else the calculated date with the user's
-  /// adjustment.
+  /// adjustment, moved where needed so that no month next to an official
+  /// one gets fewer than 29 or more than 30 days.
   DateTime startOf(int index) {
-    return monthStarts[index] ??
-        HijriDateModel(
-          index ~/ 12,
-          index % 12 + 1,
-          1,
-        ).toGregorian(adjustment: adjustment);
+    final cache = _startCache[this] ??= {};
+    return cache[index] ??= _resolveStart(index);
   }
+
+  /// Month starts already resolved, per helper. A helper never changes,
+  /// so they stay valid for its lifetime.
+  static final Expando<Map<int, DateTime>> _startCache = Expando();
+
+  DateTime _resolveStart(int index) {
+    final official = monthStarts[index];
+    if (official != null) return _dateOnly(official);
+
+    final previous = _nearestOfficial(index, -1);
+    final next = _nearestOfficial(index, 1);
+    if (previous == null && next == null) return _calculatedStart(index);
+
+    /// Walks forward from the previous official start, keeping each month
+    /// 29–30 days while drifting back to the calculated dates, then
+    /// backward from the next official start the same way.
+    final first = previous == null ? index : previous + 1;
+    final last = next == null ? index : next - 1;
+    final starts = <int, DateTime>{};
+    var start = previous == null ? null : startOf(previous);
+    for (var i = first; i <= last; i++) {
+      final calculated = _calculatedStart(i);
+      start = start == null ? calculated : _clampLength(calculated, start, 1);
+      starts[i] = start;
+    }
+    if (next != null) {
+      var after = startOf(next);
+      for (var i = last; i >= first; i--) {
+        after = _clampLength(starts[i] ?? _calculatedStart(i), after, -1);
+        starts[i] = after;
+      }
+    }
+    return starts[index] ?? _calculatedStart(index);
+  }
+
+  /// How many months away an official start still shifts estimated ones.
+  static const int _officialReach = 12;
+
+  int? _nearestOfficial(int index, int step) {
+    for (var i = 1; i <= _officialReach; i++) {
+      final candidate = index + step * i;
+      if (monthStarts.containsKey(candidate)) return candidate;
+    }
+    return null;
+  }
+
+  DateTime _calculatedStart(int index) {
+    return HijriDateModel(
+      index ~/ 12,
+      index % 12 + 1,
+      1,
+    ).toGregorian(adjustment: adjustment);
+  }
+
+  /// [start] moved to 29 or 30 days after [neighbour] when [direction] is
+  /// 1, or before it when -1, if it is not already.
+  static DateTime _clampLength(
+    DateTime start,
+    DateTime neighbour,
+    int direction,
+  ) {
+    final gap = daysBetween(neighbour, start) * direction;
+    final days = gap.clamp(29, 30) * direction;
+    return DateTime(neighbour.year, neighbour.month, neighbour.day + days);
+  }
+
+  static DateTime _dateOnly(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
 
   CalendarDayModel dayOf(DateTime date) {
     final hijri = hijriOf(date);
