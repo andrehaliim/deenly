@@ -582,10 +582,23 @@ class NotificationHelper {
     );
   }
 
+  /// Runs the calendar scheduling one call at a time, so a call that reads
+  /// newer calendar data (e.g. right after the isbat dates arrive) is never
+  /// overwritten by an older one that finishes later.
+  static Future<void> _calendarScheduling = Future.value();
+
   /// Schedules a reminder on each of the next evenings before a holiday
   /// or sunnah fast, for the kinds that are enabled. Several events on the
   /// same day share one notification.
-  Future<void> scheduleCalendarReminders() async {
+  Future<void> scheduleCalendarReminders() {
+    final scheduling = _calendarScheduling.then(
+      (_) => _scheduleCalendarReminders(),
+    );
+    _calendarScheduling = scheduling.catchError((Object _) {});
+    return scheduling;
+  }
+
+  Future<void> _scheduleCalendarReminders() async {
     await disableCalendarReminders();
 
     final prefs = await SharedPreferences.getInstance();

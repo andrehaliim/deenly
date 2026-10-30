@@ -81,11 +81,20 @@ class CalendarProvider extends ChangeNotifier {
 
   /// Called by the provider tree with the official month starts from the
   /// app config, keyed by month index (`year * 12 + month - 1`).
+  /// New isbat dates can move today into another Hijri month and the
+  /// holidays to other days, so the month shown and the reminders follow.
   void updateMonthStarts(Map<int, DateTime> starts) {
     if (mapEquals(starts, _calendar.monthStarts)) return;
+    final wasShowingToday = isShowingToday;
     _calendar = _calendar.copyWith(monthStarts: starts);
     _nextEventDay = null;
+    if (wasShowingToday) {
+      _hijriMonth = _hijriMonthOf(hijriOf(DateTime.now()));
+    }
     Future.microtask(notifyListeners);
+    NotificationHelper().scheduleCalendarReminders().catchError(
+      (Object e) => debugPrint('Rescheduling calendar reminders failed: $e'),
+    );
   }
 
   HijriDateModel hijriOf(DateTime date) => _calendar.hijriOf(date);
