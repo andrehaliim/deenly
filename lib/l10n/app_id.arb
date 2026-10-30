@@ -25,6 +25,8 @@
     "completed": "Selesai",
     "hadithTitle": "Hadis Harian",
     "hadithNarrated": "Diriwayatkan oleh: ",
+    "hadithSourceBukhari": "HR. Bukhari no. {number}",
+    "hadithSourceMuslim": "HR. Muslim no. {number}",
     "showMore": "Selengkapnya",
     "showLess": "Lebih sedikit",
 

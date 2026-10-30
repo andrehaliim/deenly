@@ -25,6 +25,24 @@
     "completed": "Completed",
     "hadithTitle": "Daily Hadith",
     "hadithNarrated": "Narrated by: ",
+    "hadithSourceBukhari": "Sahih al-Bukhari {number}",
+    "@hadithSourceBukhari": {
+        "placeholders": {
+            "number": {
+                "type": "String",
+                "example": "1"
+            }
+        }
+    },
+    "hadithSourceMuslim": "Sahih Muslim {number}",
+    "@hadithSourceMuslim": {
+        "placeholders": {
+            "number": {
+                "type": "String",
+                "example": "1"
+            }
+        }
+    },
     "showMore": "Show more",
     "showLess": "Show less",
 

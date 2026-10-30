@@ -147,6 +147,12 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
       ),
     );
     final isExpanded = widget.isExpanded;
+    final number = '${widget.hadithModel.hadithNumber}';
+    final source = switch (widget.hadithModel.book) {
+      'bukhari' => l10n?.hadithSourceBukhari(number),
+      'muslim' => l10n?.hadithSourceMuslim(number),
+      _ => null,
+    };
 
     /// Sits on the prayer gradient at the bottom of the home overview card.
     return Padding(
@@ -189,6 +195,7 @@ class _HomeHadithWidgetState extends State<HomeHadithWidget> {
                       .trim(),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
+                if (source != null) TextSpan(text: ' · $source'),
               ],
             ),
             style: theme.textTheme.bodySmall?.copyWith(

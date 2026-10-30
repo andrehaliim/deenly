@@ -79,6 +79,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hadithNarrated => 'Narrated by: ';
 
   @override
+  String hadithSourceBukhari(String number) {
+    return 'Sahih al-Bukhari $number';
+  }
+
+  @override
+  String hadithSourceMuslim(String number) {
+    return 'Sahih Muslim $number';
+  }
+
+  @override
   String get showMore => 'Show more';
 
   @override

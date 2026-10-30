@@ -236,6 +236,18 @@ abstract class AppLocalizations {
   /// **'Narrated by: '**
   String get hadithNarrated;
 
+  /// No description provided for @hadithSourceBukhari.
+  ///
+  /// In en, this message translates to:
+  /// **'Sahih al-Bukhari {number}'**
+  String hadithSourceBukhari(String number);
+
+  /// No description provided for @hadithSourceMuslim.
+  ///
+  /// In en, this message translates to:
+  /// **'Sahih Muslim {number}'**
+  String hadithSourceMuslim(String number);
+
   /// No description provided for @showMore.
   ///
   /// In en, this message translates to:
