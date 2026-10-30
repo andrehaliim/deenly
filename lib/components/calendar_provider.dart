@@ -21,7 +21,11 @@ class CalendarProvider extends ChangeNotifier {
   Map<int, DateTime> _monthStarts = const {};
   bool _isHijriPrimary = false;
   bool _isLoaded = false;
+  Future<void>? _loading;
   EventOccurrenceModel? _nextEvent;
+
+  /// The day [_nextEvent] was found for; null when it must be found again.
+  DateTime? _nextEventDay;
 
   /// The month shown: a Gregorian month (day 1) or, when [isHijriPrimary],
   /// a Hijri month (day 1). Only the one matching the mode is used.
@@ -37,16 +41,29 @@ class CalendarProvider extends ChangeNotifier {
   bool get hasOfficialMonthStarts => _monthStarts.isNotEmpty;
   bool get isHijriPrimary => _isHijriPrimary;
   bool get isLoaded => _isLoaded;
-  EventOccurrenceModel? get nextEvent => _nextEvent;
+
+  /// Found again once the day changes, so the countdown moves on after
+  /// midnight even while the app stays open.
+  EventOccurrenceModel? get nextEvent {
+    final today = DateUtils.dateOnly(DateTime.now());
+    if (_nextEventDay != today) {
+      _nextEvent = _findNextEvent(today);
+      _nextEventDay = today;
+    }
+    return _nextEvent;
+  }
+
   DateTime get gregorianMonth => _gregorianMonth;
   HijriDateModel get hijriMonth => _hijriMonth;
 
+  /// Safe to call more than once (home and the calendar page both do);
+  /// the data is read once and each call shows today's month.
   Future<void> load() async {
-    if (_isLoaded) {
-      showToday();
-      return;
-    }
+    await (_loading ??= _loadData());
+    showToday();
+  }
 
+  Future<void> _loadData() async {
     try {
       _adjustment = await _proxy.getAdjustment();
       _isHijriPrimary = await _proxy.getHijriPrimary();
@@ -61,8 +78,7 @@ class CalendarProvider extends ChangeNotifier {
     }
 
     _isLoaded = true;
-    _nextEvent = _findNextEvent();
-    showToday();
+    _nextEventDay = null;
   }
 
   /// Called by the provider tree with the official month starts from the
@@ -70,7 +86,7 @@ class CalendarProvider extends ChangeNotifier {
   void updateMonthStarts(Map<int, DateTime> starts) {
     if (mapEquals(starts, _monthStarts)) return;
     _monthStarts = starts;
-    if (_isLoaded) _nextEvent = _findNextEvent();
+    _nextEventDay = null;
     Future.microtask(notifyListeners);
   }
 
@@ -231,13 +247,12 @@ class CalendarProvider extends ChangeNotifier {
     final value = days.clamp(-maxAdjustment, maxAdjustment);
     if (value == _adjustment) return;
     _adjustment = value;
-    _nextEvent = _findNextEvent();
+    _nextEventDay = null;
     notifyListeners();
     await _proxy.saveAdjustment(value);
   }
 
-  EventOccurrenceModel? _findNextEvent() {
-    final today = DateTime.now();
+  EventOccurrenceModel? _findNextEvent(DateTime today) {
     for (var i = 0; i < _lookAheadDays; i++) {
       final date = DateTime(today.year, today.month, today.day + i);
       final hijri = hijriOf(date);

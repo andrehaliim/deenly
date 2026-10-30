@@ -134,7 +134,7 @@ void main() async {
           },
         ),
         ChangeNotifierProxyProvider<AppConfigProvider, CalendarProvider>(
-          create: (_) => CalendarProvider(),
+          create: (_) => CalendarProvider()..load(),
           update: (_, appConfig, calendarProvider) {
             final provider = calendarProvider ?? CalendarProvider();
             provider.updateMonthStarts(

@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:deenly/components/calendar_provider.dart';
+import 'package:deenly/components/hijri_format.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/models/hijri_date_model.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/prayers/prayer_icon.dart';
 import 'package:deenly/pages/quran/eight_point_star_painter.dart';
@@ -109,13 +112,17 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
         : l10n.durationMinutes(minutes);
   }
 
-  String _gregorianDate(String? languageCode) {
+  DateTime? _modelDate() {
     try {
-      final date = DateFormat('dd-MM-yyyy').parse(widget.prayerModel.date);
-      return DateFormat('EEEE, d MMMM yyyy', languageCode).format(date);
+      return DateFormat('dd-MM-yyyy').parse(widget.prayerModel.date);
     } catch (_) {
-      return widget.prayerModel.date;
+      return null;
     }
+  }
+
+  String _gregorianDate(DateTime? date, String? languageCode) {
+    if (date == null) return widget.prayerModel.date;
+    return DateFormat('EEEE, d MMMM yyyy', languageCode).format(date);
   }
 
   @override
@@ -127,6 +134,13 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
     final l10n = AppLocalizations.of(context);
     final languageCode = context.watch<LocaleProvider>().locale?.languageCode;
     final model = widget.prayerModel;
+    final date = _modelDate();
+
+    /// From the calendar rather than the prayer API, so it follows the
+    /// user's adjustment and the official isbat dates.
+    final hijri = context.select<CalendarProvider, HijriDateModel>(
+      (calendar) => calendar.hijriOf(date ?? _now),
+    );
     final timings = model.toJson();
     final nextPrayer = _next['nextPrayer'] ?? '';
     final nextTime = _next['nextTime'] ?? '';
@@ -170,7 +184,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
               ),
               const SizedBox(height: 10),
               Text(
-                '${model.hijriDate} ${model.hijriMonth} ${model.hijriYear}',
+                HijriFormat.full(l10n, hijri),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
@@ -178,7 +192,7 @@ class _HomePrayerInfoState extends State<HomePrayerInfo> {
                 ),
               ),
               Text(
-                _gregorianDate(languageCode),
+                _gregorianDate(date, languageCode),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: onCard.withValues(alpha: 0.75),
