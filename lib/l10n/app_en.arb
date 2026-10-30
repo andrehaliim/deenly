@@ -347,6 +347,31 @@
     "settingDzikirTitle": "Morning & evening dhikr reminder",
     "notificationDzikirMorningBody": "Take a few minutes for morning dhikr before sunrise",
     "notificationDzikirEveningBody": "Take a few minutes for evening dhikr before Maghrib",
+    "settingCalendarTitle": "Calendar reminders (the evening before, 8 PM)",
+    "settingCalendarHoliday": "Islamic holidays",
+    "settingCalendarSunnahFast": "Sunnah fasts",
+    "calendarReminderTitle": "Tomorrow: {names}",
+    "@calendarReminderTitle": {
+        "placeholders": {
+            "names": {
+                "type": "String",
+                "example": "Ayyamul Bidh Fast, Thursday fast"
+            }
+        }
+    },
+    "calendarReminderFastingBody": "Remember to make your intention and prepare for suhoor.",
+    "calendarReminderHolidayBody": "Tomorrow is {date}.",
+    "@calendarReminderHolidayBody": {
+        "placeholders": {
+            "date": {
+                "type": "String",
+                "example": "1 Ramadan 1448 AH"
+            }
+        }
+    },
+    "calendarReminderEstimate": "The date is an estimate until the official moon sighting (isbat) is announced.",
+    "calendarReminderMondayFast": "Monday fast",
+    "calendarReminderThursdayFast": "Thursday fast",
     "notificationMissedTitle": "Have you prayed {prayer}?",
     "@notificationMissedTitle": {
         "placeholders": {

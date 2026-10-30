@@ -564,6 +564,40 @@ class AppLocalizationsEn extends AppLocalizations {
       'Take a few minutes for evening dhikr before Maghrib';
 
   @override
+  String get settingCalendarTitle =>
+      'Calendar reminders (the evening before, 8 PM)';
+
+  @override
+  String get settingCalendarHoliday => 'Islamic holidays';
+
+  @override
+  String get settingCalendarSunnahFast => 'Sunnah fasts';
+
+  @override
+  String calendarReminderTitle(String names) {
+    return 'Tomorrow: $names';
+  }
+
+  @override
+  String get calendarReminderFastingBody =>
+      'Remember to make your intention and prepare for suhoor.';
+
+  @override
+  String calendarReminderHolidayBody(String date) {
+    return 'Tomorrow is $date.';
+  }
+
+  @override
+  String get calendarReminderEstimate =>
+      'The date is an estimate until the official moon sighting (isbat) is announced.';
+
+  @override
+  String get calendarReminderMondayFast => 'Monday fast';
+
+  @override
+  String get calendarReminderThursdayFast => 'Thursday fast';
+
+  @override
   String notificationMissedTitle(String prayer) {
     return 'Have you prayed $prayer?';
   }

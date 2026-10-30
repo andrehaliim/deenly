@@ -1,12 +1,16 @@
 import 'dart:io';
 import 'dart:ui' show DartPluginRegistrant, PlatformDispatcher;
 
+import 'package:deenly/components/hijri_calendar_helper.dart';
+import 'package:deenly/components/hijri_format.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/dzikir_period_model.dart';
+import 'package:deenly/models/islamic_event_model.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_log_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -55,6 +59,24 @@ class NotificationHelper {
   /// A dzikir reminder comes this long after its window opens (Fajr or
   /// Asr), leaving time to pray first.
   static const Duration _dzikirReminderDelay = Duration(minutes: 15);
+
+  static const String keyHolidayReminder = 'isHolidayReminderEnabled';
+  static const String keySunnahFastReminder = 'isSunnahFastReminderEnabled';
+  static const String keyMondayThursdayReminder =
+      'isMondayThursdayReminderEnabled';
+
+  /// Calendar reminders are scheduled this many evenings ahead, so they
+  /// keep coming when the daily task runs late. Ids follow the dzikir
+  /// reminders (301 onwards).
+  static const int _calendarReminderDays = 7;
+  static const int _calendarReminderIdBase = 301;
+
+  /// Hour of the evening before the event that its reminder comes.
+  static const int _calendarReminderHour = 20;
+
+  /// Ramadan, Shawwal and Dhul Hijjah start on the isbat, so their dates
+  /// are an estimate until the official start is in the app config.
+  static const Set<int> _isbatMonths = {9, 10, 12};
 
   /// Time each prayer ends, as a [PrayerModel.toJson] key.
   static const Map<String, String> _prayerEnds = {
@@ -219,8 +241,6 @@ class NotificationHelper {
       scheduledDate: scheduledTime,
       payload: _adhanPayload(scheduledTime, prayerName),
     );
-
-    debugPrint("Notification scheduled for $prayerName at $scheduledTime");
     return true;
   }
 
@@ -280,6 +300,8 @@ class NotificationHelper {
     await scheduleReminderNotifications(prayerModel);
     await scheduleMissedReminders(prayerModel);
     await scheduleDzikirReminders(prayerModel);
+    await scheduleCalendarReminders();
+    await logNotificationStatus('reschedule all');
   }
 
   Future<bool> scheduleReminderNotification({
@@ -331,8 +353,6 @@ class NotificationHelper {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       scheduledDate: reminderTime,
     );
-
-    debugPrint("Reminder scheduled for $prayerName at $reminderTime");
     return true;
   }
 
@@ -369,7 +389,6 @@ class NotificationHelper {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isReminderEnabled', false);
     }
-    debugPrint("All reminder notifications disabled");
   }
 
   static int _missedReminderIdOf(String prayer) =>
@@ -488,7 +507,6 @@ class NotificationHelper {
       scheduledDate: scheduledTime,
       payload: _adhanPayload(scheduledTime, prayer),
     );
-    debugPrint('Missed reminder scheduled for $prayer at $scheduledTime');
   }
 
   /// Schedules the morning and evening dzikir reminders, when enabled. One
@@ -552,7 +570,103 @@ class NotificationHelper {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       scheduledDate: scheduledTime,
     );
-    debugPrint('Dzikir reminder scheduled for ${period.name} at $time');
+  }
+
+  /// Schedules a reminder on each of the next evenings before a holiday
+  /// or sunnah fast, for the kinds that are enabled. Several events on the
+  /// same day share one notification.
+  Future<void> scheduleCalendarReminders() async {
+    await disableCalendarReminders();
+
+    final prefs = await SharedPreferences.getInstance();
+    final isHolidayOn = prefs.getBool(keyHolidayReminder) == true;
+    final isSunnahOn = prefs.getBool(keySunnahFastReminder) == true;
+    final isMondayThursdayOn = prefs.getBool(keyMondayThursdayReminder) == true;
+    if (!isHolidayOn && !isSunnahOn && !isMondayThursdayOn) return;
+
+    final calendar = await HijriCalendarHelper.loadSaved();
+    final l10n = await _loadL10n();
+    final now = DateTime.now();
+    for (var i = 0; i < _calendarReminderDays; i++) {
+      final time = DateTime(
+        now.year,
+        now.month,
+        now.day + i,
+        _calendarReminderHour,
+      );
+      if (!time.isAfter(now)) continue;
+
+      final day = calendar.dayOf(DateTime(time.year, time.month, time.day + 1));
+      final events = day.events.where((event) {
+        if (!event.startsOn(day.hijri)) return false;
+        return (isHolidayOn && event.isHoliday) ||
+            (isSunnahOn && event.fasting == FastingType.sunnah);
+      }).toList();
+      final isMondayThursday = isMondayThursdayOn && day.isMondayThursdayFast;
+
+      final names = [
+        for (final event in events) event.name(l10n.localeName),
+        if (isMondayThursday)
+          day.date.weekday == DateTime.monday
+              ? l10n.calendarReminderMondayFast
+              : l10n.calendarReminderThursdayFast,
+      ];
+      if (names.isEmpty) continue;
+
+      final isFasting =
+          isMondayThursday ||
+          events.any((event) => event.fasting == FastingType.sunnah);
+      final isEstimate =
+          events.any((event) => _isbatMonths.contains(event.month)) &&
+          !calendar.isOfficialMonth(day.hijri);
+      final body = [
+        isFasting
+            ? l10n.calendarReminderFastingBody
+            : l10n.calendarReminderHolidayBody(
+                HijriFormat.full(l10n, day.hijri),
+              ),
+        if (isEstimate) l10n.calendarReminderEstimate,
+      ].join(' ');
+
+      await _scheduleCalendarReminder(
+        _calendarReminderIdBase + i,
+        l10n.calendarReminderTitle(names.join(', ')),
+        body,
+        time,
+      );
+    }
+  }
+
+  Future<void> disableCalendarReminders() async {
+    for (var i = 0; i < _calendarReminderDays; i++) {
+      await cancelNotification(_calendarReminderIdBase + i);
+    }
+  }
+
+  Future<void> _scheduleCalendarReminder(
+    int id,
+    String title,
+    String body,
+    DateTime time,
+  ) async {
+    final androidNotificationDetails = AndroidNotificationDetails(
+      'deenly_calendar_channel',
+      'Deenly Calendar Reminders',
+      importance: Importance.high,
+      priority: Priority.high,
+      styleInformation: BigTextStyleInformation(body),
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: NotificationDetails(
+        android: androidNotificationDetails,
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      scheduledDate: tz.TZDateTime.from(time, tz.local),
+    );
   }
 
   /// Loads the strings for the user's chosen app language, falling back to
@@ -598,8 +712,6 @@ class NotificationHelper {
 
   Future<void> cancelNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id: id);
-
-    debugPrint("Notification cancelled for $id");
   }
 
   Future<void> showNotification({
@@ -631,19 +743,165 @@ class NotificationHelper {
     );
   }
 
-  Future<void> getPendingNotifications() async {
-    final List<PendingNotificationRequest> pending =
-        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+  static const List<int> _reminderIds = [11, 22, 33, 44, 55];
 
-    if (pending.isEmpty) {
-      debugPrint('No scheduled notifications');
-      return;
+  static List<int> get _missedReminderIds => [
+    for (final prayer in PrayerLogProxy.trackedPrayers)
+      _missedReminderIdOf(prayer),
+  ];
+
+  static List<int> get _calendarReminderIds => [
+    for (var i = 0; i < _calendarReminderDays; i++) _calendarReminderIdBase + i,
+  ];
+
+  /// Name and notification ids of the kind each toggle's [key] controls.
+  static ({String name, List<int> ids})? _toggleKindOf(String key) {
+    for (final (i, prayer) in PrayerLogProxy.trackedPrayers.indexed) {
+      if (key == 'is${prayer}Enabled') {
+        return (name: 'Adhan $prayer', ids: [i + 1]);
+      }
+    }
+    return switch (key) {
+      'isReminderEnabled' => (name: 'Before adhan', ids: _reminderIds),
+      keyMissedReminder => (name: 'Missed prayer', ids: _missedReminderIds),
+      keyDzikirReminder => (
+        name: 'Dzikir',
+        ids: _dzikirReminderIds.values.toList(),
+      ),
+      keyHolidayReminder => (
+        name: 'Calendar holiday',
+        ids: _calendarReminderIds,
+      ),
+      keySunnahFastReminder => (
+        name: 'Calendar sunnah fast',
+        ids: _calendarReminderIds,
+      ),
+      keyMondayThursdayReminder => (
+        name: 'Calendar monday-thursday fast',
+        ids: _calendarReminderIds,
+      ),
+      _ => null,
+    };
+  }
+
+  /// Logs, in debug builds only, the notification kind a toggle changed
+  /// and its ids: the ones now pending when turned on, else all of them.
+  Future<void> logNotificationToggle(String key, bool value) async {
+    if (!kDebugMode) return;
+    final kind = _toggleKindOf(key);
+    if (kind == null) return;
+
+    var ids = kind.ids;
+    if (value) {
+      final pending = await flutterLocalNotificationsPlugin
+          .pendingNotificationRequests();
+      final pendingIds = {for (final request in pending) request.id};
+      ids = ids.where(pendingIds.contains).toList();
+    }
+    final action = value ? 'ON, scheduled' : 'OFF, cancelled';
+    debugPrint(
+      '[Notif] ${kind.name} $action id: '
+      '${ids.isEmpty ? '-' : ids.join(', ')}',
+    );
+  }
+
+  /// Logs, in debug builds only, every notification kind with its toggle
+  /// and its pending ids, then each pending notification. A kind that is
+  /// off but still pending, or on but never scheduled, is flagged.
+  Future<void> logNotificationStatus(String reason) async {
+    if (!kDebugMode) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final pending = await flutterLocalNotificationsPlugin
+        .pendingNotificationRequests();
+    final pendingIds = {for (final request in pending) request.id};
+
+    bool? isPermitted;
+    if (Platform.isAndroid) {
+      isPermitted = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.areNotificationsEnabled();
     }
 
-    for (var notification in pending) {
-      debugPrint('ID: ${notification.id}');
-      debugPrint('Title: ${notification.title}');
-      debugPrint('Body: ${notification.body}');
+    bool isOn(String key) => prefs.getBool(key) == true;
+    final isCalendarOn =
+        isOn(keyHolidayReminder) ||
+        isOn(keySunnahFastReminder) ||
+        isOn(keyMondayThursdayReminder);
+
+    /// Missed and calendar reminders may rightly have nothing pending (the
+    /// time passed, the prayer is marked, or no event is near), so only
+    /// the other kinds are flagged when on without anything pending.
+    final kinds = [
+      for (final (i, prayer) in PrayerLogProxy.trackedPrayers.indexed)
+        (
+          name: 'Adhan $prayer',
+          isOn: isOn('is${prayer}Enabled'),
+          ids: [i + 1],
+          isAlwaysPending: true,
+        ),
+      (
+        name: 'Before adhan',
+        isOn: isOn('isReminderEnabled'),
+        ids: _reminderIds,
+        isAlwaysPending: true,
+      ),
+      (
+        name: 'Missed prayer',
+        isOn: isOn(keyMissedReminder),
+        ids: _missedReminderIds,
+        isAlwaysPending: false,
+      ),
+      (
+        name: 'Dzikir',
+        isOn: isOn(keyDzikirReminder),
+        ids: _dzikirReminderIds.values.toList(),
+        isAlwaysPending: true,
+      ),
+      (
+        name: 'Calendar',
+        isOn: isCalendarOn,
+        ids: _calendarReminderIds,
+        isAlwaysPending: false,
+      ),
+    ];
+
+    final lines = [
+      '===== Notifications ($reason) =====',
+      'Permission: ${isPermitted ?? 'unknown'}, pending: ${pending.length}',
+      if (isCalendarOn)
+        'Calendar: holiday ${isOn(keyHolidayReminder)}, '
+            'sunnah ${isOn(keySunnahFastReminder)}, '
+            'monday-thursday ${isOn(keyMondayThursdayReminder)}',
+    ];
+    final knownIds = <int>{};
+    for (final kind in kinds) {
+      knownIds.addAll(kind.ids);
+      final ids = kind.ids.where(pendingIds.contains).toList();
+      final warning = switch ((kind.isOn, ids.isEmpty)) {
+        (false, false) => '  <-- OFF but pending',
+        (true, true) when kind.isAlwaysPending => '  <-- ON but not pending',
+        _ => '',
+      };
+      final status = kind.isOn ? 'ON ' : 'OFF';
+      lines.add(
+        '${kind.name.padRight(14)} $status pending: '
+        '${ids.isEmpty ? '-' : ids.join(', ')}$warning',
+      );
+    }
+    final otherIds = pendingIds.difference(knownIds);
+    if (otherIds.isNotEmpty) lines.add('Other pending: ${otherIds.join(', ')}');
+
+    final sorted = pending.toList()..sort((a, b) => a.id.compareTo(b.id));
+    for (final request in sorted) {
+      lines.add('#${request.id} ${request.title} | ${request.body}');
+    }
+    lines.add('=' * 40);
+
+    for (final line in lines) {
+      debugPrint('[Notif] $line');
     }
   }
 }

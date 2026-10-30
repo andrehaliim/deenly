@@ -1064,6 +1064,60 @@ abstract class AppLocalizations {
   /// **'Take a few minutes for evening dhikr before Maghrib'**
   String get notificationDzikirEveningBody;
 
+  /// No description provided for @settingCalendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar reminders (the evening before, 8 PM)'**
+  String get settingCalendarTitle;
+
+  /// No description provided for @settingCalendarHoliday.
+  ///
+  /// In en, this message translates to:
+  /// **'Islamic holidays'**
+  String get settingCalendarHoliday;
+
+  /// No description provided for @settingCalendarSunnahFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunnah fasts'**
+  String get settingCalendarSunnahFast;
+
+  /// No description provided for @calendarReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow: {names}'**
+  String calendarReminderTitle(String names);
+
+  /// No description provided for @calendarReminderFastingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember to make your intention and prepare for suhoor.'**
+  String get calendarReminderFastingBody;
+
+  /// No description provided for @calendarReminderHolidayBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow is {date}.'**
+  String calendarReminderHolidayBody(String date);
+
+  /// No description provided for @calendarReminderEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'The date is an estimate until the official moon sighting (isbat) is announced.'**
+  String get calendarReminderEstimate;
+
+  /// No description provided for @calendarReminderMondayFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday fast'**
+  String get calendarReminderMondayFast;
+
+  /// No description provided for @calendarReminderThursdayFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday fast'**
+  String get calendarReminderThursdayFast;
+
   /// No description provided for @notificationMissedTitle.
   ///
   /// In en, this message translates to:

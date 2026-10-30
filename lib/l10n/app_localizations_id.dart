@@ -558,6 +558,40 @@ class AppLocalizationsId extends AppLocalizations {
       'Luangkan beberapa menit untuk dzikir petang sebelum Maghrib';
 
   @override
+  String get settingCalendarTitle =>
+      'Pengingat kalender (malam sebelumnya, 20.00)';
+
+  @override
+  String get settingCalendarHoliday => 'Hari besar Islam';
+
+  @override
+  String get settingCalendarSunnahFast => 'Puasa sunnah';
+
+  @override
+  String calendarReminderTitle(String names) {
+    return 'Besok: $names';
+  }
+
+  @override
+  String get calendarReminderFastingBody =>
+      'Jangan lupa niat dan siapkan sahur.';
+
+  @override
+  String calendarReminderHolidayBody(String date) {
+    return 'Besok bertepatan dengan $date.';
+  }
+
+  @override
+  String get calendarReminderEstimate =>
+      'Tanggal masih perkiraan, tunggu hasil sidang isbat.';
+
+  @override
+  String get calendarReminderMondayFast => 'Puasa Senin';
+
+  @override
+  String get calendarReminderThursdayFast => 'Puasa Kamis';
+
+  @override
   String notificationMissedTitle(String prayer) {
     return 'Sudah shalat $prayer?';
   }

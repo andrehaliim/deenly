@@ -37,6 +37,15 @@ class DrawerProvider extends ChangeNotifier {
   bool _isDzikirReminderEnabled = false;
   bool get isDzikirReminderEnabled => _isDzikirReminderEnabled;
 
+  bool _isHolidayReminderEnabled = false;
+  bool get isHolidayReminderEnabled => _isHolidayReminderEnabled;
+
+  bool _isSunnahFastReminderEnabled = false;
+  bool get isSunnahFastReminderEnabled => _isSunnahFastReminderEnabled;
+
+  bool _isMondayThursdayReminderEnabled = false;
+  bool get isMondayThursdayReminderEnabled => _isMondayThursdayReminderEnabled;
+
   DrawerProvider(this.prefs, Map<String, int> adjustments) {
     _adjustments.addAll(adjustments);
     _loadSettings();
@@ -61,6 +70,12 @@ class DrawerProvider extends ChangeNotifier {
         prefs.getBool(NotificationHelper.keyMissedReminder) ?? false;
     _isDzikirReminderEnabled =
         prefs.getBool(NotificationHelper.keyDzikirReminder) ?? false;
+    _isHolidayReminderEnabled =
+        prefs.getBool(NotificationHelper.keyHolidayReminder) ?? false;
+    _isSunnahFastReminderEnabled =
+        prefs.getBool(NotificationHelper.keySunnahFastReminder) ?? false;
+    _isMondayThursdayReminderEnabled =
+        prefs.getBool(NotificationHelper.keyMondayThursdayReminder) ?? false;
   }
 
   Future<void> togglePrayer(String prayer, bool value) async {
@@ -70,8 +85,9 @@ class DrawerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Turns on the adhan, before-prayer, after-prayer and dzikir
-  /// notifications. They are scheduled once the home page loads the prayer
+  /// Turns on the adhan, before-prayer, after-prayer, dzikir and calendar
+  /// notifications, except the Monday-Thursday fast reminder, which comes
+  /// twice a week. They are scheduled once the home page loads the prayer
   /// times.
   Future<void> enableAllNotifications() async {
     for (final prayer in prayers) {
@@ -83,7 +99,40 @@ class DrawerProvider extends ChangeNotifier {
     await prefs.setBool(NotificationHelper.keyMissedReminder, true);
     _isDzikirReminderEnabled = true;
     await prefs.setBool(NotificationHelper.keyDzikirReminder, true);
+    _isHolidayReminderEnabled = true;
+    await prefs.setBool(NotificationHelper.keyHolidayReminder, true);
+    _isSunnahFastReminderEnabled = true;
+    await prefs.setBool(NotificationHelper.keySunnahFastReminder, true);
     notifyListeners();
+  }
+
+  Future<void> toggleHolidayReminder(bool value) async {
+    _isHolidayReminderEnabled = value;
+    await _saveCalendarReminder(NotificationHelper.keyHolidayReminder, value);
+  }
+
+  Future<void> toggleSunnahFastReminder(bool value) async {
+    _isSunnahFastReminderEnabled = value;
+    await _saveCalendarReminder(
+      NotificationHelper.keySunnahFastReminder,
+      value,
+    );
+  }
+
+  Future<void> toggleMondayThursdayReminder(bool value) async {
+    _isMondayThursdayReminderEnabled = value;
+    await _saveCalendarReminder(
+      NotificationHelper.keyMondayThursdayReminder,
+      value,
+    );
+  }
+
+  /// Calendar reminders don't need prayer times, so they always schedule.
+  Future<void> _saveCalendarReminder(String key, bool value) async {
+    notifyListeners();
+    await prefs.setBool(key, value);
+    await NotificationHelper().scheduleCalendarReminders();
+    await NotificationHelper().logNotificationToggle(key, value);
   }
 
   /// Turns the adhan notification of [prayer] on or off and schedules it.
@@ -91,13 +140,18 @@ class DrawerProvider extends ChangeNotifier {
   Future<bool> setPrayerNotification(String prayer, bool value) async {
     await togglePrayer(prayer, value);
     final notifId = notificationIdOf(prayer);
+    var success = true;
     if (!value) {
       await NotificationHelper().cancelNotification(notifId);
-      return true;
+    } else {
+      success = await _schedulePrayerNotification(prayer, notifId);
+      if (!success) await togglePrayer(prayer, false);
     }
 
-    final success = await _schedulePrayerNotification(prayer, notifId);
-    if (!success) await togglePrayer(prayer, false);
+    await NotificationHelper().logNotificationToggle(
+      _enabledKey(prayer),
+      value,
+    );
     return success;
   }
 
@@ -167,6 +221,10 @@ class DrawerProvider extends ChangeNotifier {
       await NotificationHelper().scheduleMissedReminders(prayerModel);
     }
 
+    await NotificationHelper().logNotificationToggle(
+      NotificationHelper.keyMissedReminder,
+      value,
+    );
     notifyListeners();
     return true;
   }
@@ -190,6 +248,10 @@ class DrawerProvider extends ChangeNotifier {
       await NotificationHelper().scheduleDzikirReminders(prayerModel);
     }
 
+    await NotificationHelper().logNotificationToggle(
+      NotificationHelper.keyDzikirReminder,
+      value,
+    );
     notifyListeners();
     return true;
   }
@@ -211,6 +273,10 @@ class DrawerProvider extends ChangeNotifier {
       await NotificationHelper().scheduleReminderNotifications(prayerModel);
     }
 
+    await NotificationHelper().logNotificationToggle(
+      'isReminderEnabled',
+      value,
+    );
     notifyListeners();
     return true;
   }

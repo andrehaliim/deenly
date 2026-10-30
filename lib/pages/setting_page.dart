@@ -207,6 +207,35 @@ class _SettingPageState extends State<SettingPage>
         ],
       ),
       SettingSection(
+        title: l10n?.settingCalendarTitle ?? '',
+        children: [
+          SettingTile(
+            icon: Icons.mosque_rounded,
+            title: l10n?.settingCalendarHoliday ?? '',
+            trailing: SettingSwitch(
+              value: drawerProvider.isHolidayReminderEnabled,
+              onChanged: drawerProvider.toggleHolidayReminder,
+            ),
+          ),
+          SettingTile(
+            icon: Icons.nightlight_round,
+            title: l10n?.settingCalendarSunnahFast ?? '',
+            trailing: SettingSwitch(
+              value: drawerProvider.isSunnahFastReminderEnabled,
+              onChanged: drawerProvider.toggleSunnahFastReminder,
+            ),
+          ),
+          SettingTile(
+            icon: Icons.date_range_rounded,
+            title: l10n?.calendarMondayThursdayFast ?? '',
+            trailing: SettingSwitch(
+              value: drawerProvider.isMondayThursdayReminderEnabled,
+              onChanged: drawerProvider.toggleMondayThursdayReminder,
+            ),
+          ),
+        ],
+      ),
+      SettingSection(
         title: l10n?.settingTimeTitle ?? '',
         isExpanded: drawerProvider.isAdjustmentExpanded,
         onTitleTap: drawerProvider.toggleAdjustmentExpansion,
@@ -255,7 +284,7 @@ class _SettingPageState extends State<SettingPage>
             SettingTile(
               icon: Icons.pending_actions_rounded,
               title: 'List Pending Notification',
-              onTap: NotificationHelper().getPendingNotifications,
+              onTap: () => NotificationHelper().logNotificationStatus('manual'),
             ),
             SettingTile(
               icon: Icons.notification_add_rounded,
@@ -334,9 +363,8 @@ class _SettingPageState extends State<SettingPage>
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _saveAdjustments(DrawerProvider drawerProvider) async {
