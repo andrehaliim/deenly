@@ -1,5 +1,6 @@
 import 'package:deenly/components/app_config_provider.dart';
 import 'package:deenly/components/database_helper.dart';
+import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/fade_page_route.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
@@ -77,6 +78,7 @@ class _SplashPageState extends State<SplashPage>
 
     // Fetched alongside the local steps, so it rarely adds any wait.
     final appConfig = context.read<AppConfigProvider>();
+    final drawerProvider = context.read<DrawerProvider>();
     final configLoaded = appConfig.load();
 
     await _hadithProxy.load();
@@ -113,7 +115,7 @@ class _SplashPageState extends State<SplashPage>
       return UpdateRequiredPage(updateUrl: updateUrl);
     }
 
-    final nextPage = await _resolveNextPage();
+    final nextPage = await _resolveNextPage(drawerProvider);
     _completeStep();
     debugPrint('✅ [8/8] Permission status checked');
 
@@ -122,11 +124,16 @@ class _SplashPageState extends State<SplashPage>
 
   /// Only checks the permission status; the system dialogs are shown on
   /// [PermissionPage] together with an explanation.
-  Future<Widget> _resolveNextPage() async {
+  Future<Widget> _resolveNextPage(DrawerProvider drawerProvider) async {
     final hasLocation =
         await _locationProxy.hasPermission() ||
         await PrayerSyncHelper().hasSavedLocation();
-    final askNotification = await NotificationHelper().shouldAskPermission();
+    final notificationHelper = NotificationHelper();
+    if (await notificationHelper.shouldEnableByDefault()) {
+      await drawerProvider.enableAllNotifications();
+      await notificationHelper.markPermissionAsked();
+    }
+    final askNotification = await notificationHelper.shouldAskPermission();
 
     if (hasLocation && !askNotification) return const MainPage();
 

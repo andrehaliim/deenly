@@ -170,6 +170,16 @@ class NotificationHelper {
     return !await isPermissionGranted();
   }
 
+  /// Android 12 and below allow notifications without a runtime prompt, so
+  /// the onboarding step is skipped there. On a fresh install the default
+  /// notifications are turned on instead, once.
+  Future<bool> shouldEnableByDefault() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(keyPermissionAsked) ?? false) return false;
+    if (prefs.containsKey('isReminderEnabled')) return false;
+    return await isPermissionGranted();
+  }
+
   Future<void> markPermissionAsked() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(keyPermissionAsked, true);
