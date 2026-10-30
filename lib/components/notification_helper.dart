@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:ui' show DartPluginRegistrant, PlatformDispatcher;
+import 'dart:ui' show DartPluginRegistrant;
 
 import 'package:deenly/components/hijri_calendar_helper.dart';
 import 'package:deenly/components/hijri_format.dart';
@@ -693,17 +693,16 @@ class NotificationHelper {
   }
 
   /// Loads the strings for the user's chosen app language, falling back to
-  /// the device language and then English. Works without a BuildContext,
-  /// so it can be used from the background isolate.
+  /// the app's default language. Works without a BuildContext, so it can be
+  /// used from the background isolate.
   Future<AppLocalizations> _loadL10n() async {
     final prefs = await SharedPreferences.getInstance();
-    final code =
-        prefs.getString(LocaleProvider.localeKey) ??
-        PlatformDispatcher.instance.locale.languageCode;
+    final defaultCode = LocaleProvider.defaultLocale.languageCode;
+    final code = prefs.getString(LocaleProvider.localeKey) ?? defaultCode;
     final isSupported = AppLocalizations.supportedLocales.any(
       (locale) => locale.languageCode == code,
     );
-    return lookupAppLocalizations(Locale(isSupported ? code : 'en'));
+    return lookupAppLocalizations(Locale(isSupported ? code : defaultCode));
   }
 
   TZDateTime convertToTZ(String prayerTime) {

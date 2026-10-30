@@ -4,7 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocaleProvider extends ChangeNotifier {
   static const localeKey = 'selected_locale';
 
-  Locale? _locale;
+  /// Fresh installs start in Indonesian regardless of the device language.
+  static const defaultLocale = Locale('id');
+
+  Locale? _locale = defaultLocale;
   Locale? get locale => _locale;
 
   LocaleProvider() {
@@ -29,7 +32,7 @@ class LocaleProvider extends ChangeNotifier {
   }
 
   Future<void> clearLocale() async {
-    _locale = null;
+    _locale = defaultLocale;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(localeKey);
     notifyListeners();

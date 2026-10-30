@@ -433,7 +433,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionNotificationSubtitle =>
-      'Allow notifications so Deenly can remind you when each prayer time begins.';
+      'Allow notifications so Deenly can remind you of prayer times, daily dzikir and important Islamic days.';
 
   @override
   String get permissionReasonAdhanTitle => 'Adhan notifications';
@@ -447,7 +447,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionReasonReminderBody =>
-      'An optional reminder 10 minutes before each prayer.';
+      'A reminder 10 minutes before each prayer, and another before its time ends if you haven\'t marked it as prayed.';
+
+  @override
+  String get permissionReasonDzikirTitle => 'Morning & evening dzikir';
+
+  @override
+  String get permissionReasonDzikirBody =>
+      'A reminder to recite the morning dzikir after Fajr and the evening dzikir after Asr.';
+
+  @override
+  String get permissionReasonCalendarTitle => 'Islamic days & sunnah fasting';
+
+  @override
+  String get permissionReasonCalendarBody =>
+      'A reminder the evening before Islamic holidays and sunnah fasting days.';
 
   @override
   String get permissionNotificationHint =>

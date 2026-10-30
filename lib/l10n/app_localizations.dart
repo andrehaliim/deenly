@@ -845,7 +845,7 @@ abstract class AppLocalizations {
   /// No description provided for @permissionNotificationSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Allow notifications so Deenly can remind you when each prayer time begins.'**
+  /// **'Allow notifications so Deenly can remind you of prayer times, daily dzikir and important Islamic days.'**
   String get permissionNotificationSubtitle;
 
   /// No description provided for @permissionReasonAdhanTitle.
@@ -869,8 +869,32 @@ abstract class AppLocalizations {
   /// No description provided for @permissionReasonReminderBody.
   ///
   /// In en, this message translates to:
-  /// **'An optional reminder 10 minutes before each prayer.'**
+  /// **'A reminder 10 minutes before each prayer, and another before its time ends if you haven\'t marked it as prayed.'**
   String get permissionReasonReminderBody;
+
+  /// No description provided for @permissionReasonDzikirTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning & evening dzikir'**
+  String get permissionReasonDzikirTitle;
+
+  /// No description provided for @permissionReasonDzikirBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A reminder to recite the morning dzikir after Fajr and the evening dzikir after Asr.'**
+  String get permissionReasonDzikirBody;
+
+  /// No description provided for @permissionReasonCalendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Islamic days & sunnah fasting'**
+  String get permissionReasonCalendarTitle;
+
+  /// No description provided for @permissionReasonCalendarBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A reminder the evening before Islamic holidays and sunnah fasting days.'**
+  String get permissionReasonCalendarBody;
 
   /// No description provided for @permissionNotificationHint.
   ///

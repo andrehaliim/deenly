@@ -40,6 +40,16 @@ class PermissionNotificationStepWidget extends StatelessWidget {
           body: l10n?.permissionReasonReminderBody ?? '',
           highlight: true,
         ),
+        PermissionReasonWidget(
+          icon: Icons.wb_twilight_rounded,
+          title: l10n?.permissionReasonDzikirTitle ?? '',
+          body: l10n?.permissionReasonDzikirBody ?? '',
+        ),
+        PermissionReasonWidget(
+          icon: Icons.event_rounded,
+          title: l10n?.permissionReasonCalendarTitle ?? '',
+          body: l10n?.permissionReasonCalendarBody ?? '',
+        ),
       ],
       footnoteIcon: Icons.tune_rounded,
       footnote: l10n?.permissionNotificationHint ?? '',

@@ -88,7 +88,8 @@ class _SettingPageState extends State<SettingPage>
           Consumer<LocaleProvider>(
             builder: (context, localeProvider, _) {
               final isIndonesian =
-                  (localeProvider.locale ?? const Locale('en')).languageCode ==
+                  (localeProvider.locale ?? LocaleProvider.defaultLocale)
+                      .languageCode ==
                   'id';
 
               return SettingTile(

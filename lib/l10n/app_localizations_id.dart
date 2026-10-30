@@ -427,7 +427,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get permissionNotificationSubtitle =>
-      'Izinkan notifikasi agar Deenly dapat mengingatkan Anda saat waktu sholat tiba.';
+      'Izinkan notifikasi agar Deenly dapat mengingatkan Anda waktu sholat, dzikir harian, dan hari-hari penting Islam.';
 
   @override
   String get permissionReasonAdhanTitle => 'Notifikasi adzan';
@@ -441,7 +441,21 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get permissionReasonReminderBody =>
-      'Pengingat opsional 10 menit sebelum setiap waktu sholat.';
+      'Pengingat 10 menit sebelum setiap waktu sholat, dan sekali lagi sebelum waktunya habis jika belum ditandai sudah sholat.';
+
+  @override
+  String get permissionReasonDzikirTitle => 'Dzikir pagi & petang';
+
+  @override
+  String get permissionReasonDzikirBody =>
+      'Pengingat membaca dzikir pagi setelah Subuh dan dzikir petang setelah Ashar.';
+
+  @override
+  String get permissionReasonCalendarTitle => 'Hari besar & puasa sunnah';
+
+  @override
+  String get permissionReasonCalendarBody =>
+      'Pengingat di malam sebelum hari besar Islam dan hari puasa sunnah.';
 
   @override
   String get permissionNotificationHint =>
