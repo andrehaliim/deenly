@@ -1,6 +1,8 @@
 import 'package:deenly/models/hijri_date_model.dart';
 
-enum IslamicEventType { holiday, fasting }
+/// [info] is shown on its day and in the month's events only: no
+/// countdown, reminder, grid marker or fasting status.
+enum IslamicEventType { holiday, fasting, info }
 
 enum FastingType { sunnah, forbidden }
 
@@ -37,9 +39,11 @@ class IslamicEventModel {
       month: json['month'],
       day: json['day'],
       duration: json['duration'] ?? 1,
-      type: json['type'] == 'fasting'
-          ? IslamicEventType.fasting
-          : IslamicEventType.holiday,
+      type: switch (json['type']) {
+        'fasting' => IslamicEventType.fasting,
+        'info' => IslamicEventType.info,
+        _ => IslamicEventType.holiday,
+      },
       fasting: switch (json['fasting']) {
         'sunnah' => FastingType.sunnah,
         'forbidden' => FastingType.forbidden,

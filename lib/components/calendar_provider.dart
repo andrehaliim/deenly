@@ -3,6 +3,7 @@ import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/models/calendar_day_model.dart';
 import 'package:deenly/models/event_occurrence_model.dart';
 import 'package:deenly/models/hijri_date_model.dart';
+import 'package:deenly/models/islamic_event_model.dart';
 import 'package:deenly/proxys/calendar_proxy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -121,10 +122,17 @@ class CalendarProvider extends ChangeNotifier {
     ];
   }
 
-  /// Events that start in the month shown, in date order.
+  /// Events in the month shown, in date order. One that began in the
+  /// month before and is still going on (e.g. Tasyrik over a Gregorian
+  /// month end) comes first, placed on the day it started.
   List<EventOccurrenceModel> get monthEvents {
+    final days = monthDays;
     return [
-      for (final day in monthDays)
+      if (days.isNotEmpty)
+        for (final event in days.first.events)
+          if (!event.startsOn(days.first.hijri))
+            _occurrenceStartOf(event, days.first),
+      for (final day in days)
         for (final event in day.events)
           if (event.startsOn(day.hijri))
             EventOccurrenceModel(
@@ -133,6 +141,20 @@ class CalendarProvider extends ChangeNotifier {
               hijri: day.hijri,
             ),
     ];
+  }
+
+  /// [event], which is going on during [day], placed on the day it began.
+  static EventOccurrenceModel _occurrenceStartOf(
+    IslamicEventModel event,
+    CalendarDayModel day,
+  ) {
+    final hijri = day.hijri;
+    final date = day.date;
+    return EventOccurrenceModel(
+      event: event,
+      date: DateTime(date.year, date.month, date.day - hijri.day + event.day),
+      hijri: HijriDateModel(hijri.year, hijri.month, event.day),
+    );
   }
 
   bool get isShowingToday {
@@ -195,6 +217,8 @@ class CalendarProvider extends ChangeNotifier {
     await NotificationHelper().scheduleCalendarReminders();
   }
 
+  /// A holiday starting today wins over one still going on from an earlier
+  /// day (e.g. the second day of Tasyrik), which wins over later ones.
   EventOccurrenceModel? _findNextEvent(DateTime today) {
     for (var i = 0; i < _lookAheadDays; i++) {
       final date = DateTime(today.year, today.month, today.day + i);
@@ -202,6 +226,12 @@ class CalendarProvider extends ChangeNotifier {
       for (final event in _calendar.events) {
         if (event.isHoliday && event.startsOn(hijri)) {
           return EventOccurrenceModel(event: event, date: date, hijri: hijri);
+        }
+      }
+      if (i == 0) {
+        final day = dayOf(date);
+        for (final event in day.events) {
+          if (event.isHoliday) return _occurrenceStartOf(event, day);
         }
       }
     }

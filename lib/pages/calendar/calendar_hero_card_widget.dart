@@ -22,6 +22,12 @@ class CalendarHeroCard extends StatelessWidget {
     final provider = context.watch<CalendarProvider>();
     final today = DateTime.now();
     final next = provider.nextEvent;
+    final daysLeft = next == null
+        ? 0
+        : DateUtils.dateOnly(next.date)
+              .difference(DateUtils.dateOnly(today))
+              .inDays;
+    final isOngoing = daysLeft < 0;
     final onHero = colorScheme.onPrimary;
 
     return Container(
@@ -77,7 +83,10 @@ class CalendarHeroCard extends StatelessWidget {
                   Divider(height: 1, color: onHero.withValues(alpha: 0.2)),
                   const SizedBox(height: 14),
                   Text(
-                    l10n?.calendarNextEvent ?? '',
+                    (isOngoing
+                            ? l10n?.calendarOngoingEvent
+                            : l10n?.calendarNextEvent) ??
+                        '',
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: onHero.withValues(alpha: 0.75),
                     ),
@@ -108,11 +117,7 @@ class CalendarHeroCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      _CountdownBadge(
-                        days: DateUtils.dateOnly(
-                          next.date,
-                        ).difference(DateUtils.dateOnly(today)).inDays,
-                      ),
+                      _CountdownBadge(days: daysLeft),
                     ],
                   ),
                 ],
@@ -126,6 +131,8 @@ class CalendarHeroCard extends StatelessWidget {
 }
 
 class _CountdownBadge extends StatelessWidget {
+  /// Days until the event; negative while it is going on, counting back
+  /// from its first day.
   final int days;
 
   const _CountdownBadge({required this.days});
@@ -143,9 +150,12 @@ class _CountdownBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Text(
-        days == 0
-            ? l10n?.calendarToday ?? ''
-            : l10n?.calendarDaysLeft(days) ?? '',
+        switch (days) {
+              0 => l10n?.calendarToday,
+              < 0 => l10n?.calendarEventDay(1 - days),
+              _ => l10n?.calendarDaysLeft(days),
+            } ??
+            '',
         style: theme.textTheme.labelLarge?.copyWith(
           fontWeight: FontWeight.bold,
           color: colorScheme.onSecondaryFixed,

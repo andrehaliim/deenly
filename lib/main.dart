@@ -17,6 +17,7 @@ import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/splash_page.dart';
+import 'package:deenly/proxys/app_config_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -59,6 +60,15 @@ void callbackDispatcher() {
           await PrayerSyncHelper().sync(useGps: false);
         } catch (e) {
           debugPrint('Background prayer sync failed: $e');
+        }
+
+        /// Picks up new isbat dates even when the app is not opened, so the
+        /// calendar reminders scheduled below follow them. The cached config
+        /// is used when offline.
+        try {
+          await AppConfigProxy().fetchRemote();
+        } catch (e) {
+          debugPrint('Background app config fetch failed: $e');
         }
         // Always re-arm the daily task, even if a step below fails,
         // so the notification chain never stops.

@@ -918,6 +918,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarNextEvent => 'Next event';
 
   @override
+  String get calendarOngoingEvent => 'Going on now';
+
+  @override
+  String calendarEventDay(int day) {
+    return 'Day $day';
+  }
+
+  @override
   String calendarDaysLeft(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1007,6 +1015,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get calendarRamadanFastDesc =>
       'Fasting every day of Ramadan is obligatory for every adult Muslim.';
+
+  @override
+  String calendarOddNight(int night) {
+    return 'Night $night begins tonight';
+  }
+
+  @override
+  String get calendarOddNightDesc =>
+      'An odd night of the last ten nights begins at Maghrib this evening. Seek Laylat al-Qadr in it (HR. Bukhari).';
 
   @override
   String get calendarPrayerTimes => 'Prayer times';

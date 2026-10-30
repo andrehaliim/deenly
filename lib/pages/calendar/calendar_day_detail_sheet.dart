@@ -17,6 +17,10 @@ class CalendarDayDetailSheet extends StatelessWidget {
 
   static const int _ramadan = 9;
 
+  /// Ramadan days whose evening begins an odd night of the last ten
+  /// (21st–29th): a Hijri night begins at Maghrib the day before its date.
+  static const Set<int> _daysBeforeOddNights = {20, 22, 24, 26, 28};
+
   static Future<void> show(BuildContext context, CalendarDayModel day) {
     return showModalBottomSheet<void>(
       context: context,
@@ -34,6 +38,9 @@ class CalendarDayDetailSheet extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final languageCode = Localizations.localeOf(context).languageCode;
     final isForbidden = day.fasting == FastingType.forbidden;
+    final isRamadan = day.hijri.month == _ramadan;
+    final isBeforeOddNight =
+        isRamadan && _daysBeforeOddNights.contains(day.hijri.day);
 
     final practices = [
       for (final event in day.events)
@@ -42,7 +49,13 @@ class CalendarDayDetailSheet extends StatelessWidget {
           title: event.name(languageCode),
           description: event.description(languageCode),
         ),
-      if (day.hijri.month == _ramadan)
+      if (isBeforeOddNight)
+        CalendarPracticeTile(
+          color: CalendarMarkerColor.holiday(theme),
+          title: l10n?.calendarOddNight(day.hijri.day + 1) ?? '',
+          description: l10n?.calendarOddNightDesc ?? '',
+        ),
+      if (isRamadan)
         CalendarPracticeTile(
           color: CalendarMarkerColor.sunnahFast(theme),
           title: l10n?.calendarRamadanFast ?? '',

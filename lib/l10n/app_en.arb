@@ -624,6 +624,17 @@
     },
     "calendarToday": "Today",
     "calendarNextEvent": "Next event",
+    "calendarOngoingEvent": "Going on now",
+    "calendarEventDay": "Day {day}",
+    "@calendarEventDay": {
+        "description": "Badge for a multi-day event that is going on, counted from its first day",
+        "placeholders": {
+            "day": {
+                "type": "int",
+                "example": "2"
+            }
+        }
+    },
     "calendarDaysLeft": "{count, plural, =1{1 day left} other{{count} days left}}",
     "@calendarDaysLeft": {
         "placeholders": {
@@ -661,6 +672,17 @@
     "calendarMondayThursdayFastDesc": "Deeds are presented to Allah on Mondays and Thursdays, and the Prophet ﷺ loved to be fasting then (HR. Tirmidzi).",
     "calendarRamadanFast": "Ramadan fast",
     "calendarRamadanFastDesc": "Fasting every day of Ramadan is obligatory for every adult Muslim.",
+    "calendarOddNight": "Night {night} begins tonight",
+    "@calendarOddNight": {
+        "description": "Title for the odd night of the last ten nights of Ramadan that begins at Maghrib on this day",
+        "placeholders": {
+            "night": {
+                "type": "int",
+                "example": "21"
+            }
+        }
+    },
+    "calendarOddNightDesc": "An odd night of the last ten nights begins at Maghrib this evening. Seek Laylat al-Qadr in it (HR. Bukhari).",
     "calendarPrayerTimes": "Prayer times",
     "calendarPrayerUnavailable": "Prayer times for this date are not available yet."
 }

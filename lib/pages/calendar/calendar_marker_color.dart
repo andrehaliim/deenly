@@ -17,7 +17,13 @@ class CalendarMarkerColor {
         : sunnahFast(theme);
   }
 
+  static Color info(ThemeData theme) => theme.colorScheme.outline;
+
   static Color ofEvent(ThemeData theme, IslamicEventModel event) {
-    return event.isHoliday ? holiday(theme) : sunnahFast(theme);
+    return switch (event.type) {
+      IslamicEventType.holiday => holiday(theme),
+      IslamicEventType.fasting => sunnahFast(theme),
+      IslamicEventType.info => info(theme),
+    };
   }
 }

@@ -1682,6 +1682,18 @@ abstract class AppLocalizations {
   /// **'Next event'**
   String get calendarNextEvent;
 
+  /// No description provided for @calendarOngoingEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Going on now'**
+  String get calendarOngoingEvent;
+
+  /// Badge for a multi-day event that is going on, counted from its first day
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day}'**
+  String calendarEventDay(int day);
+
   /// No description provided for @calendarDaysLeft.
   ///
   /// In en, this message translates to:
@@ -1819,6 +1831,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fasting every day of Ramadan is obligatory for every adult Muslim.'**
   String get calendarRamadanFastDesc;
+
+  /// Title for the odd night of the last ten nights of Ramadan that begins at Maghrib on this day
+  ///
+  /// In en, this message translates to:
+  /// **'Night {night} begins tonight'**
+  String calendarOddNight(int night);
+
+  /// No description provided for @calendarOddNightDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'An odd night of the last ten nights begins at Maghrib this evening. Seek Laylat al-Qadr in it (HR. Bukhari).'**
+  String get calendarOddNightDesc;
 
   /// No description provided for @calendarPrayerTimes.
   ///

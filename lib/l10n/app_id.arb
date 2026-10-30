@@ -320,6 +320,8 @@
     "calendarHijriMonthYear": "{month} {year} H",
     "calendarToday": "Hari ini",
     "calendarNextEvent": "Hari besar berikutnya",
+    "calendarOngoingEvent": "Sedang berlangsung",
+    "calendarEventDay": "Hari ke-{day}",
     "calendarDaysLeft": "{count} hari lagi",
     "calendarGregorian": "Masehi",
     "calendarHijri": "Hijriah",
@@ -343,6 +345,8 @@
     "calendarMondayThursdayFastDesc": "Amal diperlihatkan kepada Allah setiap Senin dan Kamis, dan Nabi ﷺ senang saat itu beliau sedang berpuasa (HR. Tirmidzi).",
     "calendarRamadanFast": "Puasa Ramadhan",
     "calendarRamadanFastDesc": "Puasa sebulan penuh di bulan Ramadhan wajib bagi setiap muslim yang baligh.",
+    "calendarOddNight": "Malam ke-{night} dimulai malam ini",
+    "calendarOddNightDesc": "Malam ganjil dari sepuluh malam terakhir dimulai saat maghrib hari ini. Carilah Lailatul Qadar di malam ini (HR. Bukhari).",
     "calendarPrayerTimes": "Jadwal sholat",
     "calendarPrayerUnavailable": "Jadwal sholat untuk tanggal ini belum tersedia."
 }

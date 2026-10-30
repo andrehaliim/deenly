@@ -912,6 +912,14 @@ class AppLocalizationsId extends AppLocalizations {
   String get calendarNextEvent => 'Hari besar berikutnya';
 
   @override
+  String get calendarOngoingEvent => 'Sedang berlangsung';
+
+  @override
+  String calendarEventDay(int day) {
+    return 'Hari ke-$day';
+  }
+
+  @override
   String calendarDaysLeft(int count) {
     return '$count hari lagi';
   }
@@ -995,6 +1003,15 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get calendarRamadanFastDesc =>
       'Puasa sebulan penuh di bulan Ramadhan wajib bagi setiap muslim yang baligh.';
+
+  @override
+  String calendarOddNight(int night) {
+    return 'Malam ke-$night dimulai malam ini';
+  }
+
+  @override
+  String get calendarOddNightDesc =>
+      'Malam ganjil dari sepuluh malam terakhir dimulai saat maghrib hari ini. Carilah Lailatul Qadar di malam ini (HR. Bukhari).';
 
   @override
   String get calendarPrayerTimes => 'Jadwal sholat';

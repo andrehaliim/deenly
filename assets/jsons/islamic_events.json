@@ -72,6 +72,18 @@
     "description_id": "Pertengahan Sya'ban, bulan yang banyak diisi puasa oleh Nabi ﷺ."
   },
   {
+    "id": "day_of_doubt",
+    "month": 8,
+    "day": 30,
+    "duration": 1,
+    "type": "info",
+    "fasting": null,
+    "name_en": "Day of Doubt (30 Sha'ban)",
+    "name_id": "Hari Syak (30 Sya'ban)",
+    "description_en": "The Prophet ﷺ forbade preceding Ramadan with a fast of a day or two, except for someone who habitually fasts on that day (HR. Bukhari and Muslim). In the Shafi'i school, make-up (qadha) and vowed (nadzar) fasts are also allowed.",
+    "description_id": "Nabi ﷺ melarang mendahului Ramadhan dengan puasa sehari atau dua hari, kecuali bagi yang sudah terbiasa berpuasa pada hari itu (HR. Bukhari dan Muslim). Menurut mazhab Syafi'i, puasa qadha dan nadzar juga diperbolehkan."
+  },
+  {
     "id": "ramadan_start",
     "month": 9,
     "day": 1,
@@ -104,8 +116,8 @@
     "fasting": null,
     "name_en": "Last Ten Nights (Laylat al-Qadr)",
     "name_id": "10 Malam Terakhir (Lailatul Qadar)",
-    "description_en": "Seek Laylat al-Qadr in the odd nights of the last ten nights of Ramadan (HR. Bukhari).",
-    "description_id": "Carilah Lailatul Qadar pada malam ganjil di sepuluh malam terakhir Ramadhan (HR. Bukhari)."
+    "description_en": "Seek Laylat al-Qadr in the odd nights of the last ten nights of Ramadan (HR. Bukhari). Each night begins at Maghrib the day before its date, so the 21st night begins on the evening of 20 Ramadan.",
+    "description_id": "Carilah Lailatul Qadar pada malam ganjil di sepuluh malam terakhir Ramadhan (HR. Bukhari). Setiap malam dimulai saat maghrib sehari sebelum tanggalnya, jadi malam ke-21 dimulai pada sore tanggal 20 Ramadhan."
   },
   {
     "id": "eid_al_fitr",
