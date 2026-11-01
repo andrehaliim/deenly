@@ -1,8 +1,10 @@
 import 'package:deenly/components/audio_provider.dart';
+import 'package:deenly/components/quran_settings_provider.dart';
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/pages/quran/jump_to_ayah_panel.dart';
+import 'package:deenly/pages/quran/reading_settings_sheet.dart';
 import 'package:deenly/pages/quran/surah_detail_list.dart';
 import 'package:deenly/pages/quran/surah_jump_controller.dart';
 import 'package:deenly/pages/quran/surah_options_panel.dart';
@@ -97,8 +99,25 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
     });
   }
 
+  void _openSettings() {
+    _closePanels();
+    ReadingSettingsSheet.show(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final readingTheme = context.select<QuranSettingsProvider, ReadingTheme>(
+      (settings) => settings.readingTheme,
+    );
+
+    /// The reader follows its own page color, separate from the app theme.
+    return AnimatedTheme(
+      data: readingTheme.resolve(Theme.of(context).brightness),
+      child: Builder(builder: _buildPage),
+    );
+  }
+
+  Widget _buildPage(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isPanelOpen = _showOptions || _showJumpPanel;
 
@@ -154,44 +173,19 @@ class _QuranDetailPageState extends State<QuranDetailPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              IconButton.filledTonal(
+              IconButton(
                 onPressed: _toggleJumpPanel,
                 tooltip: AppLocalizations.of(context)?.jumpToAyah,
                 isSelected: _showJumpPanel,
+                color: colorScheme.primary,
                 icon: const Icon(Icons.format_list_numbered_rounded),
+                selectedIcon: const Icon(Icons.close_rounded),
               ),
-              const SizedBox(width: 4),
-              Selector<AudioProvider, bool>(
-                selector: (_, audio) => audio.playedSurah == _activeSurah.id,
-                builder: (context, isPlaying, _) {
-                  return IconButton.filled(
-                    onPressed: () => context.read<AudioProvider>().playMultiple(
-                      _activeSurah,
-                      1,
-                    ),
-                    icon: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      transitionBuilder: (child, animation) =>
-                          RotationTransition(
-                            turns: Tween(
-                              begin: 0.75,
-                              end: 1.0,
-                            ).animate(animation),
-                            child: ScaleTransition(
-                              scale: animation,
-                              child: child,
-                            ),
-                          ),
-                      child: Icon(
-                        isPlaying
-                            ? Icons.stop_rounded
-                            : Icons.play_arrow_rounded,
-                        key: ValueKey(isPlaying),
-                        color: colorScheme.onPrimary,
-                      ),
-                    ),
-                  );
-                },
+              IconButton(
+                onPressed: _openSettings,
+                tooltip: AppLocalizations.of(context)?.quranSettings,
+                color: colorScheme.primary,
+                icon: const Icon(Icons.settings_rounded),
               ),
             ],
           ),

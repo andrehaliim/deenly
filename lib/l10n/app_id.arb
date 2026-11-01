@@ -373,5 +373,19 @@
     "settingNotificationsTitle": "Notifikasi",
     "settingCalendarMenu": "Pengingat kalender",
     "settingEnabledCount": "{enabled} dari {total} aktif",
-    "settingAdjustmentSummary": "{count, plural, =0{Tidak ada penyesuaian} other{{count} waktu disesuaikan}}"
+    "settingAdjustmentSummary": "{count, plural, =0{Tidak ada penyesuaian} other{{count} waktu disesuaikan}}",
+    "quranSettings": "Pengaturan Baca",
+    "quranSettingsDisplay": "Tampilan",
+    "quranArabicSize": "Ukuran teks Arab",
+    "quranTranslationSize": "Ukuran terjemahan",
+    "quranShowTranslation": "Tampilkan terjemahan",
+    "quranReadingTheme": "Warna halaman",
+    "quranThemeStandard": "Standar",
+    "quranThemeDark": "Gelap",
+    "quranThemeSepia": "Sepia",
+    "quranSettingsAudio": "Audio",
+    "quranReciter": "Qari",
+    "quranPlayTaawudz": "Putar ta'awudz",
+    "quranPlayBasmala": "Putar basmalah",
+    "quranIntroHint": "Diputar sebelum ayat pertama"
 }

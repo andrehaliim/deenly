@@ -9,6 +9,7 @@ import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
+import 'package:deenly/components/quran_settings_provider.dart';
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/components/workmanager_helper.dart';
@@ -133,7 +134,19 @@ void main() async {
             return provider;
           },
         ),
-        ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => QuranSettingsProvider(prefs)),
+        ChangeNotifierProxyProvider<QuranSettingsProvider, AudioProvider>(
+          create: (_) => AudioProvider(),
+          update: (_, settings, audioProvider) {
+            final provider = audioProvider ?? AudioProvider();
+            provider.updateSettings(
+              reciter: settings.reciter,
+              playTaawudz: settings.playTaawudz,
+              playBasmala: settings.playBasmala,
+            );
+            return provider;
+          },
+        ),
         ChangeNotifierProvider(create: (_) => AppConfigProvider()),
         ChangeNotifierProxyProvider<AppConfigProvider, ZakatProvider>(
           create: (_) => ZakatProvider(),

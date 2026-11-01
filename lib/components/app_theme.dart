@@ -307,4 +307,33 @@ class AppTheme {
       ),
     ),
   );
+
+  /// ========================================
+  /// 📜 SEPIA THEME (Qur'an reader only)
+  /// ========================================
+  static const _sepiaSurface = Color(0xFFF6EEDC);
+  static const _sepiaSurfaceLow = Color(0xFFEFE4CC);
+  static const _sepiaOnSurface = Color(0xFF3B2F1E);
+
+  /// Light theme on warm paper tones, easier on the eyes for long reading.
+  static final ThemeData sepia = light.copyWith(
+    colorScheme: light.colorScheme.copyWith(
+      surface: _sepiaSurface,
+      onSurface: _sepiaOnSurface,
+      surfaceBright: _sepiaSurface,
+      surfaceDim: const Color(0xFFDCCFAF),
+      surfaceContainerLowest: const Color(0xFFFBF5E8),
+      surfaceContainerLow: _sepiaSurfaceLow,
+      surfaceContainer: const Color(0xFFEADFC5),
+      surfaceContainerHigh: const Color(0xFFE5D9BD),
+      surfaceContainerHighest: const Color(0xFFDFD2B4),
+      onSurfaceVariant: const Color(0xFF5C4E38),
+      outlineVariant: const Color(0xFFD3C4A3),
+    ),
+    scaffoldBackgroundColor: _sepiaSurface,
+    appBarTheme: light.appBarTheme.copyWith(
+      backgroundColor: _sepiaSurface,
+      foregroundColor: _sepiaOnSurface,
+    ),
+  );
 }

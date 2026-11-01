@@ -1,10 +1,12 @@
 import 'package:deenly/components/app_colors.dart';
+import 'package:deenly/components/audio_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:deenly/pages/quran/eight_point_star_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class SurahDetailHeader extends StatelessWidget {
   final SurahModel surah;
@@ -41,21 +43,38 @@ class SurahDetailHeader extends StatelessWidget {
           ),
         );
       },
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          gradient: appColors?.heroGradient,
-          boxShadow: [
-            BoxShadow(
-              color: appColors?.heroShadow ?? colorScheme.shadow,
-              blurRadius: 18,
-              offset: const Offset(0, 8),
+      // The basmala clip plays as ayah 0, so a gold border marks it as active.
+      child: Selector<AudioProvider, bool>(
+        selector: (_, audio) =>
+            audio.playedSurah == surah.id && audio.playedAyah == 0,
+        builder: (context, isPlayingBasmala, child) => AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            gradient: appColors?.heroGradient,
+            border: Border.all(
+              color: isPlayingBasmala
+                  ? colorScheme.secondaryFixedDim
+                  : Colors.transparent,
+              width: 2,
             ),
-          ],
+            boxShadow: [
+              BoxShadow(
+                color: isPlayingBasmala
+                    ? colorScheme.secondaryFixedDim.withValues(alpha: 0.4)
+                    : appColors?.heroShadow ?? colorScheme.shadow,
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: child,
         ),
         child: Stack(
+          alignment: Alignment.center,
           children: [
             Positioned(
               right: -50,
@@ -79,18 +98,27 @@ class SurahDetailHeader extends StatelessWidget {
                 ),
               ),
             ),
+            Positioned(
+              top: 16,
+              right: 16,
+              child: _SurahPlayButton(surah: surah),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
               child: Column(
                 children: [
-                  Text(
-                    surah.nameArab,
-                    textAlign: TextAlign.center,
-                    textDirection: TextDirection.rtl,
-                    style: GoogleFonts.notoNaskhArabic(
-                      textStyle: theme.textTheme.headlineLarge,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.secondaryFixedDim,
+                  // Side inset keeps long names clear of the play button.
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Text(
+                      surah.nameArab,
+                      textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
+                      style: GoogleFonts.notoNaskhArabic(
+                        textStyle: theme.textTheme.headlineLarge,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.secondaryFixedDim,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -162,6 +190,59 @@ class SurahDetailHeader extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Plays the whole surah from ayah 1, mirroring the per-ayah play button
+/// but in gold so it stands out on the hero gradient.
+class _SurahPlayButton extends StatelessWidget {
+  final SurahModel surah;
+
+  const _SurahPlayButton({required this.surah});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final gold = colorScheme.secondaryFixedDim;
+
+    return Selector<AudioProvider, bool>(
+      selector: (_, audio) => audio.playedSurah == surah.id,
+      builder: (context, isPlaying, _) {
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isPlaying ? gold : gold.withValues(alpha: 0.15),
+            border: Border.all(
+              color: isPlaying ? gold : gold.withValues(alpha: 0.7),
+              width: 1.2,
+            ),
+          ),
+          child: Material(
+            type: MaterialType.transparency,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => context.read<AudioProvider>().playMultiple(surah, 1),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (child, animation) =>
+                      ScaleTransition(scale: animation, child: child),
+                  child: Icon(
+                    isPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
+                    key: ValueKey(isPlaying),
+                    size: 20,
+                    color: isPlaying ? colorScheme.primary : gold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

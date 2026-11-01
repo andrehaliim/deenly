@@ -2005,6 +2005,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{No adjustments} =1{1 time adjusted} other{{count} times adjusted}}'**
   String settingAdjustmentSummary(int count);
+
+  /// No description provided for @quranSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Settings'**
+  String get quranSettings;
+
+  /// No description provided for @quranSettingsDisplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Display'**
+  String get quranSettingsDisplay;
+
+  /// No description provided for @quranArabicSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic text size'**
+  String get quranArabicSize;
+
+  /// No description provided for @quranTranslationSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation size'**
+  String get quranTranslationSize;
+
+  /// No description provided for @quranShowTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'Show translation'**
+  String get quranShowTranslation;
+
+  /// No description provided for @quranReadingTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Page color'**
+  String get quranReadingTheme;
+
+  /// No description provided for @quranThemeStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get quranThemeStandard;
+
+  /// No description provided for @quranThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get quranThemeDark;
+
+  /// No description provided for @quranThemeSepia.
+  ///
+  /// In en, this message translates to:
+  /// **'Sepia'**
+  String get quranThemeSepia;
+
+  /// No description provided for @quranSettingsAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get quranSettingsAudio;
+
+  /// No description provided for @quranReciter.
+  ///
+  /// In en, this message translates to:
+  /// **'Reciter'**
+  String get quranReciter;
+
+  /// No description provided for @quranPlayTaawudz.
+  ///
+  /// In en, this message translates to:
+  /// **'Play ta\'awudz'**
+  String get quranPlayTaawudz;
+
+  /// No description provided for @quranPlayBasmala.
+  ///
+  /// In en, this message translates to:
+  /// **'Play basmala'**
+  String get quranPlayBasmala;
+
+  /// No description provided for @quranIntroHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Plays before the first ayah'**
+  String get quranIntroHint;
 }
 
 class _AppLocalizationsDelegate

@@ -5,7 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Draggable thumb on the trailing edge of the ayah list. It appears while
-/// the list scrolls, and dragging it jumps through ayahs with a label bubble.
+/// the list scrolls, and dragging it jumps through ayahs with a label bubble
+/// that is shown only during the drag.
 /// Place it inside a [Stack] with [Positioned.fill].
 class AyahFastScroller extends StatefulWidget {
   final int totalAyahs;
@@ -149,26 +150,32 @@ class _AyahFastScrollerState extends State<AyahFastScroller> {
                   duration: moveDuration,
                   right: _touchWidth + 4,
                   top: thumbTop + _thumbHeight / 2 - 20,
-                  child: Container(
-                    height: 40,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.shadow.withValues(alpha: 0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                  // The ayah label only appears while the thumb is dragged,
+                  // not when the list scrolls by itself (e.g. audio follow).
+                  child: AnimatedOpacity(
+                    opacity: _dragging ? 1 : 0,
+                    duration: const Duration(milliseconds: 150),
+                    child: Container(
+                      height: 40,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.shadow.withValues(alpha: 0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        l10n?.ayahCount('$labelAyah') ?? '$labelAyah',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onPrimary,
                         ),
-                      ],
-                    ),
-                    child: Text(
-                      l10n?.ayahCount('$labelAyah') ?? '$labelAyah',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onPrimary,
                       ),
                     ),
                   ),

@@ -750,5 +750,19 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "quranSettings": "Reading Settings",
+    "quranSettingsDisplay": "Display",
+    "quranArabicSize": "Arabic text size",
+    "quranTranslationSize": "Translation size",
+    "quranShowTranslation": "Show translation",
+    "quranReadingTheme": "Page color",
+    "quranThemeStandard": "Default",
+    "quranThemeDark": "Dark",
+    "quranThemeSepia": "Sepia",
+    "quranSettingsAudio": "Audio",
+    "quranReciter": "Reciter",
+    "quranPlayTaawudz": "Play ta'awudz",
+    "quranPlayBasmala": "Play basmala",
+    "quranIntroHint": "Plays before the first ayah"
 }

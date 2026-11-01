@@ -1132,4 +1132,46 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get quranSettings => 'Reading Settings';
+
+  @override
+  String get quranSettingsDisplay => 'Display';
+
+  @override
+  String get quranArabicSize => 'Arabic text size';
+
+  @override
+  String get quranTranslationSize => 'Translation size';
+
+  @override
+  String get quranShowTranslation => 'Show translation';
+
+  @override
+  String get quranReadingTheme => 'Page color';
+
+  @override
+  String get quranThemeStandard => 'Default';
+
+  @override
+  String get quranThemeDark => 'Dark';
+
+  @override
+  String get quranThemeSepia => 'Sepia';
+
+  @override
+  String get quranSettingsAudio => 'Audio';
+
+  @override
+  String get quranReciter => 'Reciter';
+
+  @override
+  String get quranPlayTaawudz => 'Play ta\'awudz';
+
+  @override
+  String get quranPlayBasmala => 'Play basmala';
+
+  @override
+  String get quranIntroHint => 'Plays before the first ayah';
 }

@@ -5,8 +5,10 @@ import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/prayer_method_helper.dart';
+import 'package:deenly/components/quran_settings_provider.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/pages/quran/reading_settings_sheet.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/pages/setting/calendar_reminder_page.dart';
 import 'package:deenly/pages/setting/prayer_adjustment_page.dart';
@@ -125,6 +127,20 @@ class _SettingPageState extends State<SettingPage>
               value: themeProvider.isDarkMode,
               onChanged: themeProvider.toggleTheme,
             ),
+          ),
+        ],
+      ),
+      SettingSection(
+        title: l10n?.menuQuran ?? '',
+        children: [
+          SettingTile(
+            icon: Icons.menu_book_rounded,
+            title: l10n?.quranSettings ?? '',
+            subtitle: context.select<QuranSettingsProvider, String>(
+              (settings) => settings.reciter.label,
+            ),
+            trailing: const SettingChevron(),
+            onTap: () => ReadingSettingsSheet.show(context),
           ),
         ],
       ),
@@ -399,8 +415,9 @@ class _SettingPageState extends State<SettingPage>
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _openPrivacyPolicy() async {

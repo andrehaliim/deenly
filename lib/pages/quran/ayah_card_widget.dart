@@ -1,4 +1,5 @@
 import 'package:deenly/components/audio_provider.dart';
+import 'package:deenly/components/quran_settings_provider.dart';
 import 'package:deenly/components/surah_provider.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/pages/quran/ayah_number_badge_widget.dart';
@@ -32,6 +33,10 @@ class AyahCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final (arabicSize, translationSize, showTranslation) = context
+        .select<QuranSettingsProvider, (double, double, bool)>(
+          (s) => (s.arabicSize, s.translationSize, s.showTranslation),
+        );
 
     return Selector<AudioProvider, bool>(
       selector: (_, audio) =>
@@ -102,20 +107,24 @@ class AyahCard extends StatelessWidget {
                   textDirection: TextDirection.rtl,
                   style: GoogleFonts.notoNaskhArabic(
                     textStyle: theme.textTheme.headlineMedium,
+                    fontSize: arabicSize,
                     fontWeight: FontWeight.w600,
                     height: 1.9,
                     color: colorScheme.onSurface,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              Text(
-                data.text(langCode),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  height: 1.5,
-                  color: colorScheme.onSurfaceVariant,
+              if (showTranslation) ...[
+                const SizedBox(height: 16),
+                Text(
+                  data.text(langCode),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: translationSize,
+                    height: 1.5,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         );
@@ -134,11 +143,21 @@ class _AyahPlayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    // Idle state echoes the gold ayah badge; playing switches to the teal
+    // used by the active card border.
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isPlaying ? colorScheme.primary : colorScheme.primaryContainer,
+        color: isPlaying
+            ? colorScheme.primary
+            : colorScheme.secondary.withValues(alpha: 0.1),
+        border: Border.all(
+          color: isPlaying
+              ? colorScheme.primary
+              : colorScheme.secondary.withValues(alpha: 0.6),
+          width: 1.2,
+        ),
       ),
       child: Material(
         type: MaterialType.transparency,
@@ -158,7 +177,7 @@ class _AyahPlayButton extends StatelessWidget {
                 size: 20,
                 color: isPlaying
                     ? colorScheme.onPrimary
-                    : colorScheme.onPrimaryContainer,
+                    : colorScheme.secondary,
               ),
             ),
           ),

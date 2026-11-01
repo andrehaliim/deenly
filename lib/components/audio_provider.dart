@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:deenly/models/reciter_model.dart';
 import 'package:deenly/models/surah_detail_model.dart';
 import 'package:deenly/models/surah_model.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +18,36 @@ class AudioProvider extends ChangeNotifier {
   int _playedAyah = 0;
   int get playedAyah => _playedAyah;
 
-  final audhubillahUrl =
-      'https://everyayah.com/data/Alafasy_128kbps/audhubillah.mp3';
-  final bismillahUrl =
-      'https://everyayah.com/data/Alafasy_128kbps/bismillah.mp3';
+  ReciterModel _reciter = ReciterModel.defaultReciter;
+  bool _playTaawudz = false;
+  bool _playBasmala = true;
+
+  /// Reciter whose sample is playing in the settings sheet, if any.
+  String? _previewReciterId;
+  String? get previewReciterId => _previewReciterId;
+
+  /// Applies the reader settings to the next playback.
+  void updateSettings({
+    required ReciterModel reciter,
+    required bool playTaawudz,
+    required bool playBasmala,
+  }) {
+    _reciter = reciter;
+    _playTaawudz = playTaawudz;
+    _playBasmala = playBasmala;
+  }
+
+  /// Falls back to the default reciter when the chosen folder has no
+  /// ta'awudz clip.
+  String get _taawudzUrl {
+    final folder = _reciter.hasTaawudz
+        ? _reciter.id
+        : ReciterModel.defaultReciter.id;
+    return 'https://everyayah.com/data/$folder/audhubillah.mp3';
+  }
+
+  /// Al-Fatihah 1:1 is the basmala, and every reciter folder has it.
+  String get _basmalaUrl => _getAyahUrl(surah: 1, ayah: 1);
 
   AudioProvider() {
     _player.playerStateStream.listen((state) async {
@@ -34,6 +61,7 @@ class AudioProvider extends ChangeNotifier {
     await _player.stop();
     _playedSurah = 0;
     _playedAyah = 0;
+    _previewReciterId = null;
     _isLoading = false;
     notifyListeners();
   }
@@ -49,6 +77,7 @@ class AudioProvider extends ChangeNotifier {
     _isLoading = true;
     _playedSurah = surah.chapterNo;
     _playedAyah = index;
+    _previewReciterId = null;
     notifyListeners();
     final url = _getAyahUrl(surah: surah.chapterNo, ayah: surah.verseNo);
 
@@ -74,9 +103,21 @@ class AudioProvider extends ChangeNotifier {
 
     final myToken = ++_requestToken;
 
+    // Intro clips only play before ayah 1. Al-Fatihah already opens with the
+    // basmala as ayah 1 and At-Tawbah has none, so neither gets the
+    // separate basmala clip.
+    final intros = <String>[
+      if (startFrom == 1 && _playTaawudz) _taawudzUrl,
+      if (startFrom == 1 && _playBasmala && surah.id != 1 && surah.id != 9)
+        _basmalaUrl,
+    ];
+
     _isLoading = true;
     _playedSurah = surah.id;
-    _playedAyah = startFrom;
+    _previewReciterId = null;
+    // Intros play on slot 0 (the surah header), so ayah 1 doesn't flash as
+    // active before the playlist reports its first index.
+    _playedAyah = intros.isNotEmpty ? 0 : startFrom;
     notifyListeners();
 
     await _player.stop();
@@ -84,7 +125,7 @@ class AudioProvider extends ChangeNotifier {
     final start = startFrom;
     final end = surah.surahTotal;
     final playlist = <AudioSource>[
-      if (startFrom == 1) AudioSource.uri(Uri.parse(bismillahUrl)),
+      for (final url in intros) AudioSource.uri(Uri.parse(url)),
       for (int ayah = start; ayah <= end; ayah++)
         AudioSource.uri(Uri.parse(_getAyahUrl(surah: surah.id, ayah: ayah))),
     ];
@@ -99,11 +140,7 @@ class AudioProvider extends ChangeNotifier {
       sub = _player.currentIndexStream.listen((i) {
         if (myToken != _requestToken || i == null) return;
         _playedSurah = surah.id;
-        if (startFrom == 1) {
-          _playedAyah = i < 1 ? 0 : start + (i - 1);
-        } else {
-          _playedAyah = start + i;
-        }
+        _playedAyah = i < intros.length ? 0 : start + (i - intros.length);
         notifyListeners();
       });
       _isLoading = false;
@@ -119,14 +156,40 @@ class AudioProvider extends ChangeNotifier {
     }
   }
 
-  static String _getAyahUrl({
-    required int surah,
-    required int ayah,
-    String reciter = 'Alafasy_128kbps',
-  }) {
+  /// Plays a short sample of [reciter], or stops it when it is already
+  /// playing. Any surah playback stops first.
+  Future<void> previewReciter(ReciterModel reciter) async {
+    if (_previewReciterId == reciter.id) {
+      await stopAll();
+      return;
+    }
+
+    final myToken = ++_requestToken;
+
+    _playedSurah = 0;
+    _playedAyah = 0;
+    _previewReciterId = reciter.id;
+    notifyListeners();
+
+    try {
+      await _player.stop();
+      await _player.setUrl(
+        _getAyahUrl(surah: 1, ayah: 1, reciter: reciter.id),
+      );
+      await _player.play();
+    } catch (e) {
+      debugPrint('Audio error: $e');
+    } finally {
+      if (myToken == _requestToken) {
+        await stopAll();
+      }
+    }
+  }
+
+  String _getAyahUrl({required int surah, required int ayah, String? reciter}) {
     final s = surah.toString().padLeft(3, '0');
     final a = ayah.toString().padLeft(3, '0');
-    return 'https://everyayah.com/data/$reciter/$s$a.mp3';
+    return 'https://everyayah.com/data/${reciter ?? _reciter.id}/$s$a.mp3';
   }
 
   @override
