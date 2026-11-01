@@ -8,8 +8,12 @@ import 'package:deenly/components/prayer_method_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
-import 'package:deenly/pages/setting/prayer_adjustment_tile.dart';
+import 'package:deenly/pages/setting/calendar_reminder_page.dart';
+import 'package:deenly/pages/setting/prayer_adjustment_page.dart';
+import 'package:deenly/pages/setting/prayer_notification_page.dart';
+import 'package:deenly/pages/setting/setting_list_view.dart';
 import 'package:deenly/pages/setting/setting_section.dart';
+import 'package:deenly/pages/setting/setting_subpage.dart';
 import 'package:deenly/pages/setting/setting_tile.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/foundation.dart';
@@ -36,15 +40,11 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _entranceController;
-  bool _isSaving = false;
   bool _isApplyingCalculation = false;
 
   /// Dropdown value for the automatic (country based) option.
   static const int _automatic = -1;
 
-  /// Unsaved edits. Rebuilt from the saved values every time the page
-  /// opens, so changes that were never saved are discarded.
-  final Map<String, int> _pendingAdjustments = {};
   String _version = '';
 
   @override
@@ -54,7 +54,6 @@ class _SettingPageState extends State<SettingPage>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..forward();
-    _loadSettings();
     _loadVersion();
   }
 
@@ -72,13 +71,6 @@ class _SettingPageState extends State<SettingPage>
     });
   }
 
-  void _loadSettings() {
-    final drawerProvider = context.read<DrawerProvider>();
-    for (final prayer in DrawerProvider.prayers) {
-      _pendingAdjustments[prayer] = drawerProvider.adjustmentOf(prayer);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -86,9 +78,21 @@ class _SettingPageState extends State<SettingPage>
     final drawerProvider = context.watch<DrawerProvider>();
     final l10n = AppLocalizations.of(context);
 
+    final adjustedCount = DrawerProvider.prayers
+        .where((prayer) => drawerProvider.adjustmentOf(prayer) != 0)
+        .length;
+    final enabledPrayerCount = DrawerProvider.prayers
+        .where(drawerProvider.isPrayerEnabled)
+        .length;
+    final calendarReminders = [
+      drawerProvider.isHolidayReminderEnabled,
+      drawerProvider.isSunnahFastReminderEnabled,
+      drawerProvider.isMondayThursdayReminderEnabled,
+    ];
+
     final sections = <Widget>[
       SettingSection(
-        title: l10n?.settingLanguageTitle ?? '',
+        title: l10n?.settingGeneralTitle ?? '',
         children: [
           Consumer<LocaleProvider>(
             builder: (context, localeProvider, _) {
@@ -114,11 +118,6 @@ class _SettingPageState extends State<SettingPage>
               );
             },
           ),
-        ],
-      ),
-      SettingSection(
-        title: l10n?.settingAppearanceTitle ?? '',
-        children: [
           SettingTile(
             icon: Icons.dark_mode_rounded,
             title: l10n?.settingTheme ?? '',
@@ -130,140 +129,71 @@ class _SettingPageState extends State<SettingPage>
         ],
       ),
       SettingSection(
-        title: l10n?.settingNotificationTitle ?? '',
-        isExpanded: drawerProvider.isNotificationExpanded,
-        onTitleTap: drawerProvider.toggleNotificationExpansion,
+        title: l10n?.settingPrayerTitle ?? '',
         children: [
-          for (final prayer in DrawerProvider.prayers)
-            SettingTile(
-              icon: drawerProvider.isPrayerEnabled(prayer)
-                  ? Icons.notifications_active_rounded
-                  : Icons.notifications_off_rounded,
-              title: PrayerProxy().getPrayerLabel(context, prayer),
-              trailing: SettingSwitch(
-                value: drawerProvider.isPrayerEnabled(prayer),
-                onChanged: (value) =>
-                    _onPrayerToggled(drawerProvider, prayer, value),
-              ),
-            ),
+          ..._calculationTiles(drawerProvider, l10n),
+          SettingTile(
+            icon: Icons.tune_rounded,
+            title: l10n?.settingTimeTitle ?? '',
+            subtitle: l10n?.settingAdjustmentSummary(adjustedCount),
+            trailing: const SettingChevron(),
+            onTap: () => _open(PrayerAdjustmentPage(onSaved: widget.onSaved)),
+          ),
         ],
       ),
       SettingSection(
-        title: l10n?.settingBeforeTitle ?? '',
+        title: l10n?.settingNotificationsTitle ?? '',
         children: [
+          SettingTile(
+            icon: Icons.notifications_active_rounded,
+            title: l10n?.settingNotificationTitle ?? '',
+            subtitle: l10n?.settingEnabledCount(
+              enabledPrayerCount,
+              DrawerProvider.prayers.length,
+            ),
+            trailing: const SettingChevron(),
+            onTap: () => _open(const PrayerNotificationPage()),
+          ),
           SettingTile(
             icon: Icons.alarm_rounded,
-            title: l10n?.settingBeforeValue ?? '',
+            title: l10n?.settingBeforeTitle ?? '',
             trailing: SettingSwitch(
               value: drawerProvider.isReminderEnabled,
-              onChanged: (value) async {
-                final success = await drawerProvider.toggleReminder(value);
-                if (!success && mounted) {
-                  _showSnackBar(
-                    AppLocalizations.of(context)?.reminderEnableFailed ?? '',
-                  );
-                }
-              },
+              onChanged: (value) =>
+                  _onReminderToggled(drawerProvider.toggleReminder, value),
             ),
           ),
-        ],
-      ),
-      SettingSection(
-        title: l10n?.settingMissedTitle ?? '',
-        children: [
           SettingTile(
             icon: Icons.task_alt_rounded,
-            title: l10n?.settingBeforeValue ?? '',
+            title: l10n?.settingMissedTitle ?? '',
             trailing: SettingSwitch(
               value: drawerProvider.isMissedReminderEnabled,
-              onChanged: (value) async {
-                final success = await drawerProvider.toggleMissedReminder(
-                  value,
-                );
-                if (!success && mounted) {
-                  _showSnackBar(
-                    AppLocalizations.of(context)?.reminderEnableFailed ?? '',
-                  );
-                }
-              },
+              onChanged: (value) => _onReminderToggled(
+                drawerProvider.toggleMissedReminder,
+                value,
+              ),
             ),
           ),
-        ],
-      ),
-      SettingSection(
-        title: l10n?.settingDzikirTitle ?? '',
-        children: [
           SettingTile(
             icon: Icons.auto_awesome_rounded,
-            title: l10n?.settingBeforeValue ?? '',
+            title: l10n?.settingDzikirTitle ?? '',
             trailing: SettingSwitch(
               value: drawerProvider.isDzikirReminderEnabled,
-              onChanged: (value) async {
-                final success = await drawerProvider.toggleDzikirReminder(
-                  value,
-                );
-                if (!success && mounted) {
-                  _showSnackBar(
-                    AppLocalizations.of(context)?.reminderEnableFailed ?? '',
-                  );
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-      SettingSection(
-        title: l10n?.settingCalendarTitle ?? '',
-        children: [
-          SettingTile(
-            icon: Icons.mosque_rounded,
-            title: l10n?.settingCalendarHoliday ?? '',
-            trailing: SettingSwitch(
-              value: drawerProvider.isHolidayReminderEnabled,
-              onChanged: drawerProvider.toggleHolidayReminder,
+              onChanged: (value) => _onReminderToggled(
+                drawerProvider.toggleDzikirReminder,
+                value,
+              ),
             ),
           ),
           SettingTile(
-            icon: Icons.nightlight_round,
-            title: l10n?.settingCalendarSunnahFast ?? '',
-            trailing: SettingSwitch(
-              value: drawerProvider.isSunnahFastReminderEnabled,
-              onChanged: drawerProvider.toggleSunnahFastReminder,
+            icon: Icons.event_rounded,
+            title: l10n?.settingCalendarMenu ?? '',
+            subtitle: l10n?.settingEnabledCount(
+              calendarReminders.where((enabled) => enabled).length,
+              calendarReminders.length,
             ),
-          ),
-          SettingTile(
-            icon: Icons.date_range_rounded,
-            title: l10n?.calendarMondayThursdayFast ?? '',
-            trailing: SettingSwitch(
-              value: drawerProvider.isMondayThursdayReminderEnabled,
-              onChanged: drawerProvider.toggleMondayThursdayReminder,
-            ),
-          ),
-        ],
-      ),
-      SettingSection(
-        title: l10n?.settingCalculationTitle ?? '',
-        children: _calculationTiles(drawerProvider, l10n),
-      ),
-      SettingSection(
-        title: l10n?.settingTimeTitle ?? '',
-        isExpanded: drawerProvider.isAdjustmentExpanded,
-        onTitleTap: drawerProvider.toggleAdjustmentExpansion,
-        children: [
-          for (final prayer in DrawerProvider.prayers)
-            PrayerAdjustmentTile(
-              prayerName: PrayerProxy().getPrayerLabel(context, prayer),
-              adjustment: _pendingAdjustments[prayer] ?? 0,
-              onChanged: (value) {
-                setState(() {
-                  _pendingAdjustments[prayer] = value;
-                });
-              },
-            ),
-          _SaveButton(
-            label: l10n?.settingSaveButton ?? '',
-            isSaving: _isSaving,
-            onPressed: () => _saveAdjustments(drawerProvider),
+            trailing: const SettingChevron(),
+            onTap: () => _open(const CalendarReminderPage()),
           ),
         ],
       ),
@@ -325,8 +255,7 @@ class _SettingPageState extends State<SettingPage>
           : null,
       body: SafeArea(
         top: false,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        child: SettingListView(
           children: [
             for (final (index, section) in sections.indexed)
               StaggeredEntrance(
@@ -438,16 +367,18 @@ class _SettingPageState extends State<SettingPage>
     }
   }
 
-  Future<void> _onPrayerToggled(
-    DrawerProvider drawerProvider,
-    String prayer,
+  void _open(Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+  }
+
+  /// Shows a message when [toggle] could not turn the reminder on.
+  Future<void> _onReminderToggled(
+    Future<bool> Function(bool) toggle,
     bool value,
   ) async {
-    final success = await drawerProvider.setPrayerNotification(prayer, value);
+    final success = await toggle(value);
     if (!success && mounted) {
-      _showSnackBar(
-        AppLocalizations.of(context)?.notificationScheduleFailed ?? '',
-      );
+      _showSnackBar(AppLocalizations.of(context)?.reminderEnableFailed ?? '');
     }
   }
 
@@ -472,28 +403,6 @@ class _SettingPageState extends State<SettingPage>
         .showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _saveAdjustments(DrawerProvider drawerProvider) async {
-    if (_isSaving) return;
-    setState(() {
-      _isSaving = true;
-    });
-
-    try {
-      await drawerProvider.saveAdjustments(Map.of(_pendingAdjustments));
-      widget.onSaved?.call();
-    } catch (e) {
-      debugPrint('Saving prayer adjustments failed: $e');
-      final l10n = mounted ? AppLocalizations.of(context) : null;
-      if (l10n != null) _showSnackBar(l10n.adjustmentSaveFailed);
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-        });
-      }
-    }
-  }
-
   Future<void> _openPrivacyPolicy() async {
     bool opened;
     try {
@@ -508,53 +417,6 @@ class _SettingPageState extends State<SettingPage>
     if (!opened && mounted) {
       _showSnackBar(AppLocalizations.of(context)?.couldNotOpenLink ?? '');
     }
-  }
-}
-
-class _SaveButton extends StatelessWidget {
-  const _SaveButton({
-    required this.label,
-    required this.isSaving,
-    required this.onPressed,
-  });
-
-  final String label;
-  final bool isSaving;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: SizedBox(
-        width: double.infinity,
-        child: FilledButton.icon(
-          onPressed: isSaving ? null : onPressed,
-          style: FilledButton.styleFrom(
-            foregroundColor: theme.colorScheme.onPrimary,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-          ),
-          icon: isSaving
-              ? SizedBox.square(
-                  dimension: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: theme.colorScheme.primary,
-                  ),
-                )
-              : const Icon(Icons.check_rounded, size: 20),
-          label: Text(
-            label,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isSaving ? null : theme.colorScheme.onPrimary,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 

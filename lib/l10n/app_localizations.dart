@@ -350,18 +350,6 @@ abstract class AppLocalizations {
   /// **'Taps'**
   String get sessionTap;
 
-  /// No description provided for @settingLanguageTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Language'**
-  String get settingLanguageTitle;
-
-  /// No description provided for @settingAppearanceTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Appearance'**
-  String get settingAppearanceTitle;
-
   /// No description provided for @settingTheme.
   ///
   /// In en, this message translates to:
@@ -391,12 +379,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notification before adhan'**
   String get settingBeforeTitle;
-
-  /// No description provided for @settingBeforeValue.
-  ///
-  /// In en, this message translates to:
-  /// **'Turn on'**
-  String get settingBeforeValue;
 
   /// No description provided for @settingAboutTitle.
   ///
@@ -1933,6 +1915,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to update prayer times. It will be applied once online.'**
   String get calculationSaveFailed;
+
+  /// No description provided for @settingGeneralTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get settingGeneralTitle;
+
+  /// No description provided for @settingPrayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Times'**
+  String get settingPrayerTitle;
+
+  /// No description provided for @settingNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get settingNotificationsTitle;
+
+  /// No description provided for @settingCalendarMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar reminders'**
+  String get settingCalendarMenu;
+
+  /// No description provided for @settingEnabledCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{enabled} of {total} on'**
+  String settingEnabledCount(int enabled, int total);
+
+  /// No description provided for @settingAdjustmentSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No adjustments} =1{1 time adjusted} other{{count} times adjusted}}'**
+  String settingAdjustmentSummary(int count);
 }
 
 class _AppLocalizationsDelegate

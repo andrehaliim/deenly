@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// Settings row: icon badge, title, optional [titleSuffix] and a
-/// [trailing] control. Tappable when [onTap] is set.
+/// Settings row: icon badge, title, optional [titleSuffix], [subtitle] and
+/// a [trailing] control. Tappable when [onTap] is set.
 class SettingTile extends StatelessWidget {
   const SettingTile({
     super.key,
     required this.icon,
     required this.title,
+    this.subtitle,
     this.trailing,
     this.titleSuffix,
     this.onTap,
@@ -14,6 +15,7 @@ class SettingTile extends StatelessWidget {
 
   final IconData icon;
   final String title;
+  final String? subtitle;
   final Widget? trailing;
   final Widget? titleSuffix;
   final VoidCallback? onTap;
@@ -22,6 +24,7 @@ class SettingTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final suffix = titleSuffix;
+    final subtitleText = subtitle;
     final trailingWidget = trailing;
 
     return InkWell(
@@ -35,20 +38,39 @@ class SettingTile extends StatelessWidget {
               _IconBadge(icon: icon),
               const SizedBox(width: 14),
               Expanded(
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
-                      child: Text(
-                        title,
-                        maxLines: 2,
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        if (suffix != null) ...[
+                          const SizedBox(width: 10),
+                          suffix,
+                        ],
+                      ],
+                    ),
+                    if (subtitleText != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitleText,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.w600,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
-                    ),
-                    if (suffix != null) ...[const SizedBox(width: 10), suffix],
+                    ],
                   ],
                 ),
               ),

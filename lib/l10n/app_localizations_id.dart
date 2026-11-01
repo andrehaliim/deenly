@@ -142,12 +142,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get sessionTap => 'Tap';
 
   @override
-  String get settingLanguageTitle => 'Bahasa';
-
-  @override
-  String get settingAppearanceTitle => 'Tampilan';
-
-  @override
   String get settingTheme => 'Mode Gelap';
 
   @override
@@ -161,9 +155,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingBeforeTitle => 'Notifikasi sebelum adzan';
-
-  @override
-  String get settingBeforeValue => 'Nyalakan';
 
   @override
   String get settingAboutTitle => 'Tentang';
@@ -1067,4 +1058,32 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get calculationSaveFailed =>
       'Gagal memperbarui jadwal sholat. Akan diterapkan saat online.';
+
+  @override
+  String get settingGeneralTitle => 'Umum';
+
+  @override
+  String get settingPrayerTitle => 'Waktu Sholat';
+
+  @override
+  String get settingNotificationsTitle => 'Notifikasi';
+
+  @override
+  String get settingCalendarMenu => 'Pengingat kalender';
+
+  @override
+  String settingEnabledCount(int enabled, int total) {
+    return '$enabled dari $total aktif';
+  }
+
+  @override
+  String settingAdjustmentSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count waktu disesuaikan',
+      zero: 'Tidak ada penyesuaian',
+    );
+    return '$_temp0';
+  }
 }

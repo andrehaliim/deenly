@@ -143,12 +143,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionTap => 'Taps';
 
   @override
-  String get settingLanguageTitle => 'Language';
-
-  @override
-  String get settingAppearanceTitle => 'Appearance';
-
-  @override
   String get settingTheme => 'Dark Mode';
 
   @override
@@ -162,9 +156,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingBeforeTitle => 'Notification before adhan';
-
-  @override
-  String get settingBeforeValue => 'Turn on';
 
   @override
   String get settingAboutTitle => 'About';
@@ -1079,4 +1070,33 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get calculationSaveFailed =>
       'Failed to update prayer times. It will be applied once online.';
+
+  @override
+  String get settingGeneralTitle => 'General';
+
+  @override
+  String get settingPrayerTitle => 'Prayer Times';
+
+  @override
+  String get settingNotificationsTitle => 'Notifications';
+
+  @override
+  String get settingCalendarMenu => 'Calendar reminders';
+
+  @override
+  String settingEnabledCount(int enabled, int total) {
+    return '$enabled of $total on';
+  }
+
+  @override
+  String settingAdjustmentSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count times adjusted',
+      one: '1 time adjusted',
+      zero: 'No adjustments',
+    );
+    return '$_temp0';
+  }
 }

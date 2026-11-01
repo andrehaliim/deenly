@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-/// Titled group of settings rendered as one rounded card, with a divider
-/// between each of its [children].
+/// Group of settings rendered as one rounded card, with a divider between
+/// each of its [children]. The header is left out when [title] is null.
 ///
 /// Passing [isExpanded] makes the section collapsible: the header shows a
 /// chevron and calls [onTitleTap] when tapped.
 class SettingSection extends StatelessWidget {
   const SettingSection({
     super.key,
-    required this.title,
+    this.title,
     required this.children,
     this.isExpanded,
     this.onTitleTap,
   });
 
-  final String title;
+  final String? title;
   final List<Widget> children;
   final bool? isExpanded;
   final VoidCallback? onTitleTap;
@@ -22,11 +22,18 @@ class SettingSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final expanded = isExpanded ?? true;
+    final sectionTitle = title;
+
+    if (sectionTitle == null) return _SectionCard(children: children);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SectionHeader(title: title, isExpanded: isExpanded, onTap: onTitleTap),
+        _SectionHeader(
+          title: sectionTitle,
+          isExpanded: isExpanded,
+          onTap: onTitleTap,
+        ),
         AnimatedSize(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,

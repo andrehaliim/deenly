@@ -78,14 +78,11 @@
     "sessionReset": "Reset Counter",
     "sessionTap": "Taps",
 
-    "settingLanguageTitle": "Language",
-    "settingAppearanceTitle": "Appearance",
     "settingTheme": "Dark Mode",
     "settingNotificationTitle": "Prayer Notifications",
     "settingTimeTitle": "Time Adjustment",
     "settingSaveButton": "Save",
     "settingBeforeTitle": "Notification before adhan",
-    "settingBeforeValue": "Turn on",
     "settingAboutTitle": "About",
     "settingPrivacyPolicy": "Privacy Policy",
 
@@ -721,5 +718,28 @@
     },
     "settingSchoolShafi": "Shafi'i",
     "settingSchoolHanafi": "Hanafi",
-    "calculationSaveFailed": "Failed to update prayer times. It will be applied once online."
+    "calculationSaveFailed": "Failed to update prayer times. It will be applied once online.",
+    "settingGeneralTitle": "General",
+    "settingPrayerTitle": "Prayer Times",
+    "settingNotificationsTitle": "Notifications",
+    "settingCalendarMenu": "Calendar reminders",
+    "settingEnabledCount": "{enabled} of {total} on",
+    "@settingEnabledCount": {
+        "placeholders": {
+            "enabled": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "settingAdjustmentSummary": "{count, plural, =0{No adjustments} =1{1 time adjusted} other{{count} times adjusted}}",
+    "@settingAdjustmentSummary": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

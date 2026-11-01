@@ -62,14 +62,11 @@
     "sessionReset": "Reset Penghitung",
     "sessionTap": "Tap",
 
-    "settingLanguageTitle": "Bahasa",
-    "settingAppearanceTitle": "Tampilan",
     "settingTheme": "Mode Gelap",
     "settingNotificationTitle": "Notifikasi Shalat",
     "settingTimeTitle": "Penyesuaian Waktu",
     "settingSaveButton": "Simpan",
     "settingBeforeTitle": "Notifikasi sebelum adzan",
-    "settingBeforeValue": "Nyalakan",
     "settingAboutTitle": "Tentang",
     "settingPrivacyPolicy": "Kebijakan Privasi",
 
@@ -361,5 +358,11 @@
     "settingAutomatic": "Otomatis ({name})",
     "settingSchoolShafi": "Syafi'i",
     "settingSchoolHanafi": "Hanafi",
-    "calculationSaveFailed": "Gagal memperbarui jadwal sholat. Akan diterapkan saat online."
+    "calculationSaveFailed": "Gagal memperbarui jadwal sholat. Akan diterapkan saat online.",
+    "settingGeneralTitle": "Umum",
+    "settingPrayerTitle": "Waktu Sholat",
+    "settingNotificationsTitle": "Notifikasi",
+    "settingCalendarMenu": "Pengingat kalender",
+    "settingEnabledCount": "{enabled} dari {total} aktif",
+    "settingAdjustmentSummary": "{count, plural, =0{Tidak ada penyesuaian} other{{count} waktu disesuaikan}}"
 }

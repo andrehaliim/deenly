@@ -23,12 +23,6 @@ class DrawerProvider extends ChangeNotifier {
   final Map<String, bool> _enabled = {};
   final Map<String, int> _adjustments = {};
 
-  bool _isNotificationExpanded = true;
-  bool get isNotificationExpanded => _isNotificationExpanded;
-
-  bool _isAdjustmentExpanded = true;
-  bool get isAdjustmentExpanded => _isAdjustmentExpanded;
-
   bool _isReminderEnabled = false;
   bool get isReminderEnabled => _isReminderEnabled;
 
@@ -213,16 +207,6 @@ class DrawerProvider extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
-  }
-
-  void toggleNotificationExpansion() {
-    _isNotificationExpanded = !_isNotificationExpanded;
-    notifyListeners();
-  }
-
-  void toggleAdjustmentExpansion() {
-    _isAdjustmentExpanded = !_isAdjustmentExpanded;
-    notifyListeners();
   }
 
   /// Turns the reminder for prayers not marked yet on or off. Returns
