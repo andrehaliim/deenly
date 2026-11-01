@@ -169,9 +169,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingSaveButton => 'Simpan';
 
   @override
-  String get settingBeforeTitle => 'Notifikasi sebelum adzan';
-
-  @override
   String get settingAboutTitle => 'Tentang';
 
   @override
@@ -279,14 +276,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String notificationAdhanBody(String prayer) {
     return 'Sudah masuk waktu shalat $prayer';
-  }
-
-  @override
-  String get notificationReminderTitle => 'Pengingat Shalat';
-
-  @override
-  String notificationReminderBody(String prayer) {
-    return '10 menit lagi menuju waktu shalat $prayer';
   }
 
   @override
@@ -574,7 +563,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get notificationMarkDone => 'Sudah shalat';
 
   @override
-  String get settingMissedTitle => 'Pengingat jika belum shalat';
+  String get settingPrayerReminderTitle => 'Pengingat shalat';
 
   @override
   String get settingDzikirTitle => 'Pengingat dzikir pagi & petang';
@@ -640,13 +629,22 @@ class AppLocalizationsId extends AppLocalizations {
   String get calendarReminderThursdayFast => 'Puasa Kamis';
 
   @override
-  String notificationMissedTitle(String prayer) {
-    return 'Sudah shalat $prayer?';
+  String notificationPrayerReminderTitle(String prayer) {
+    return 'Shalat $prayer akan tiba dalam 10 menit lagi';
   }
 
   @override
-  String get notificationMissedBody =>
-      'Tandai jika sudah, supaya progresmu tercatat';
+  String get notificationSunriseReminderTitle =>
+      'Waktu syuruq akan tiba dalam 10 menit lagi';
+
+  @override
+  String notificationPrayerReminderAsk(String prayer) {
+    return 'Sudahkah kamu menunaikan shalat $prayer?';
+  }
+
+  @override
+  String get notificationPrayerReminderReady =>
+      'Bersiaplah untuk menunaikan shalat';
 
   @override
   String get zakatNisabYearly => 'Nisab per tahun';

@@ -86,7 +86,6 @@
     "settingTimeInfoTitle": "Shift each time by the minute",
     "settingTimeInfoDesc": "Use + to make a time later and - to make it earlier, so it matches your nearest mosque. Tap Save to apply.",
     "settingSaveButton": "Save",
-    "settingBeforeTitle": "Notification before adhan",
     "settingAboutTitle": "About",
     "settingPrivacyPolicy": "Privacy Policy",
 
@@ -160,16 +159,6 @@
     "notificationAdhanTitle": "Adhan Reminder",
     "notificationAdhanBody": "It is time for {prayer} prayer",
     "@notificationAdhanBody": {
-        "placeholders": {
-            "prayer": {
-                "type": "String",
-                "example": "Fajr"
-            }
-        }
-    },
-    "notificationReminderTitle": "Prayer Reminder",
-    "notificationReminderBody": "10 minutes until {prayer} prayer",
-    "@notificationReminderBody": {
         "placeholders": {
             "prayer": {
                 "type": "String",
@@ -366,7 +355,7 @@
     },
     "jumuah": "Jumu'ah",
     "notificationMarkDone": "I have prayed",
-    "settingMissedTitle": "Reminder if not prayed yet",
+    "settingPrayerReminderTitle": "Prayer reminder",
     "settingDzikirTitle": "Morning & evening dhikr reminder",
     "notificationDzikirMorningBody": "Take a few minutes for morning dhikr before sunrise",
     "notificationDzikirEveningBody": "Take a few minutes for evening dhikr before Maghrib",
@@ -400,15 +389,26 @@
     "calendarReminderEstimate": "The date is an estimate until the official moon sighting (isbat) is announced.",
     "calendarReminderMondayFast": "Monday fast",
     "calendarReminderThursdayFast": "Thursday fast",
-    "notificationMissedTitle": "Have you prayed {prayer}?",
-    "@notificationMissedTitle": {
+    "notificationPrayerReminderTitle": "{prayer} prayer is in 10 minutes",
+    "@notificationPrayerReminderTitle": {
         "placeholders": {
             "prayer": {
-                "type": "String"
+                "type": "String",
+                "example": "Asr"
             }
         }
     },
-    "notificationMissedBody": "Mark it once you have, so your progress is recorded",
+    "notificationSunriseReminderTitle": "Sunrise is in 10 minutes",
+    "notificationPrayerReminderAsk": "Have you prayed {prayer} yet?",
+    "@notificationPrayerReminderAsk": {
+        "placeholders": {
+            "prayer": {
+                "type": "String",
+                "example": "Dhuhr"
+            }
+        }
+    },
+    "notificationPrayerReminderReady": "Get ready to pray",
 
     "zakatNisabYearly": "Yearly nisab",
     "zakatNisabInfo": "Equal to 85 g of gold · {decree}",

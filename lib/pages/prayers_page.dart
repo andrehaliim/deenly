@@ -169,7 +169,7 @@ class PrayersPageState extends State<PrayersPage>
     apply(isDone);
     try {
       await _prayerLogProxy.setDone(date, prayer, isDone);
-      await NotificationHelper().updateMissedReminder(date, prayer, isDone);
+      await NotificationHelper().updatePrayerReminder(date, prayer);
     } catch (e, st) {
       debugPrint('Saving prayer log failed: $e\n$st');
       if (mounted && DateUtils.isSameDay(date, _date)) apply(!isDone);

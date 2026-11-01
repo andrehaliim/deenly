@@ -398,12 +398,6 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get settingSaveButton;
 
-  /// No description provided for @settingBeforeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Notification before adhan'**
-  String get settingBeforeTitle;
-
   /// No description provided for @settingAboutTitle.
   ///
   /// In en, this message translates to:
@@ -595,18 +589,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It is time for {prayer} prayer'**
   String notificationAdhanBody(String prayer);
-
-  /// No description provided for @notificationReminderTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Prayer Reminder'**
-  String get notificationReminderTitle;
-
-  /// No description provided for @notificationReminderBody.
-  ///
-  /// In en, this message translates to:
-  /// **'10 minutes until {prayer} prayer'**
-  String notificationReminderBody(String prayer);
 
   /// No description provided for @qiblaNoLocation.
   ///
@@ -1082,11 +1064,11 @@ abstract class AppLocalizations {
   /// **'I have prayed'**
   String get notificationMarkDone;
 
-  /// No description provided for @settingMissedTitle.
+  /// No description provided for @settingPrayerReminderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reminder if not prayed yet'**
-  String get settingMissedTitle;
+  /// **'Prayer reminder'**
+  String get settingPrayerReminderTitle;
 
   /// No description provided for @settingDzikirTitle.
   ///
@@ -1190,17 +1172,29 @@ abstract class AppLocalizations {
   /// **'Thursday fast'**
   String get calendarReminderThursdayFast;
 
-  /// No description provided for @notificationMissedTitle.
+  /// No description provided for @notificationPrayerReminderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Have you prayed {prayer}?'**
-  String notificationMissedTitle(String prayer);
+  /// **'{prayer} prayer is in 10 minutes'**
+  String notificationPrayerReminderTitle(String prayer);
 
-  /// No description provided for @notificationMissedBody.
+  /// No description provided for @notificationSunriseReminderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Mark it once you have, so your progress is recorded'**
-  String get notificationMissedBody;
+  /// **'Sunrise is in 10 minutes'**
+  String get notificationSunriseReminderTitle;
+
+  /// No description provided for @notificationPrayerReminderAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you prayed {prayer} yet?'**
+  String notificationPrayerReminderAsk(String prayer);
+
+  /// No description provided for @notificationPrayerReminderReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Get ready to pray'**
+  String get notificationPrayerReminderReady;
 
   /// No description provided for @zakatNisabYearly.
   ///

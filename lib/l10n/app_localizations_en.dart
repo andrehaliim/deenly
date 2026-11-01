@@ -170,9 +170,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingSaveButton => 'Save';
 
   @override
-  String get settingBeforeTitle => 'Notification before adhan';
-
-  @override
   String get settingAboutTitle => 'About';
 
   @override
@@ -279,14 +276,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String notificationAdhanBody(String prayer) {
     return 'It is time for $prayer prayer';
-  }
-
-  @override
-  String get notificationReminderTitle => 'Prayer Reminder';
-
-  @override
-  String notificationReminderBody(String prayer) {
-    return '10 minutes until $prayer prayer';
   }
 
   @override
@@ -580,7 +569,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationMarkDone => 'I have prayed';
 
   @override
-  String get settingMissedTitle => 'Reminder if not prayed yet';
+  String get settingPrayerReminderTitle => 'Prayer reminder';
 
   @override
   String get settingDzikirTitle => 'Morning & evening dhikr reminder';
@@ -646,13 +635,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarReminderThursdayFast => 'Thursday fast';
 
   @override
-  String notificationMissedTitle(String prayer) {
-    return 'Have you prayed $prayer?';
+  String notificationPrayerReminderTitle(String prayer) {
+    return '$prayer prayer is in 10 minutes';
   }
 
   @override
-  String get notificationMissedBody =>
-      'Mark it once you have, so your progress is recorded';
+  String get notificationSunriseReminderTitle => 'Sunrise is in 10 minutes';
+
+  @override
+  String notificationPrayerReminderAsk(String prayer) {
+    return 'Have you prayed $prayer yet?';
+  }
+
+  @override
+  String get notificationPrayerReminderReady => 'Get ready to pray';
 
   @override
   String get zakatNisabYearly => 'Yearly nisab';

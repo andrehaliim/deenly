@@ -26,31 +26,45 @@ Future<void> onBackgroundNotificationResponse(
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 
-  /// Needed to cancel the missed prayer reminder from this isolate.
+  /// Needed to cancel the prayer reminder from this isolate.
   await NotificationHelper().init();
   await NotificationHelper.handleResponse(response);
 }
+
+typedef _PrayerReminder = ({
+  int id,
+  String time,
+  String? asks,
+  bool isAskedDayBefore,
+});
 
 class NotificationHelper {
   /// Action on the adhan notification that marks the prayer as done.
   static const String actionMarkDone = 'mark_done';
 
-  static const String keyMissedReminder = 'isMissedReminderEnabled';
+  static const String keyPrayerReminder = 'isPrayerReminderEnabled';
 
-  /// Ids of the missed prayer reminders, after the adhan (1-5) and the
-  /// before-adhan reminders (11-55).
-  static const int _missedReminderIdBase = 100;
+  /// A prayer reminder comes this long before its time.
+  static const Duration _prayerReminderLead = Duration(minutes: 10);
 
-  /// A missed prayer reminder comes this long before the prayer's time
-  /// ends, but never sooner than [_missedReminderMinDelay] after it began.
-  /// Isha has no end, so it comes [_missedReminderLead] after it began.
-  static const Duration _missedReminderLead = Duration(minutes: 30);
-  static const Duration _missedReminderMinDelay = Duration(minutes: 15);
+  /// Prayer reminders, with ids after the adhan (1-5). Each comes before
+  /// [time] (a [PrayerModel.toJson] key) and asks whether [asks], the
+  /// prayer whose time it ends, was done. Isha lasts until Fajr, so it is
+  /// asked the next morning. Fajr ends at sunrise, hours before Dhuhr, so
+  /// the Dhuhr one only says to get ready.
+  static const List<_PrayerReminder> _prayerReminders = [
+    (id: 11, time: 'Fajr', asks: 'Isha', isAskedDayBefore: true),
+    (id: 12, time: 'Sunrise', asks: 'Fajr', isAskedDayBefore: false),
+    (id: 13, time: 'Dhuhr', asks: null, isAskedDayBefore: false),
+    (id: 14, time: 'Asr', asks: 'Dhuhr', isAskedDayBefore: false),
+    (id: 15, time: 'Maghrib', asks: 'Asr', isAskedDayBefore: false),
+    (id: 16, time: 'Isha', asks: 'Maghrib', isAskedDayBefore: false),
+  ];
 
   static const String keyDzikirReminder = 'isDzikirReminderEnabled';
 
-  /// Ids of the morning and evening dzikir reminders, after the missed
-  /// prayer reminders (101-105).
+  /// Ids of the morning and evening dzikir reminders, after the prayer
+  /// reminders (11-16).
   static const Map<DzikirPeriod, int> _dzikirReminderIds = {
     DzikirPeriod.morning: 201,
     DzikirPeriod.evening: 202,
@@ -77,14 +91,6 @@ class NotificationHelper {
   /// Ramadan, Shawwal and Dhul Hijjah start on the isbat, so their dates
   /// are an estimate until the official start is in the app config.
   static const Set<int> _isbatMonths = {9, 10, 12};
-
-  /// Time each prayer ends, as a [PrayerModel.toJson] key.
-  static const Map<String, String> _prayerEnds = {
-    'Fajr': 'Sunrise',
-    'Dhuhr': 'Asr',
-    'Asr': 'Maghrib',
-    'Maghrib': 'Isha',
-  };
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -124,7 +130,7 @@ class NotificationHelper {
 
   /// Payload of an adhan notification: the day it belongs to and the
   /// prayer, so a late tap still marks the right day.
-  static String _adhanPayload(TZDateTime time, String prayer) =>
+  static String _adhanPayload(DateTime time, String prayer) =>
       '${PrayerLogProxy.dateKey(time)}|$prayer';
 
   /// Marks the prayer of an adhan notification as done when its action was
@@ -142,7 +148,7 @@ class NotificationHelper {
     try {
       await PrayerLogProxy().setDone(date, parts[1], true);
       debugPrint('${parts[1]} on ${parts[0]} marked done from notification');
-      await NotificationHelper().updateMissedReminder(date, parts[1], true);
+      await NotificationHelper().updatePrayerReminder(date, parts[1]);
     } catch (e, st) {
       debugPrint('Marking prayer from notification failed: $e\n$st');
     }
@@ -176,7 +182,7 @@ class NotificationHelper {
   Future<bool> shouldEnableByDefault() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(keyPermissionAsked) ?? false) return false;
-    if (prefs.containsKey('isReminderEnabled')) return false;
+    if (prefs.containsKey(keyPrayerReminder)) return false;
     return await isPermissionGranted();
   }
 
@@ -307,119 +313,73 @@ class NotificationHelper {
   /// scheduled, so this also runs after the app language changes.
   Future<void> rescheduleAll(PrayerModel prayerModel) async {
     await scheduleAllPrayerNotifications(prayerModel);
-    await scheduleReminderNotifications(prayerModel);
-    await scheduleMissedReminders(prayerModel);
+    await schedulePrayerReminders(prayerModel);
     await scheduleDzikirReminders(prayerModel);
     await scheduleCalendarReminders();
     await logNotificationStatus('reschedule all');
   }
 
-  Future<bool> scheduleReminderNotification({
-    required int notifId,
-    required String prayerName,
-    required TZDateTime scheduledTime,
-  }) async {
-    if (Platform.isAndroid) {
-      final androidImplementation = flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin
-          >();
-
-      try {
-        final bool? granted = await androidImplementation
-            ?.areNotificationsEnabled();
-        if (granted == false) return false;
-      } catch (_) {}
-    }
-
-    const androidNotificationDetails = AndroidNotificationDetails(
-      'deenly_reminder_channel',
-      'Deenly Reminder Notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-      sound: RawResourceAndroidNotificationSound('reminder'),
-      playSound: true,
-    );
-
-    const notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-    );
-
-    // zonedSchedule throws for past dates. When the prayer is less than
-    // 10 minutes away, roll the reminder over to the next day instead.
-    var reminderTime = scheduledTime.subtract(const Duration(minutes: 10));
-    if (reminderTime.isBefore(tz.TZDateTime.now(tz.local))) {
-      reminderTime = reminderTime.add(const Duration(days: 1));
-    }
+  /// Schedules the next prayer reminder of each time, when enabled. One
+  /// whose time already passed today is moved to tomorrow.
+  Future<void> schedulePrayerReminders(PrayerModel prayerModel) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(keyPrayerReminder) != true) return;
 
     final l10n = await _loadL10n();
-    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayerName);
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      id: notifId,
-      title: l10n.notificationReminderTitle,
-      body: l10n.notificationReminderBody(prayerLabel),
-      notificationDetails: notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      scheduledDate: reminderTime,
-    );
-    return true;
+    for (final reminder in _prayerReminders) {
+      await _schedulePrayerReminder(reminder, prayerModel, l10n);
+    }
   }
 
-  Future<void> scheduleReminderNotifications(PrayerModel prayerModel) async {
+  /// Keeps the reminder that asks about [prayer] on [date] in step with
+  /// its check: marking it cancels the reminder, unmarking schedules it
+  /// again.
+  Future<void> updatePrayerReminder(DateTime date, String prayer) async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('isReminderEnabled') == null ||
-        prefs.getBool('isReminderEnabled') == false) {
-      return;
-    }
-    final prayers = [
-      (id: 11, name: 'Fajr', time: prayerModel.fajr),
-      (id: 22, name: 'Dhuhr', time: prayerModel.dhuhr),
-      (id: 33, name: 'Asr', time: prayerModel.asr),
-      (id: 44, name: 'Maghrib', time: prayerModel.maghrib),
-      (id: 55, name: 'Isha', time: prayerModel.isha),
-    ];
-    for (final prayer in prayers) {
-      await scheduleReminderNotification(
-        notifId: prayer.id,
-        prayerName: prayer.name,
-        scheduledTime: convertToTZ(prayer.time),
-      );
+    if (prefs.getBool(keyPrayerReminder) != true) return;
+
+    final reminder = _prayerReminders
+        .where((reminder) => reminder.asks == prayer)
+        .firstOrNull;
+    if (reminder == null) return;
+    final prayerModel = await PrayerProxy().getTodayPrayer();
+    if (prayerModel == null) return;
+    final time = _nextPrayerReminderTime(reminder, prayerModel);
+    if (time == null) return;
+    if (!DateUtils.isSameDay(_askedDayOf(reminder, time), date)) return;
+
+    await _schedulePrayerReminder(reminder, prayerModel, await _loadL10n());
+  }
+
+  Future<void> disablePrayerReminders() async {
+    for (final reminder in _prayerReminders) {
+      await cancelNotification(reminder.id);
     }
   }
 
-  Future<void> disableReminderNotifications(bool isReset) async {
-    const reminderIds = [11, 22, 33, 44, 55];
-
-    for (final idx in reminderIds) {
-      await flutterLocalNotificationsPlugin.cancel(id: idx);
-    }
-
-    if (isReset) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isReminderEnabled', false);
-    }
-  }
-
-  static int _missedReminderIdOf(String prayer) =>
-      _missedReminderIdBase + PrayerLogProxy.trackedPrayers.indexOf(prayer) + 1;
-
-  /// When to ask whether [prayer] of [prayerModel] (today's times) was
-  /// done, or null when its times are unknown.
-  static DateTime? missedReminderTime(PrayerModel prayerModel, String prayer) {
-    final timings = prayerModel.toJson();
-    final start = _todayAt(timings[prayer] as String? ?? '');
+  /// Next time [reminder] comes, from today's prayer times, or null when
+  /// its time is unknown.
+  static DateTime? _nextPrayerReminderTime(
+    _PrayerReminder reminder,
+    PrayerModel prayerModel,
+  ) {
+    final start = _todayAt(
+      prayerModel.toJson()[reminder.time] as String? ?? '',
+    );
     if (start == null) return null;
-
-    final endKey = _prayerEnds[prayer];
-    if (endKey == null) return start.add(_missedReminderLead);
-
-    final end = _todayAt(timings[endKey] as String? ?? '');
-    if (end == null) return null;
-    final earliest = start.add(_missedReminderMinDelay);
-    final time = end.subtract(_missedReminderLead);
-    return time.isBefore(earliest) ? earliest : time;
+    final time = start.subtract(_prayerReminderLead);
+    return time.isAfter(DateTime.now())
+        ? time
+        : time.add(const Duration(days: 1));
   }
+
+  /// Day of the prayer [reminder] asks about when it comes at [time].
+  static DateTime _askedDayOf(_PrayerReminder reminder, DateTime time) =>
+      DateTime(
+        time.year,
+        time.month,
+        time.day - (reminder.isAskedDayBefore ? 1 : 0),
+      );
 
   /// Today at [time] ("HH:mm"), or null if unparsable.
   static DateTime? _todayAt(String time) {
@@ -432,90 +392,68 @@ class NotificationHelper {
     return DateTime(now.year, now.month, now.day, hour, minute);
   }
 
-  /// Schedules today's missed prayer reminders for the prayers not marked
-  /// yet, when enabled. Unlike the adhan they are never moved to tomorrow:
-  /// the daily task schedules the next day's.
-  Future<void> scheduleMissedReminders(PrayerModel prayerModel) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(keyMissedReminder) != true) return;
-
-    final done = await PrayerLogProxy().getDonePrayers(DateTime.now());
-    final l10n = await _loadL10n();
-    for (final prayer in PrayerLogProxy.trackedPrayers) {
-      if (done.contains(prayer)) continue;
-      final time = missedReminderTime(prayerModel, prayer);
-      if (time == null) continue;
-      await _scheduleMissedReminder(prayer, time, l10n);
-    }
-  }
-
-  /// Keeps the reminder of [prayer] in step with its check: marking it
-  /// cancels the reminder, unmarking it today schedules it again.
-  Future<void> updateMissedReminder(
-    DateTime date,
-    String prayer,
-    bool isDone,
+  /// Schedules the next [reminder]. Once the prayer it asks about is
+  /// marked done, it only says to get ready, and the sunrise one, with no
+  /// prayer to get ready for, is cancelled.
+  Future<void> _schedulePrayerReminder(
+    _PrayerReminder reminder,
+    PrayerModel prayerModel,
+    AppLocalizations l10n,
   ) async {
-    if (!DateUtils.isSameDay(date, DateTime.now())) return;
+    final time = _nextPrayerReminderTime(reminder, prayerModel);
+    if (time == null) return;
 
-    if (isDone) {
-      await cancelNotification(_missedReminderIdOf(prayer));
+    var asks = reminder.asks;
+    final askedDay = _askedDayOf(reminder, time);
+    if (asks != null) {
+      final done = await PrayerLogProxy().getDonePrayers(askedDay);
+      if (done.contains(asks)) asks = null;
+    }
+    if (asks == null && reminder.time == 'Sunrise') {
+      await cancelNotification(reminder.id);
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(keyMissedReminder) != true) return;
-    final prayerModel = await PrayerProxy().getTodayPrayer();
-    if (prayerModel == null) return;
-    final time = missedReminderTime(prayerModel, prayer);
-    if (time == null) return;
-    await _scheduleMissedReminder(prayer, time, await _loadL10n());
-  }
+    final title = reminder.time == 'Sunrise'
+        ? l10n.notificationSunriseReminderTitle
+        : l10n.notificationPrayerReminderTitle(
+            PrayerProxy.prayerLabelOf(l10n, reminder.time),
+          );
+    final body = asks == null
+        ? l10n.notificationPrayerReminderReady
+        : l10n.notificationPrayerReminderAsk(
+            PrayerProxy.prayerLabelOf(l10n, asks),
+          );
 
-  Future<void> disableMissedReminders() async {
-    for (final prayer in PrayerLogProxy.trackedPrayers) {
-      await cancelNotification(_missedReminderIdOf(prayer));
-    }
-  }
-
-  Future<void> _scheduleMissedReminder(
-    String prayer,
-    DateTime time,
-    AppLocalizations l10n,
-  ) async {
-    if (!time.isAfter(DateTime.now())) return;
-
-    final scheduledTime = tz.TZDateTime.from(time, tz.local);
-    final prayerLabel = PrayerProxy.prayerLabelOf(l10n, prayer);
-
-    /// Same action and payload as the adhan, so it marks the prayer too.
+    /// Same action and payload as the adhan, so it marks the asked prayer.
     final androidNotificationDetails = AndroidNotificationDetails(
-      'deenly_missed_channel',
-      'Deenly Missed Prayer Reminders',
-      importance: Importance.high,
+      'deenly_reminder_channel',
+      'Deenly Reminder Notifications',
+      importance: Importance.max,
       priority: Priority.high,
-      sound: const RawResourceAndroidNotificationSound('arabic_oud'),
+      sound: const RawResourceAndroidNotificationSound('reminder'),
       playSound: true,
       actions: [
-        AndroidNotificationAction(
-          actionMarkDone,
-          l10n.notificationMarkDone,
-          showsUserInterface: false,
-          cancelNotification: true,
-        ),
+        if (asks != null)
+          AndroidNotificationAction(
+            actionMarkDone,
+            l10n.notificationMarkDone,
+            showsUserInterface: false,
+            cancelNotification: true,
+          ),
       ],
     );
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      id: _missedReminderIdOf(prayer),
-      title: l10n.notificationMissedTitle(prayerLabel),
-      body: l10n.notificationMissedBody,
+      id: reminder.id,
+      title: title,
+      body: body,
       notificationDetails: NotificationDetails(
         android: androidNotificationDetails,
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      scheduledDate: scheduledTime,
-      payload: _adhanPayload(scheduledTime, prayer),
+      scheduledDate: tz.TZDateTime.from(time, tz.local),
+      payload: asks == null ? null : _adhanPayload(askedDay, asks),
     );
   }
 
@@ -765,11 +703,8 @@ class NotificationHelper {
     );
   }
 
-  static const List<int> _reminderIds = [11, 22, 33, 44, 55];
-
-  static List<int> get _missedReminderIds => [
-    for (final prayer in PrayerLogProxy.trackedPrayers)
-      _missedReminderIdOf(prayer),
+  static List<int> get _prayerReminderIds => [
+    for (final reminder in _prayerReminders) reminder.id,
   ];
 
   static List<int> get _calendarReminderIds => [
@@ -784,8 +719,7 @@ class NotificationHelper {
       }
     }
     return switch (key) {
-      'isReminderEnabled' => (name: 'Before adhan', ids: _reminderIds),
-      keyMissedReminder => (name: 'Missed prayer', ids: _missedReminderIds),
+      keyPrayerReminder => (name: 'Prayer reminder', ids: _prayerReminderIds),
       keyDzikirReminder => (
         name: 'Dzikir',
         ids: _dzikirReminderIds.values.toList(),
@@ -853,9 +787,10 @@ class NotificationHelper {
         isOn(keySunnahFastReminder) ||
         isOn(keyMondayThursdayReminder);
 
-    /// Missed and calendar reminders may rightly have nothing pending (the
-    /// time passed, the prayer is marked, or no event is near), so only
-    /// the other kinds are flagged when on without anything pending.
+    /// Calendar reminders may rightly have nothing pending (no event is
+    /// near), so only the other kinds are flagged when on without anything
+    /// pending. Only the sunrise prayer reminder is skipped once marked, so
+    /// the others are always pending.
     final kinds = [
       for (final (i, prayer) in PrayerLogProxy.trackedPrayers.indexed)
         (
@@ -865,16 +800,10 @@ class NotificationHelper {
           isAlwaysPending: true,
         ),
       (
-        name: 'Before adhan',
-        isOn: isOn('isReminderEnabled'),
-        ids: _reminderIds,
+        name: 'Prayer reminder',
+        isOn: isOn(keyPrayerReminder),
+        ids: _prayerReminderIds,
         isAlwaysPending: true,
-      ),
-      (
-        name: 'Missed prayer',
-        isOn: isOn(keyMissedReminder),
-        ids: _missedReminderIds,
-        isAlwaysPending: false,
       ),
       (
         name: 'Dzikir',

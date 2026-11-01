@@ -172,20 +172,11 @@ class _SettingPageState extends State<SettingPage>
           ),
           SettingTile(
             icon: Icons.alarm_rounded,
-            title: l10n?.settingBeforeTitle ?? '',
+            title: l10n?.settingPrayerReminderTitle ?? '',
             trailing: SettingSwitch(
-              value: drawerProvider.isReminderEnabled,
-              onChanged: (value) =>
-                  _onReminderToggled(drawerProvider.toggleReminder, value),
-            ),
-          ),
-          SettingTile(
-            icon: Icons.task_alt_rounded,
-            title: l10n?.settingMissedTitle ?? '',
-            trailing: SettingSwitch(
-              value: drawerProvider.isMissedReminderEnabled,
+              value: drawerProvider.isPrayerReminderEnabled,
               onChanged: (value) => _onReminderToggled(
-                drawerProvider.toggleMissedReminder,
+                drawerProvider.togglePrayerReminder,
                 value,
               ),
             ),
