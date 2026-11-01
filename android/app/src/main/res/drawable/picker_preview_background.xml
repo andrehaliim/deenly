@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stands in for a wallpaper so every theme shows its edges. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <gradient
+        android:angle="315"
+        android:endColor="@color/pickerStageEnd"
+        android:startColor="@color/pickerStageStart" />
+    <corners android:radius="20dp" />
+
+</shape>

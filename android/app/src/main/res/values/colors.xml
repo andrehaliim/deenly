@@ -12,5 +12,30 @@
     <color name="lightOnSurface">#FF191C1B</color>
     <color name="lightOnSurfaceVariant">#FF3F4946</color>
     <color name="lightOutline">#FF707974</color>
+    <color name="widgetCardStart">#FFFFFDF8</color>
+    <color name="widgetCardEnd">#FFF3EADB</color>
+    <color name="widgetTileBorder">#FFE9E4DA</color>
+    <color name="widgetOnPrimary">#FFE8E8E8</color>
+    <color name="widgetAccent">#FFD4B16A</color>
+    <!-- Widget dark theme, from AppTheme dark colors -->
+    <color name="widgetDarkCardStart">#FF1A1D1C</color>
+    <color name="widgetDarkCardEnd">#FF0E1111</color>
+    <color name="widgetDarkSurface">#FF222524</color>
+    <color name="widgetDarkBorder">#FF3F4946</color>
+    <color name="widgetDarkActive">#FF14524A</color>
+    <color name="widgetDarkOnSurface">#FFE1E3E1</color>
+    <color name="widgetDarkOnSurfaceVariant">#FFBFC9C4</color>
+    <color name="widgetDarkOutline">#FF89938E</color>
+    <color name="widgetDarkBrand">#FF80CBC4</color>
+
+    <!-- Widget Deenly theme, from the home hero card -->
+    <color name="widgetPrimaryCardEnd">#FF456A49</color>
+    <color name="widgetPrimarySurface">#1FFFFFFF</color>
+    <color name="widgetPrimaryBorder">#33FFFFFF</color>
+    <color name="widgetPrimaryOnSurfaceVariant">#D9E8E8E8</color>
+    <color name="widgetPrimaryOutline">#B3E8E8E8</color>
+    <!-- Widget theme picker -->
+    <color name="pickerStageStart">#FFB9C6BF</color>
+    <color name="pickerStageEnd">#FF7E8C84</color>
     <color name="ic_launcher_background">#004D40</color>
 </resources>

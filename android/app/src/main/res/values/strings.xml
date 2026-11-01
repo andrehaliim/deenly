@@ -15,6 +15,15 @@
     <string name="maghrib_notification_icon">maghrib notification icon</string>
     <string name="isha_notification_icon">isha notification icon</string>
     <string name="next_prayer_text">Next Prayer</string>
+    <string name="widget_title">Deenly</string>
+    <string name="remaining_text">remaining</string>
+    <string name="widget_theme_title">Widget theme</string>
+    <string name="widget_theme_subtitle">Choose how Deenly looks on your home screen.</string>
+    <string name="widget_theme_apply">Apply</string>
+    <string name="widget_theme_cancel">Cancel</string>
+    <string name="widget_theme_light">Light</string>
+    <string name="widget_theme_dark">Dark</string>
+    <string name="widget_theme_deenly">Deenly</string>
     <string name="hijri_default">01 Hijri 1447</string>
     <string name="gregorian_default">01 Jan 2026</string>
     <string name="prayer_default">Prayer</string>

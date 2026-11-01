@@ -1,15 +1,359 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/prayer_widget_root"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/lightPrimary"
+    android:id="@android:id/background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:background="@drawable/widget_card_background"
+    android:clipToOutline="true"
+    android:orientation="vertical"
+    android:padding="12dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/widget_logo"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="-12dp"
+            android:layout_marginTop="-12dp"
+            android:layout_marginEnd="-8dp"
+            android:layout_marginBottom="-12dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_launcher_foreground"
+            android:tint="@color/lightPrimary" />
+
+        <!-- Drawn as a bitmap: launchers ignore @font in RemoteViews. -->
+        <ImageView
+            android:id="@+id/widget_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/widget_title" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:gravity="end|center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/location_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/location_chip_background"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp">
+
+                <ImageView
+                    android:id="@+id/location_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="6dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_location_outlined"
+                    android:tint="@color/widgetAccent" />
+
+                <TextView
+                    android:id="@+id/location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="@string/location_default"
+                    android:textColor="@color/lightPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="-3dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/fajr_row"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/prayer_tile_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="5dp">
+
+            <ImageView
+                android:id="@+id/fajr_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginBottom="1dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_prayer_fajr"
+                android:tint="@color/lightOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/fajr_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/fajr_name"
+                android:textColor="@color/lightOnSurfaceVariant"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/fajr_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/no_time"
+                android:textColor="@color/lightOnSurface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/fajr_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lightOutline"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dhuhr_row"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/prayer_tile_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="5dp">
+
+            <ImageView
+                android:id="@+id/dhuhr_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginBottom="1dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_prayer_dhuhr"
+                android:tint="@color/lightOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/dhuhr_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/dhuhr_name"
+                android:textColor="@color/lightOnSurfaceVariant"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/dhuhr_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/no_time"
+                android:textColor="@color/lightOnSurface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dhuhr_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lightOutline"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/asr_row"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/prayer_tile_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="5dp">
+
+            <ImageView
+                android:id="@+id/asr_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginBottom="1dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_prayer_asr"
+                android:tint="@color/lightOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/asr_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/asr_name"
+                android:textColor="@color/lightOnSurfaceVariant"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/asr_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/no_time"
+                android:textColor="@color/lightOnSurface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/asr_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lightOutline"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/maghrib_row"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/prayer_tile_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="5dp">
+
+            <ImageView
+                android:id="@+id/maghrib_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginBottom="1dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_prayer_maghrib"
+                android:tint="@color/lightOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/maghrib_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/maghrib_name"
+                android:textColor="@color/lightOnSurfaceVariant"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/maghrib_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/no_time"
+                android:textColor="@color/lightOnSurface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/maghrib_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lightOutline"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/isha_row"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/prayer_tile_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="5dp">
+
+            <ImageView
+                android:id="@+id/isha_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginBottom="1dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_prayer_isha"
+                android:tint="@color/lightOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/isha_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/isha_name"
+                android:textColor="@color/lightOnSurfaceVariant"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/isha_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/no_time"
+                android:textColor="@color/lightOnSurface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/isha_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lightOutline"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/next_prayer_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/next_prayer_background"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="5dp">
+
+        <ImageView
+            android:id="@+id/next_prayer_icon"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_clock"
+            android:tint="@color/lightSecondary" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -18,299 +362,48 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/next_prayer_label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/next_prayer_text"
-                android:textColor="@color/lightSurface"
-                android:textSize="14sp"/>
+                android:textColor="@color/lightOnSurfaceVariant"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/next_prayer_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/prayer_default"
                 android:fontFamily="serif"
-                android:textColor="@color/lightSurface"
-                android:textSize="28sp"
-                android:textStyle="bold|italic"/>
+                android:maxLines="1"
+                android:text="@string/prayer_default"
+                android:textColor="@color/lightPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end">
+            android:gravity="end"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/hijri_date"
+                android:id="@+id/next_prayer_countdown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/hijri_default"
-                android:textColor="@color/lightSurface"
-                android:textSize="14sp"/>
+                android:fontFamily="serif"
+                android:text="@string/no_time"
+                android:textColor="@color/lightPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/gregorian_date"
+                android:id="@+id/remaining_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/gregorian_default"
-                android:textColor="@color/lightSurface"
-                android:textSize="14sp"/>
+                android:text="@string/remaining_text"
+                android:textColor="@color/lightOnSurfaceVariant"
+                android:textSize="12sp" />
         </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="6dp">
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginEnd="4dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_place"
-            android:tint="@color/lightSurface"/>
-
-        <TextView
-            android:id="@+id/location"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@string/location_default"
-            android:textColor="@color/lightSurface"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fajr_row"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="2dp"
-        android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="3dp">
-
-        <TextView
-            android:id="@+id/fajr_name"
-            android:text="@string/fajr_name"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/fajr_time"
-            android:text="@string/no_time"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"/>
-
-
-        <ImageView
-            android:id="@+id/fajr_notification"
-            android:contentDescription="@string/fajr_notification_icon"
-            android:src="@drawable/ic_notification_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tint="@color/lightSurface"
-            android:layout_marginEnd="6dp"
-            android:layout_marginStart="6dp"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/dhuhr_row"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="2dp"
-        android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="3dp">
-
-        <TextView
-            android:id="@+id/dhuhr_name"
-            android:text="@string/dhuhr_name"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/dhuhr_time"
-            android:text="@string/no_time"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"/>
-
-
-        <ImageView
-            android:id="@+id/dhuhr_notification"
-            android:contentDescription="@string/dhuhr_notification_icon"
-            android:src="@drawable/ic_notification_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tint="@color/lightSurface"
-            android:layout_marginEnd="6dp"
-            android:layout_marginStart="6dp"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/asr_row"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="2dp"
-        android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="3dp">
-
-        <TextView
-            android:id="@+id/asr_name"
-            android:text="@string/asr_name"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/asr_time"
-            android:text="@string/no_time"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"/>
-
-
-        <ImageView
-            android:id="@+id/asr_notification"
-            android:contentDescription="@string/asr_notification_icon"
-            android:src="@drawable/ic_notification_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tint="@color/lightSurface"
-            android:layout_marginEnd="6dp"
-            android:layout_marginStart="6dp"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/maghrib_row"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="2dp"
-        android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="3dp">
-
-        <TextView
-            android:id="@+id/maghrib_name"
-            android:text="@string/maghrib_name"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/maghrib_time"
-            android:text="@string/no_time"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"/>
-
-
-        <ImageView
-            android:id="@+id/maghrib_notification"
-            android:contentDescription="@string/maghrib_notification_icon"
-            android:src="@drawable/ic_notification_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tint="@color/lightSurface"
-            android:layout_marginEnd="6dp"
-            android:layout_marginStart="6dp"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/isha_row"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="2dp"
-        android:background="@drawable/rounded_grey_background"
-        android:layout_marginVertical="3dp">
-
-        <TextView
-            android:id="@+id/isha_name"
-            android:text="@string/isha_name"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/isha_time"
-            android:text="@string/no_time"
-            android:textColor="@color/lightSurface"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"/>
-
-
-        <ImageView
-            android:id="@+id/isha_notification"
-            android:contentDescription="@string/isha_notification_icon"
-            android:src="@drawable/ic_notification_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tint="@color/lightSurface"
-            android:layout_marginEnd="6dp"
-            android:layout_marginStart="6dp"
-            />
     </LinearLayout>
 </LinearLayout>
