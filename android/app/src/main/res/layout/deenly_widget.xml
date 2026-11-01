@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
-    android:background="@drawable/widget_card_background"
+    android:background="@drawable/widget_card_background_primary"
     android:clipToOutline="true"
     android:orientation="vertical"
     android:padding="12dp">
@@ -23,8 +23,7 @@
             android:layout_marginEnd="-8dp"
             android:layout_marginBottom="-12dp"
             android:contentDescription="@null"
-            android:src="@drawable/ic_launcher_foreground"
-            android:tint="@color/lightPrimary" />
+            android:src="@drawable/ic_launcher_foreground" />
 
         <!-- Drawn as a bitmap: launchers ignore @font in RemoteViews. -->
         <ImageView
@@ -32,6 +31,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/widget_title" />
+
+        <!-- Shown in the widget picker preview, which can't run renderTitle. -->
+        <TextView
+            android:id="@+id/widget_title_fallback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:text="@string/widget_title"
+            android:textColor="@color/widgetOnPrimary"
+            android:textSize="22sp"
+            android:textStyle="bold|italic" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -45,7 +55,7 @@
                 android:id="@+id/location_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/location_chip_background"
+                android:background="@drawable/location_chip_background_primary"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="10dp"
@@ -70,7 +80,7 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/location_default"
-                    android:textColor="@color/lightPrimary"
+                    android:textColor="@color/widgetOnPrimary"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -90,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginHorizontal="3dp"
-            android:background="@drawable/prayer_tile_background"
+            android:background="@drawable/prayer_tile_background_primary"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingHorizontal="4dp"
@@ -103,7 +113,7 @@
                 android:layout_marginBottom="1dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_prayer_fajr"
-                android:tint="@color/lightOnSurfaceVariant" />
+                android:tint="@color/widgetPrimaryOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/fajr_name"
@@ -111,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@string/fajr_name"
-                android:textColor="@color/lightOnSurfaceVariant"
+                android:textColor="@color/widgetPrimaryOnSurfaceVariant"
                 android:textSize="12sp" />
 
             <TextView
@@ -119,8 +129,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="@string/no_time"
-                android:textColor="@color/lightOnSurface"
+                android:text="@string/preview_fajr_time"
+                android:textColor="@color/widgetOnPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -140,7 +150,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginHorizontal="3dp"
-            android:background="@drawable/prayer_tile_background"
+            android:background="@drawable/prayer_tile_background_primary"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingHorizontal="4dp"
@@ -153,7 +163,7 @@
                 android:layout_marginBottom="1dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_prayer_dhuhr"
-                android:tint="@color/lightOnSurfaceVariant" />
+                android:tint="@color/widgetPrimaryOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/dhuhr_name"
@@ -161,7 +171,7 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@string/dhuhr_name"
-                android:textColor="@color/lightOnSurfaceVariant"
+                android:textColor="@color/widgetPrimaryOnSurfaceVariant"
                 android:textSize="12sp" />
 
             <TextView
@@ -169,8 +179,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="@string/no_time"
-                android:textColor="@color/lightOnSurface"
+                android:text="@string/preview_dhuhr_time"
+                android:textColor="@color/widgetOnPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -190,7 +200,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginHorizontal="3dp"
-            android:background="@drawable/prayer_tile_background"
+            android:background="@drawable/prayer_tile_background_primary"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingHorizontal="4dp"
@@ -203,7 +213,7 @@
                 android:layout_marginBottom="1dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_prayer_asr"
-                android:tint="@color/lightOnSurfaceVariant" />
+                android:tint="@color/widgetPrimaryOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/asr_name"
@@ -211,7 +221,7 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@string/asr_name"
-                android:textColor="@color/lightOnSurfaceVariant"
+                android:textColor="@color/widgetPrimaryOnSurfaceVariant"
                 android:textSize="12sp" />
 
             <TextView
@@ -219,8 +229,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="@string/no_time"
-                android:textColor="@color/lightOnSurface"
+                android:text="@string/preview_asr_time"
+                android:textColor="@color/widgetOnPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -240,7 +250,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginHorizontal="3dp"
-            android:background="@drawable/prayer_tile_background"
+            android:background="@drawable/prayer_tile_active_background_primary"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingHorizontal="4dp"
@@ -253,7 +263,7 @@
                 android:layout_marginBottom="1dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_prayer_maghrib"
-                android:tint="@color/lightOnSurfaceVariant" />
+                android:tint="@color/lightPrimary" />
 
             <TextView
                 android:id="@+id/maghrib_name"
@@ -269,8 +279,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="@string/no_time"
-                android:textColor="@color/lightOnSurface"
+                android:text="@string/preview_maghrib_time"
+                android:textColor="@color/lightPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -290,7 +300,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginHorizontal="3dp"
-            android:background="@drawable/prayer_tile_background"
+            android:background="@drawable/prayer_tile_background_primary"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingHorizontal="4dp"
@@ -303,7 +313,7 @@
                 android:layout_marginBottom="1dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_prayer_isha"
-                android:tint="@color/lightOnSurfaceVariant" />
+                android:tint="@color/widgetPrimaryOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/isha_name"
@@ -311,7 +321,7 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@string/isha_name"
-                android:textColor="@color/lightOnSurfaceVariant"
+                android:textColor="@color/widgetPrimaryOnSurfaceVariant"
                 android:textSize="12sp" />
 
             <TextView
@@ -319,8 +329,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="@string/no_time"
-                android:textColor="@color/lightOnSurface"
+                android:text="@string/preview_isha_time"
+                android:textColor="@color/widgetOnPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -340,7 +350,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@drawable/next_prayer_background"
+        android:background="@drawable/next_prayer_background_primary"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="12dp"
@@ -353,7 +363,7 @@
             android:layout_marginEnd="10dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_clock"
-            android:tint="@color/lightSecondary" />
+            android:tint="@color/widgetAccent" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -366,7 +376,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/next_prayer_text"
-                android:textColor="@color/lightOnSurfaceVariant"
+                android:textColor="@color/widgetPrimaryOnSurfaceVariant"
                 android:textSize="12sp" />
 
             <TextView
@@ -375,8 +385,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="serif"
                 android:maxLines="1"
-                android:text="@string/prayer_default"
-                android:textColor="@color/lightPrimary"
+                android:text="@string/maghrib_name"
+                android:textColor="@color/widgetOnPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -392,8 +402,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="serif"
-                android:text="@string/no_time"
-                android:textColor="@color/lightPrimary"
+                android:text="@string/preview_countdown"
+                android:textColor="@color/widgetAccent"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -402,7 +412,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/remaining_text"
-                android:textColor="@color/lightOnSurfaceVariant"
+                android:textColor="@color/widgetPrimaryOnSurfaceVariant"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>

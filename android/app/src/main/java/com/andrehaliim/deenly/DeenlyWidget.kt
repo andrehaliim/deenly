@@ -164,6 +164,7 @@ class DeenlyWidget : AppWidgetProvider() {
                     if (theme.logoKeepsColors) Color.TRANSPARENT else color(theme.brand)
             )
             views.setImageViewBitmap(R.id.widget_title, renderTitle(context, color(theme.brand)))
+            views.setViewVisibility(R.id.widget_title_fallback, View.GONE)
             views.setInt(R.id.location_icon, "setColorFilter", color(theme.accent))
             views.setInt(R.id.next_prayer_icon, "setColorFilter", color(theme.accent))
             views.setTextColor(R.id.location, color(theme.brand))

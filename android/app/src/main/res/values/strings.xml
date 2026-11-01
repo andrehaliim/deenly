@@ -2,7 +2,7 @@
 <resources>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
-    <string name="app_widget_description">This is an app widget description</string>
+    <string name="app_widget_description">Prayer times for today and a countdown to the next prayer</string>
     <string name="fajr_name">Fajr</string>
     <string name="dhuhr_name">Dhuhr</string>
     <string name="asr_name">Asr</string>
@@ -17,6 +17,13 @@
     <string name="next_prayer_text">Next Prayer</string>
     <string name="widget_title">Deenly</string>
     <string name="remaining_text">remaining</string>
+    <!-- Sample data for the widget picker preview -->
+    <string name="preview_fajr_time">04:31</string>
+    <string name="preview_dhuhr_time">11:52</string>
+    <string name="preview_asr_time">15:12</string>
+    <string name="preview_maghrib_time">17:58</string>
+    <string name="preview_isha_time">19:09</string>
+    <string name="preview_countdown">01:24</string>
     <string name="widget_theme_title">Widget theme</string>
     <string name="widget_theme_subtitle">Choose how Deenly looks on your home screen.</string>
     <string name="widget_theme_apply">Apply</string>

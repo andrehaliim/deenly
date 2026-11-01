@@ -86,13 +86,16 @@ enum class WidgetTheme(
     );
 
     companion object {
+        /** Also the colors baked into deenly_widget.xml for the picker preview. */
+        val DEFAULT = DEENLY
+
         private const val PREFS_NAME = "deenly_widget_themes"
 
         private fun key(widgetId: Int) = "theme_$widgetId"
 
         fun of(context: Context, widgetId: Int): WidgetTheme {
             val name = prefs(context).getString(key(widgetId), null)
-            return entries.firstOrNull { it.name == name } ?: LIGHT
+            return entries.firstOrNull { it.name == name } ?: DEFAULT
         }
 
         fun save(context: Context, widgetId: Int, theme: WidgetTheme) {
