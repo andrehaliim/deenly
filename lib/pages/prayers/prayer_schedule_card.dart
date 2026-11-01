@@ -1,14 +1,12 @@
 import 'dart:async';
 
 import 'package:deenly/components/app_colors.dart';
-import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/pages/prayers/prayer_icon.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 
 /// Full prayer schedule of one day as a vertical timeline. For today the
 /// rail fills up to the current time, the current prayer is highlighted,
@@ -97,19 +95,6 @@ class _PrayerScheduleCardState extends State<PrayerScheduleCard> {
         : l10n.durationMinutes(rest);
   }
 
-  Future<void> _toggleNotification(String prayer, bool value) async {
-    final drawerProvider = context.read<DrawerProvider>();
-    final messenger = ScaffoldMessenger.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    final success = await drawerProvider.setPrayerNotification(prayer, value);
-    if (!success && l10n != null) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.notificationScheduleFailed)),
-      );
-    }
-  }
-
   /// Marks [prayer] when allowed, otherwise tells why it is locked. Today's
   /// prayers unlock once their time has come.
   void _onPrayerTap(String prayer, {required bool hasStarted}) {
@@ -133,7 +118,6 @@ class _PrayerScheduleCardState extends State<PrayerScheduleCard> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
-    final drawerProvider = context.watch<DrawerProvider>();
     final timings = widget.prayerModel.toJson();
 
     final rows = [
@@ -170,10 +154,6 @@ class _PrayerScheduleCardState extends State<PrayerScheduleCard> {
       return (nowMinutes - from) / (to - from);
     }
 
-    final enabledCount = DrawerProvider.prayers
-        .where(drawerProvider.isPrayerEnabled)
-        .length;
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
@@ -196,24 +176,14 @@ class _PrayerScheduleCardState extends State<PrayerScheduleCard> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l10n?.prayerTimes ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-                _AdhanCountPill(
-                  enabled: enabledCount,
-                  total: DrawerProvider.prayers.length,
-                ),
-              ],
+            child: Text(
+              l10n?.prayerTimes ?? '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
             ),
           ),
           for (final (i, row) in rows.indexed)
@@ -252,49 +222,7 @@ class _PrayerScheduleCardState extends State<PrayerScheduleCard> {
                 row.prayer,
                 hasStarted: row.minutes <= nowMinutes,
               ),
-              isNotificationOn: drawerProvider.isPrayerEnabled(row.prayer),
-              onNotificationChanged: (value) =>
-                  _toggleNotification(row.prayer, value),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AdhanCountPill extends StatelessWidget {
-  final int enabled;
-  final int total;
-
-  const _AdhanCountPill({required this.enabled, required this.total});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(8, 4, 10, 4),
-      decoration: BoxDecoration(
-        color: colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.notifications_active_rounded,
-            size: 14,
-            color: colorScheme.onPrimaryContainer,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            '$enabled/$total',
-            style: theme.textTheme.labelSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onPrimaryContainer,
-            ),
-          ),
         ],
       ),
     );
@@ -303,7 +231,7 @@ class _AdhanCountPill extends StatelessWidget {
 
 /// One stop of the timeline: time on the left, the rail with its dot, and
 /// the prayer itself. Info rows (Imsak, Sunrise) are smaller and have no
-/// bell.
+/// done check.
 class _TimelineRow extends StatelessWidget {
   static const double _timeWidth = 48;
   static const double _railWidth = 28;
@@ -324,8 +252,6 @@ class _TimelineRow extends StatelessWidget {
   final bool isDone;
   final bool isLocked;
   final VoidCallback onTap;
-  final bool isNotificationOn;
-  final ValueChanged<bool> onNotificationChanged;
 
   const _TimelineRow({
     required this.prayer,
@@ -343,8 +269,6 @@ class _TimelineRow extends StatelessWidget {
     required this.isDone,
     required this.isLocked,
     required this.onTap,
-    required this.isNotificationOn,
-    required this.onNotificationChanged,
   });
 
   @override
@@ -419,8 +343,6 @@ class _TimelineRow extends StatelessWidget {
                       isDone: isDone,
                       isLocked: isLocked,
                       onTap: onTap,
-                      isNotificationOn: isNotificationOn,
-                      onNotificationChanged: onNotificationChanged,
                     ),
             ),
           ),
@@ -439,8 +361,6 @@ class _PrayerContent extends StatelessWidget {
   final bool isDone;
   final bool isLocked;
   final VoidCallback onTap;
-  final bool isNotificationOn;
-  final ValueChanged<bool> onNotificationChanged;
 
   const _PrayerContent({
     required this.prayer,
@@ -451,8 +371,6 @@ class _PrayerContent extends StatelessWidget {
     required this.isDone,
     required this.isLocked,
     required this.onTap,
-    required this.isNotificationOn,
-    required this.onNotificationChanged,
   });
 
   @override
@@ -460,7 +378,6 @@ class _PrayerContent extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final appColors = theme.extension<AppColors>();
-    final l10n = AppLocalizations.of(context);
 
     final foreground = isCurrent
         ? colorScheme.onPrimary
@@ -501,18 +418,21 @@ class _PrayerContent extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(18),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 6, 2, 6),
+            padding: const EdgeInsets.fromLTRB(8, 6, 14, 6),
             child: Row(
               children: [
-                Semantics(
-                  checked: isDone,
-                  label: label,
-                  child: _DoneCheck(
-                    prayer: prayer,
-                    isDone: isDone,
-                    isLocked: isLocked,
-                    onAccent: isCurrent,
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: accent.withValues(alpha: isCurrent ? 0.15 : 0.08),
+                    border: Border.all(
+                      color: accent.withValues(alpha: 0.3),
+                      width: 1.5,
+                    ),
                   ),
+                  child: Icon(prayerIconOf(prayer), size: 18, color: accent),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -544,24 +464,13 @@ class _PrayerContent extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () => onNotificationChanged(!isNotificationOn),
-                  tooltip: isNotificationOn ? l10n?.adhanOn : l10n?.adhanOff,
-                  visualDensity: VisualDensity.compact,
-                  icon: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    transitionBuilder: (child, animation) =>
-                        ScaleTransition(scale: animation, child: child),
-                    child: Icon(
-                      isNotificationOn
-                          ? Icons.notifications_active_rounded
-                          : Icons.notifications_off_outlined,
-                      key: ValueKey(isNotificationOn),
-                      size: 20,
-                      color: isNotificationOn
-                          ? accent
-                          : foreground.withValues(alpha: 0.4),
-                    ),
+                Semantics(
+                  checked: isDone,
+                  label: label,
+                  child: _DoneCheck(
+                    isDone: isDone,
+                    isLocked: isLocked,
+                    onAccent: isCurrent,
                   ),
                 ),
               ],
@@ -573,16 +482,14 @@ class _PrayerContent extends StatelessWidget {
   }
 }
 
-/// Round checkbox of a prayer: its icon while not done, a check once done.
-/// [onAccent] draws it on the current prayer's gradient.
+/// Round checkbox of a prayer: an empty ring while not done, a filled check
+/// once done. [onAccent] draws it on the current prayer's gradient.
 class _DoneCheck extends StatelessWidget {
-  final String prayer;
   final bool isDone;
   final bool isLocked;
   final bool onAccent;
 
   const _DoneCheck({
-    required this.prayer,
     required this.isDone,
     required this.isLocked,
     required this.onAccent,
@@ -597,30 +504,34 @@ class _DoneCheck extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
-      width: 34,
-      height: 34,
+      width: 26,
+      height: 26,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isDone
-            ? accent
-            : accent.withValues(alpha: onAccent ? 0.15 : 0.08),
+        color: isDone ? accent : Colors.transparent,
         border: Border.all(
-          color: accent.withValues(alpha: isDone ? 1 : 0.3),
-          width: 1.5,
+          color: accent.withValues(
+            alpha: isDone
+                ? 1
+                : isLocked
+                ? 0.25
+                : 0.6,
+          ),
+          width: 2,
         ),
       ),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 250),
         transitionBuilder: (child, animation) =>
             ScaleTransition(scale: animation, child: child),
-        child: Icon(
-          isDone ? Icons.check_rounded : prayerIconOf(prayer),
-          key: ValueKey(isDone),
-          size: 18,
-          color: isDone
-              ? onFill
-              : accent.withValues(alpha: isLocked ? 0.45 : 1),
-        ),
+        child: isDone
+            ? Icon(
+                Icons.check_rounded,
+                key: const ValueKey(true),
+                size: 18,
+                color: onFill,
+              )
+            : const SizedBox.shrink(key: ValueKey(false)),
       ),
     );
   }
