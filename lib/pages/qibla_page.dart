@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'package:deenly/components/app_colors.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +19,10 @@ class QiblaPage extends StatefulWidget {
 }
 
 class _QiblaPageState extends State<QiblaPage> {
+  static const _sensorChannel = MethodChannel('com.andrehaliim.deenly/sensors');
+
   bool _isLoading = true;
+  bool _hasMagnetometer = true;
   double? _qiblaDirection;
   String _location = '';
 
@@ -36,7 +41,20 @@ class _QiblaPageState extends State<QiblaPage> {
   }
 
   Future<void> init() async {
+    await _checkMagnetometer();
     await _loadLocation();
+  }
+
+  Future<void> _checkMagnetometer() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+    try {
+      final hasSensor =
+          await _sensorChannel.invokeMethod<bool>('hasMagnetometer') ?? true;
+      if (!mounted) return;
+      setState(() => _hasMagnetometer = hasSensor);
+    } on PlatformException {
+      // Keep the compass enabled if the check itself fails.
+    }
   }
 
   Future<void> _loadLocation() async {
@@ -91,6 +109,14 @@ class _QiblaPageState extends State<QiblaPage> {
     }
 
     final l10n = AppLocalizations.of(context);
+    if (!_hasMagnetometer) {
+      return _QiblaStatus(
+        icon: Icons.explore_off_rounded,
+        message: l10n?.qiblaNoMagnetometer ?? '',
+        isError: true,
+      );
+    }
+
     final qiblaDirection = _qiblaDirection;
     if (qiblaDirection == null) {
       return _QiblaStatus(

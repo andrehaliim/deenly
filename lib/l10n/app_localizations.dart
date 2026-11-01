@@ -596,6 +596,12 @@ abstract class AppLocalizations {
   /// **'Location is not available yet. Turn on GPS or choose a city on the Home page.'**
   String get qiblaNoLocation;
 
+  /// No description provided for @qiblaNoMagnetometer.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone does not have a magnetic sensor, so the compass feature cannot be used.'**
+  String get qiblaNoMagnetometer;
+
   /// No description provided for @mosqueLocationUnavailable.
   ///
   /// In en, this message translates to:

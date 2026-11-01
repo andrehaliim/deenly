@@ -283,6 +283,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Location is not available yet. Turn on GPS or choose a city on the Home page.';
 
   @override
+  String get qiblaNoMagnetometer =>
+      'Your phone does not have a magnetic sensor, so the compass feature cannot be used.';
+
+  @override
   String get mosqueLocationUnavailable =>
       'Could not get your location. Make sure GPS is on and location permission is granted.';
 

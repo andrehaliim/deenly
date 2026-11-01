@@ -283,6 +283,10 @@ class AppLocalizationsId extends AppLocalizations {
       'Lokasi belum tersedia. Aktifkan GPS atau pilih kota di halaman Beranda.';
 
   @override
+  String get qiblaNoMagnetometer =>
+      'HP kamu tidak memiliki sensor magnet, sehingga fitur kompas tidak bisa digunakan.';
+
+  @override
   String get mosqueLocationUnavailable =>
       'Tidak dapat mengambil lokasimu. Pastikan GPS aktif dan izin lokasi sudah diberikan.';
 
