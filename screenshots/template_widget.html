@@ -1,0 +1,95 @@
+<!doctype html>
+<!--
+  Widget frame rendered by frame.py at 1080x1920 (entries with
+  "layout": "widget" in captions.json).
+  Take the screenshot on a plain green wallpaper (#00FF00 or close): the
+  green is keyed out so the widgets sit straight on the promo background.
+  Placeholders: {{fonts}}, {{shot}}, {{title}}, {{subtitle}},
+  {{crop_top}}, {{crop_bottom}}, {{source_width}}.
+  The crop keeps rows crop_top..crop_bottom (in source_width pixels), which
+  drops the status bar and the dock.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Manrope; font-weight: 700; src: url("{{fonts}}/Manrope-Bold.ttf"); }
+@font-face { font-family: Manrope; font-weight: 500; src: url("{{fonts}}/Manrope-Medium.ttf"); }
+
+* { margin: 0; box-sizing: border-box; }
+
+html, body { width: 1080px; height: 1920px; overflow: hidden; }
+
+body {
+  font-family: Manrope, sans-serif;
+  background:
+    radial-gradient(900px 700px at 85% 8%, rgba(197, 160, 89, 0.28), transparent 60%),
+    radial-gradient(800px 900px at 0% 100%, rgba(0, 117, 106, 0.55), transparent 65%),
+    linear-gradient(165deg, #00594B 0%, #004D40 45%, #00332B 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.caption { padding: 120px 80px 0; text-align: center; }
+
+h1 { font-size: 76px; font-weight: 700; line-height: 1.1; letter-spacing: -1px; }
+
+p { margin-top: 26px; font-size: 36px; font-weight: 500; line-height: 1.35; color: #E6D5B8; }
+
+.stage {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 50px 80px;
+}
+
+canvas {
+  max-width: 100%;
+  max-height: 100%;
+  filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.35));
+}
+</style>
+</head>
+<body>
+  <div class="caption">
+    <h1>{{title}}</h1>
+    <p>{{subtitle}}</p>
+  </div>
+  <div class="stage"><canvas id="widget"></canvas></div>
+  <img id="source" src="{{shot}}" hidden>
+<script>
+const source = document.getElementById('source');
+const canvas = document.getElementById('widget');
+
+function draw() {
+  const scale = source.naturalWidth / {{source_width}};
+  const top = Math.round({{crop_top}} * scale);
+  const bottom = Math.min(source.naturalHeight, Math.round({{crop_bottom}} * scale));
+  canvas.width = source.naturalWidth;
+  canvas.height = bottom - top;
+
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(source, 0, top, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+
+  // Soft chroma key: fully green pixels vanish, the anti-aliased edges fade
+  // out and lose their green tint.
+  const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const px = image.data;
+  for (let i = 0; i < px.length; i += 4) {
+    const r = px[i], g = px[i + 1], b = px[i + 2];
+    const green = g - Math.max(r, b);
+    if (green <= 40) continue;
+    px[i + 3] = green >= 120 ? 0 : Math.round(255 * (1 - (green - 40) / 80));
+    px[i + 1] = Math.max(r, b);
+  }
+  ctx.putImageData(image, 0, 0);
+}
+
+if (source.complete) draw(); else source.onload = draw;
+</script>
+</body>
+</html>

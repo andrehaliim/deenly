@@ -1,0 +1,123 @@
+<!doctype html>
+<!--
+  Landscape banner (1920x1080) for the portfolio, rendered by banner.py.
+  Placeholders: {{fonts}}, {{icon}}, {{prayers}}, {{quran}}, {{widget}},
+  {{crop}} (status bar height as a percentage of the screenshot width).
+  The widget shot is taken on a green wallpaper: the green is keyed out
+  and replaced by .wallpaper, and the dock below the widgets is dropped.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Manrope; font-weight: 600; src: url("{{fonts}}/Manrope-Medium.ttf"); }
+@font-face { font-family: NotoSerif; font-style: italic; font-weight: 600; src: url("{{fonts}}/NotoSerif-SemiBoldItalic.ttf"); }
+
+* { margin: 0; box-sizing: border-box; }
+
+html, body { width: 1920px; height: 1080px; overflow: hidden; }
+
+body {
+  position: relative;
+  font-family: Manrope, sans-serif;
+  background:
+    radial-gradient(1100px 700px at 50% 110%, rgba(197, 160, 89, 0.30), transparent 60%),
+    radial-gradient(900px 800px at 0% 0%, rgba(0, 117, 106, 0.55), transparent 65%),
+    linear-gradient(160deg, #00594B 0%, #004D40 50%, #00332B 100%);
+}
+
+.brand {
+  position: absolute;
+  top: 56px;
+  left: 64px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.brand img { width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 0 0 2px rgba(197, 160, 89, 0.5); }
+
+.brand span { font-family: NotoSerif, serif; font-style: italic; font-weight: 600; font-size: 52px; color: #fff; }
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone {
+  position: absolute;
+  padding: 16px;
+  border-radius: 64px;
+  background: #0B0F0E;
+  box-shadow: 0 0 0 3px #2A3A36, 0 50px 100px rgba(0, 0, 0, 0.45);
+}
+
+.phone.center { width: 440px; top: 120px; z-index: 2; }
+
+.phone.side { width: 380px; top: 190px; z-index: 1; }
+
+.phone.left { transform: translateX(-430px) rotate(-7deg); }
+
+.phone.right { transform: translateX(430px) rotate(7deg); }
+
+.screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50px;
+  aspect-ratio: 1080 / 2240;
+}
+
+.screen img { display: block; width: 100%; margin-top: calc(-1 * {{crop}}%); }
+
+.wallpaper {
+  background:
+    radial-gradient(400px 500px at 80% 10%, rgba(230, 213, 184, 0.9), transparent 70%),
+    linear-gradient(170deg, #CFE3DD 0%, #9CC7BB 100%);
+}
+
+.wallpaper canvas { display: block; width: 100%; }
+</style>
+</head>
+<body>
+  <div class="brand"><img src="{{icon}}"><span>Deenly</span></div>
+  <div class="stage">
+    <div class="phone side left"><div class="screen"><img src="{{prayers}}"></div></div>
+    <div class="phone center"><div class="screen"><img src="{{quran}}"></div></div>
+    <div class="phone side right"><div class="screen wallpaper"><canvas id="widget"></canvas></div></div>
+  </div>
+  <img id="widget-source" src="{{widget}}" hidden>
+<script>
+const source = document.getElementById('widget-source');
+const canvas = document.getElementById('widget');
+
+function draw() {
+  // Keeps the rows between the status bar and the dock.
+  const scale = source.naturalWidth / 1080;
+  const top = Math.round(100 * scale);
+  const bottom = Math.round(1880 * scale);
+  canvas.width = source.naturalWidth;
+  canvas.height = bottom - top;
+
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(source, 0, top, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+
+  // Same soft chroma key as template_widget.html.
+  const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const px = image.data;
+  for (let i = 0; i < px.length; i += 4) {
+    const r = px[i], g = px[i + 1], b = px[i + 2];
+    const green = g - Math.max(r, b);
+    if (green <= 40) continue;
+    px[i + 3] = green >= 120 ? 0 : Math.round(255 * (1 - (green - 40) / 80));
+    px[i + 1] = Math.max(r, b);
+  }
+  ctx.putImageData(image, 0, 0);
+}
+
+if (source.complete) draw(); else source.onload = draw;
+</script>
+</body>
+</html>

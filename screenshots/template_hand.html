@@ -1,0 +1,125 @@
+<!doctype html>
+<!--
+  Landscape portfolio banner (1920x1080) with a hand holding the phone,
+  rendered by hand.py. The hand, phone and screen mask come from the
+  "Free iPhone 18 Pro Mockup Held at an Angle" PSD (screenshots/mockup/).
+  .scene is laid out in the PSD's own 3680x2760 pixel space and scaled
+  into the banner, so the PSD coordinates below stay untouched.
+  Placeholders: {{fonts}}, {{icon}}, {{scene}}, {{mask}}, {{shot}},
+  {{matrix}} (maps the 1080x2340 screen onto the PSD screen corners),
+  {{crop_top}} (status bar height in screenshot pixels).
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Manrope; font-weight: 500; src: url("{{fonts}}/Manrope-Medium.ttf"); }
+@font-face { font-family: NotoSerif; font-style: italic; font-weight: 600; src: url("{{fonts}}/NotoSerif-SemiBoldItalic.ttf"); }
+
+* { margin: 0; box-sizing: border-box; }
+
+html, body { width: 1920px; height: 1080px; overflow: hidden; }
+
+body {
+  position: relative;
+  font-family: Manrope, sans-serif;
+  background:
+    radial-gradient(900px 700px at 75% 40%, rgba(197, 160, 89, 0.22), transparent 65%),
+    radial-gradient(900px 800px at 0% 100%, rgba(0, 117, 106, 0.55), transparent 65%),
+    linear-gradient(160deg, #00594B 0%, #004D40 50%, #00332B 100%);
+}
+
+.brand {
+  position: absolute;
+  left: 150px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+}
+
+.brand img {
+  width: 132px;
+  height: 132px;
+  border-radius: 32px;
+  box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.5), 0 24px 48px rgba(0, 0, 0, 0.3);
+}
+
+.brand h1 {
+  margin-top: 34px;
+  font-family: NotoSerif, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 128px;
+  line-height: 1;
+}
+
+.brand p { margin-top: 22px; font-size: 34px; color: #E6D5B8; }
+
+.scene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3680px;
+  height: 2760px;
+  /* Rotates around the phone's centre so it stands upright and the arm
+     leaves through the bottom edge; translate puts that centre at
+     (1330, 580) in the banner. */
+  transform-origin: 1870px 1365px;
+  transform: translate(-540px, -785px) scale(0.45) rotate(-28deg);
+}
+
+.scene > * { position: absolute; }
+
+.hand { left: 0; top: 373px; }
+
+.glass {
+  inset: 0;
+  -webkit-mask: url("{{mask}}") 1128px 403px / auto no-repeat;
+  mask: url("{{mask}}") 1128px 403px / auto no-repeat;
+}
+
+.screen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1080px;
+  height: 2340px;
+  overflow: hidden;
+  background: #F7F8F7;
+  transform-origin: 0 0;
+  transform: {{matrix}};
+}
+
+.screen img {
+  display: block;
+  width: 100%;
+  clip-path: inset({{crop_top}}px 0 0 0);
+}
+
+/* Dynamic Island, drawn over the trimmed status bar. */
+.screen .island {
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  width: 330px;
+  height: 96px;
+  margin-left: -165px;
+  border-radius: 48px;
+  background: #000;
+}
+</style>
+</head>
+<body>
+  <div class="brand">
+    <img src="{{icon}}">
+    <h1>Deenly</h1>
+    <p>A companion for the modern Muslim.</p>
+  </div>
+  <div class="scene">
+    <img class="hand" src="{{scene}}">
+    <div class="glass">
+      <div class="screen"><img src="{{shot}}"><div class="island"></div></div>
+    </div>
+  </div>
+</body>
+</html>

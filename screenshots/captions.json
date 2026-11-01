@@ -1,0 +1,56 @@
+{
+  "crop_top": 100,
+  "source_width": 1080,
+  "captions": {
+    "01_home": {
+      "id": ["Teman ibadah harianmu", "Jadwal shalat, menu ibadah lengkap, dan hadis harian"],
+      "en": ["Your worship companion", "Prayer times, worship tools and a daily hadith"]
+    },
+    "02_quran": {
+      "id": ["Baca Al-Qur'an nyaman", "Terjemahan, audio qari, tema dan ukuran huruf pilihan"],
+      "en": ["Read the Quran your way", "Translation, reciter audio, themes and font sizes"]
+    },
+    "03_prayers": {
+      "id": ["Pantau shalat harianmu", "Tandai shalat yang selesai & lihat riwayatnya"],
+      "en": ["Track your daily prayers", "Mark prayers as done and look back at your history"]
+    },
+    "04_qibla": {
+      "id": ["Arah kiblat di genggaman", "Kompas kiblat yang jelas di mana pun kamu berada"],
+      "en": ["Find the Qibla anywhere", "A clear Qibla compass wherever you are"]
+    },
+    "05_dzikir": {
+      "id": ["Dzikir pagi & petang", "Bacaan lengkap dengan penghitung di setiap dzikir"],
+      "en": ["Morning & evening dhikr", "Full readings with a counter on every dhikr"]
+    },
+    "06_calendar": {
+      "id": ["Kalender Hijriah lengkap", "Hari besar Islam dan jadwal puasa sunnah"],
+      "en": ["Complete Hijri calendar", "Islamic events and recommended fasting days"]
+    },
+    "07_zakat": {
+      "id": ["Hitung zakat mudah", "Nisab mengikuti harga emas terkini"],
+      "en": ["Calculate zakat with ease", "Nisab follows the latest gold price"]
+    },
+    "08_tasbih": {
+      "id": ["Tasbih digital", "Hitung dzikir tanpa kehilangan jejak"],
+      "en": ["Digital tasbih", "Count your dhikr without losing track"]
+    },
+    "09_doa": {
+      "id": ["Kumpulan doa harian", "Lengkap dengan bacaan Arab, latin, dan artinya"],
+      "en": ["Daily duas", "Arabic text, transliteration and meaning"]
+    },
+    "10_mosque": {
+      "id": ["Temukan masjid terdekat", "Lengkap dengan jarak dan petunjuk arah"],
+      "en": ["Find nearby mosques", "With distance and directions"]
+    },
+    "11_home_dark": {
+      "id": ["Nyaman di mode gelap", "Tampilan yang tetap tenang di malam hari"],
+      "en": ["Easy on the eyes", "A calm dark mode for the night"]
+    },
+    "12_widget": {
+      "layout": "widget",
+      "crop": [190, 1850],
+      "id": ["Widget jadwal shalat", "Di layar utama, dengan tema Deenly, terang, dan gelap"],
+      "en": ["Prayer times at a glance", "Widgets in Deenly, light and dark themes"]
+    }
+  }
+}
