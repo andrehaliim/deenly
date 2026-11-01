@@ -6,7 +6,6 @@ import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/pages/main_page.dart';
 import 'package:deenly/pages/permission/permission_page.dart';
-import 'package:deenly/pages/splash/splash_logo_widget.dart';
 import 'package:deenly/pages/splash/splash_text_widget.dart';
 import 'package:deenly/pages/update/update_required_page.dart';
 import 'package:deenly/proxys/hadith_proxy.dart';
@@ -36,8 +35,8 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     duration: _introDuration,
   );
 
-  /// Played once loading is done: the logo and text grow slightly while
-  /// fading into the teal background.
+  /// Played once loading is done: the title and tagline grow slightly while
+  /// fading into the background.
   late final AnimationController _exitController = AnimationController(
     vsync: this,
     duration: _exitDuration,
@@ -149,12 +148,13 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    // The teal background is dark in both themes, so always use light icons.
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: theme.colorScheme.primary,
+        // Same background as the home screen, so the fade into it is seamless.
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -163,15 +163,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                 opacity: _contentOpacity,
                 child: ScaleTransition(
                   scale: _contentScale,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SplashLogoWidget(animation: _controller),
-                      // The logo image already has transparent padding below.
-                      const SizedBox(height: 4),
-                      SplashTextWidget(animation: _controller),
-                    ],
-                  ),
+                  child: SplashTextWidget(animation: _controller),
                 ),
               ),
             ),

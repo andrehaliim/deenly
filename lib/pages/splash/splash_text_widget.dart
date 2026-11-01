@@ -15,10 +15,13 @@ class SplashTextWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
-    final textColor = colorScheme.onPrimary;
+    final isDark = theme.brightness == Brightness.dark;
 
-    const titleInterval = Interval(0.25, 0.7, curve: Curves.easeOutCubic);
-    const taglineInterval = Interval(0.45, 0.85, curve: Curves.easeOutCubic);
+    // Primary teal is too dark on the dark surface, so use gold there.
+    final titleColor = isDark ? colorScheme.secondary : colorScheme.primary;
+
+    const titleInterval = Interval(0.05, 0.55, curve: Curves.easeOutCubic);
+    const taglineInterval = Interval(0.3, 0.8, curve: Curves.easeOutCubic);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -37,7 +40,7 @@ class SplashTextWidget extends StatelessWidget {
               l10n?.appTitle ?? '',
               textAlign: TextAlign.center,
               style: theme.extension<AppTextStyles>()?.brandTitle.copyWith(
-                color: textColor,
+                color: titleColor,
                 fontSize: 48,
                 height: 1.1,
               ),
@@ -54,41 +57,18 @@ class SplashTextWidget extends StatelessWidget {
                 end: Offset.zero,
               ).chain(CurveTween(curve: taglineInterval)),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _TaglineRule(color: colorScheme.secondary),
-                const SizedBox(width: 12),
-                Flexible(
-                  child: Text(
-                    (l10n?.splashTagline ?? '').toUpperCase(),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: textColor,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 2.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                _TaglineRule(color: colorScheme.secondary),
-              ],
+            child: Text(
+              (l10n?.splashTagline ?? '').toUpperCase(),
+              textAlign: TextAlign.center,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 2.4,
+              ),
             ),
           ),
         ),
       ],
     );
-  }
-}
-
-/// Short gold line that frames the tagline on both sides.
-class _TaglineRule extends StatelessWidget {
-  final Color color;
-
-  const _TaglineRule({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(width: 20, height: 1, color: color.withValues(alpha: 0.7));
   }
 }
