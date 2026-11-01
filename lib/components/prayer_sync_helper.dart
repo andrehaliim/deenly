@@ -1,3 +1,4 @@
+import 'package:deenly/components/prayer_method_helper.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/location_proxy.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
@@ -12,6 +13,17 @@ class PrayerSyncHelper {
   static const String keyLocationName = 'locationName';
   static const String keyTimezone = 'prayerTimezone';
   static const String keyApproximate = 'locationApproximate';
+
+  /// Chosen by the user; absent means automatic (from [keyCountry]).
+  static const String keyMethod = 'prayerMethod';
+  static const String keySchool = 'prayerSchool';
+
+  /// Country of the last fetch, reused when it cannot be looked up.
+  static const String keyCountry = 'prayerCountry';
+
+  /// Method and school the cached prayer times were fetched with.
+  static const String _keyAppliedMethod = 'prayerAppliedMethod';
+  static const String _keyAppliedSchool = 'prayerAppliedSchool';
 
   final LocationProxy _locationProxy = LocationProxy();
   final PrayerProxy _prayerProxy = PrayerProxy();
@@ -32,7 +44,11 @@ class PrayerSyncHelper {
 
     /// Only a saved location may refetch an outdated cache; the timezone
     /// fallback would replace it with an approximate one.
-    if (today != null && (!_isOutdated(today) || !hasCoordinates)) return;
+    if (today != null &&
+        ((!_isOutdated(today) && !_calculationChanged(prefs)) ||
+            !hasCoordinates)) {
+      return;
+    }
 
     if (latitude != null && longitude != null) {
       await _fetchAndSave(
@@ -50,6 +66,58 @@ class PrayerSyncHelper {
 
   /// Cached before Imsak and Sunrise were stored.
   bool _isOutdated(PrayerModel prayer) => prayer.sunrise.isEmpty;
+
+  /// True when the cache was fetched with another method or school, e.g.
+  /// a change that could not be fetched offline, or a cache from before
+  /// the method was selectable.
+  bool _calculationChanged(SharedPreferences prefs) {
+    final (:method, :school) = _calculationFor(
+      prefs,
+      prefs.getString(keyCountry),
+    );
+    return prefs.getInt(_keyAppliedMethod) != method ||
+        prefs.getInt(_keyAppliedSchool) != school;
+  }
+
+  ({int method, int school}) _calculationFor(
+    SharedPreferences prefs,
+    String? countryCode,
+  ) => (
+    method:
+        prefs.getInt(keyMethod) ?? PrayerMethodHelper.methodFor(countryCode),
+    school:
+        prefs.getInt(keySchool) ?? PrayerMethodHelper.schoolFor(countryCode),
+  );
+
+  /// Saves the chosen [method] and [school] (null for automatic) and
+  /// refetches the prayer times with them. When the fetch fails the choice
+  /// stays saved and the next [sync] applies it.
+  Future<void> setCalculation({
+    required int? method,
+    required int? school,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await Future.wait([
+      method == null
+          ? prefs.remove(keyMethod)
+          : prefs.setInt(keyMethod, method),
+      school == null
+          ? prefs.remove(keySchool)
+          : prefs.setInt(keySchool, school),
+    ]);
+
+    final latitude = prefs.getDouble(keyLatitude);
+    final longitude = prefs.getDouble(keyLongitude);
+    if (latitude == null || longitude == null) return;
+
+    await _fetchAndSave(
+      prefs,
+      latitude: latitude,
+      longitude: longitude,
+      locationName: prefs.getString(keyLocationName),
+      isApproximate: prefs.getBool(keyApproximate) ?? false,
+    );
+  }
 
   Future<bool> hasSavedLocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -101,7 +169,12 @@ class PrayerSyncHelper {
     final today = await _prayerProxy.getTodayPrayer();
     final todayMissing = today == null || _isOutdated(today);
 
-    if (!locationChanged && !timezoneChanged && !todayMissing) return;
+    if (!locationChanged &&
+        !timezoneChanged &&
+        !todayMissing &&
+        !_calculationChanged(prefs)) {
+      return;
+    }
 
     await _fetchAndSave(
       prefs,
@@ -140,9 +213,22 @@ class PrayerSyncHelper {
     required String? locationName,
     required bool isApproximate,
   }) async {
-    await _prayerProxy.fetchYearlyPrayer(latitude, longitude);
+    final countryCode =
+        await _locationProxy.getCountryCode(latitude, longitude) ??
+        prefs.getString(keyCountry);
+    final (:method, :school) = _calculationFor(prefs, countryCode);
+
+    await _prayerProxy.fetchYearlyPrayer(
+      latitude,
+      longitude,
+      method: method,
+      school: school,
+    );
 
     await Future.wait([
+      prefs.setInt(_keyAppliedMethod, method),
+      prefs.setInt(_keyAppliedSchool, school),
+      if (countryCode != null) prefs.setString(keyCountry, countryCode),
       prefs.setDouble(keyLatitude, latitude),
       prefs.setDouble(keyLongitude, longitude),
       prefs.setString(keyTimezone, tz.local.name),

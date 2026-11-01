@@ -4,6 +4,7 @@ import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/prayer_method_helper.dart';
 import 'package:deenly/components/theme_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
@@ -36,6 +37,10 @@ class _SettingPageState extends State<SettingPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _entranceController;
   bool _isSaving = false;
+  bool _isApplyingCalculation = false;
+
+  /// Dropdown value for the automatic (country based) option.
+  static const int _automatic = -1;
 
   /// Unsaved edits. Rebuilt from the saved values every time the page
   /// opens, so changes that were never saved are discarded.
@@ -237,6 +242,10 @@ class _SettingPageState extends State<SettingPage>
         ],
       ),
       SettingSection(
+        title: l10n?.settingCalculationTitle ?? '',
+        children: _calculationTiles(drawerProvider, l10n),
+      ),
+      SettingSection(
         title: l10n?.settingTimeTitle ?? '',
         isExpanded: drawerProvider.isAdjustmentExpanded,
         onTitleTap: drawerProvider.toggleAdjustmentExpansion,
@@ -332,6 +341,101 @@ class _SettingPageState extends State<SettingPage>
         ),
       ),
     );
+  }
+
+  List<Widget> _calculationTiles(
+    DrawerProvider drawerProvider,
+    AppLocalizations? l10n,
+  ) {
+    final method = drawerProvider.prayerMethod;
+    final school = drawerProvider.prayerSchool;
+    final country = drawerProvider.prayerCountry;
+    final autoMethod = PrayerMethodHelper.methodOf(
+      PrayerMethodHelper.methodFor(country),
+    );
+    final autoSchool = PrayerMethodHelper.schoolFor(country);
+
+    String schoolLabel(int school) => school == PrayerMethodHelper.schoolHanafi
+        ? l10n?.settingSchoolHanafi ?? ''
+        : l10n?.settingSchoolShafi ?? '';
+
+    void apply({required int? method, required int? school}) =>
+        _onCalculationChanged(drawerProvider, method: method, school: school);
+
+    return [
+      SettingDropdownTile<int>(
+        icon: Icons.calculate_rounded,
+        title: l10n?.settingMethod ?? '',
+        value: method ?? _automatic,
+        items: [
+          SettingDropdownItem(
+            value: _automatic,
+            label: l10n?.settingAutomatic(autoMethod.shortName) ?? '',
+          ),
+          for (final option in PrayerMethodHelper.methods)
+            SettingDropdownItem(value: option.id, label: option.name),
+        ],
+        onChanged: _isApplyingCalculation
+            ? null
+            : (value) => apply(
+                method: value == _automatic ? null : value,
+                school: school,
+              ),
+      ),
+      SettingDropdownTile<int>(
+        icon: Icons.wb_twilight_rounded,
+        title: l10n?.settingSchool ?? '',
+        value: school ?? _automatic,
+        items: [
+          SettingDropdownItem(
+            value: _automatic,
+            label: l10n?.settingAutomatic(schoolLabel(autoSchool)) ?? '',
+          ),
+          for (final option in [
+            PrayerMethodHelper.schoolShafi,
+            PrayerMethodHelper.schoolHanafi,
+          ])
+            SettingDropdownItem(value: option, label: schoolLabel(option)),
+        ],
+        onChanged: _isApplyingCalculation
+            ? null
+            : (value) => apply(
+                method: method,
+                school: value == _automatic ? null : value,
+              ),
+      ),
+      if (_isApplyingCalculation)
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: LinearProgressIndicator(),
+        ),
+    ];
+  }
+
+  Future<void> _onCalculationChanged(
+    DrawerProvider drawerProvider, {
+    required int? method,
+    required int? school,
+  }) async {
+    if (_isApplyingCalculation) return;
+    setState(() {
+      _isApplyingCalculation = true;
+    });
+
+    try {
+      await drawerProvider.setPrayerCalculation(method: method, school: school);
+      widget.onSaved?.call();
+    } catch (e) {
+      debugPrint('Applying prayer calculation failed: $e');
+      final l10n = mounted ? AppLocalizations.of(context) : null;
+      if (l10n != null) _showSnackBar(l10n.calculationSaveFailed);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isApplyingCalculation = false;
+        });
+      }
+    }
   }
 
   Future<void> _onPrayerToggled(

@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:deenly/components/database_helper.dart';
+import 'package:deenly/components/prayer_method_helper.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:flutter/material.dart';
@@ -40,18 +42,26 @@ class PrayerProxy {
 
   /// Re-applies the saved adjustments, since the API returns unadjusted
   /// times.
-  Future<void> fetchYearlyPrayer(double lat, double lon) async {
+  Future<void> fetchYearlyPrayer(
+    double lat,
+    double lon, {
+    required int method,
+    required int school,
+  }) async {
     final db = await DatabaseHelper.instance.database;
     final now = DateTime.now();
     final deviceTimezone = tz.local.name;
+    final tune = PrayerMethodHelper.tuneFor(method);
 
     final uri = Uri.parse('$_baseUrl/calendar/${now.year}').replace(
       queryParameters: {
         'latitude': '$lat',
         'longitude': '$lon',
-        'method': '20',
+        'method': '$method',
+        'school': '$school',
         'timezonestring': deviceTimezone,
         'annual': 'true',
+        'tune': ?tune,
       },
     );
 
@@ -148,11 +158,10 @@ class PrayerProxy {
 
       final batch = txn.batch();
       for (final entry in adjustments.entries) {
-        batch.insert(
-          DatabaseHelper.tablePrayerAdjustment,
-          {'prayer': entry.key, 'minutes': entry.value},
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
+        batch.insert(DatabaseHelper.tablePrayerAdjustment, {
+          'prayer': entry.key,
+          'minutes': entry.value,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
       }
       await batch.commit(noResult: true);
     });

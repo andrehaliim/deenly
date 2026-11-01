@@ -67,6 +67,23 @@ class LocationProxy {
     }
   }
 
+  /// ISO 3166-1 alpha-2 code, e.g. 'ID'. Null when it cannot be looked up,
+  /// e.g. offline.
+  Future<String?> getCountryCode(double latitude, double longitude) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      ).timeout(_timeLimit);
+      final code = placemarks.firstOrNull?.isoCountryCode;
+      if (code == null || code.isEmpty) return null;
+      return code.toUpperCase();
+    } catch (e) {
+      debugPrint('getCountryCode failed: $e');
+      return null;
+    }
+  }
+
   Future<({double latitude, double longitude})?> getCoordinatesFromName(
     String name,
   ) async {

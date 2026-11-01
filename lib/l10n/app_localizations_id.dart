@@ -1043,4 +1043,28 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get calendarPrayerUnavailable =>
       'Jadwal sholat untuk tanggal ini belum tersedia.';
+
+  @override
+  String get settingCalculationTitle => 'Metode Perhitungan';
+
+  @override
+  String get settingMethod => 'Metode';
+
+  @override
+  String get settingSchool => 'Mazhab Ashar';
+
+  @override
+  String settingAutomatic(String name) {
+    return 'Otomatis ($name)';
+  }
+
+  @override
+  String get settingSchoolShafi => 'Syafi\'i';
+
+  @override
+  String get settingSchoolHanafi => 'Hanafi';
+
+  @override
+  String get calculationSaveFailed =>
+      'Gagal memperbarui jadwal sholat. Akan diterapkan saat online.';
 }

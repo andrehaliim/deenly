@@ -1,4 +1,5 @@
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/components/widget_helper.dart';
 import 'package:deenly/models/prayer_model.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
@@ -190,6 +191,28 @@ class DrawerProvider extends ChangeNotifier {
     await PrayerProxy().saveAdjustments(adjustments);
     _adjustments.addAll(adjustments);
     notifyListeners();
+  }
+
+  /// Calculation method chosen by the user; null means automatic.
+  int? get prayerMethod => prefs.getInt(PrayerSyncHelper.keyMethod);
+
+  /// Asr school chosen by the user; null means automatic.
+  int? get prayerSchool => prefs.getInt(PrayerSyncHelper.keySchool);
+
+  /// Country the automatic method and school follow, if known.
+  String? get prayerCountry => prefs.getString(PrayerSyncHelper.keyCountry);
+
+  /// Saves the choice (null for automatic) and refetches the prayer times.
+  /// The choice stays saved even when the fetch fails.
+  Future<void> setPrayerCalculation({
+    required int? method,
+    required int? school,
+  }) async {
+    try {
+      await PrayerSyncHelper().setCalculation(method: method, school: school);
+    } finally {
+      notifyListeners();
+    }
   }
 
   void toggleNotificationExpansion() {

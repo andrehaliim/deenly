@@ -706,5 +706,20 @@
     },
     "calendarOddNightDesc": "An odd night of the last ten nights begins at Maghrib this evening. Seek Laylat al-Qadr in it (HR. Bukhari).",
     "calendarPrayerTimes": "Prayer times",
-    "calendarPrayerUnavailable": "Prayer times for this date are not available yet."
+    "calendarPrayerUnavailable": "Prayer times for this date are not available yet.",
+    "settingCalculationTitle": "Calculation Method",
+    "settingMethod": "Method",
+    "settingSchool": "Asr Calculation",
+    "settingAutomatic": "Automatic ({name})",
+    "@settingAutomatic": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Kemenag"
+            }
+        }
+    },
+    "settingSchoolShafi": "Shafi'i",
+    "settingSchoolHanafi": "Hanafi",
+    "calculationSaveFailed": "Failed to update prayer times. It will be applied once online."
 }

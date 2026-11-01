@@ -1891,6 +1891,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Prayer times for this date are not available yet.'**
   String get calendarPrayerUnavailable;
+
+  /// No description provided for @settingCalculationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculation Method'**
+  String get settingCalculationTitle;
+
+  /// No description provided for @settingMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Method'**
+  String get settingMethod;
+
+  /// No description provided for @settingSchool.
+  ///
+  /// In en, this message translates to:
+  /// **'Asr Calculation'**
+  String get settingSchool;
+
+  /// No description provided for @settingAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic ({name})'**
+  String settingAutomatic(String name);
+
+  /// No description provided for @settingSchoolShafi.
+  ///
+  /// In en, this message translates to:
+  /// **'Shafi\'i'**
+  String get settingSchoolShafi;
+
+  /// No description provided for @settingSchoolHanafi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hanafi'**
+  String get settingSchoolHanafi;
+
+  /// No description provided for @calculationSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update prayer times. It will be applied once online.'**
+  String get calculationSaveFailed;
 }
 
 class _AppLocalizationsDelegate

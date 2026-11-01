@@ -354,5 +354,12 @@
     "calendarOddNight": "Malam ke-{night} dimulai malam ini",
     "calendarOddNightDesc": "Malam ganjil dari sepuluh malam terakhir dimulai saat maghrib hari ini. Carilah Lailatul Qadar di malam ini (HR. Bukhari).",
     "calendarPrayerTimes": "Jadwal sholat",
-    "calendarPrayerUnavailable": "Jadwal sholat untuk tanggal ini belum tersedia."
+    "calendarPrayerUnavailable": "Jadwal sholat untuk tanggal ini belum tersedia.",
+    "settingCalculationTitle": "Metode Perhitungan",
+    "settingMethod": "Metode",
+    "settingSchool": "Mazhab Ashar",
+    "settingAutomatic": "Otomatis ({name})",
+    "settingSchoolShafi": "Syafi'i",
+    "settingSchoolHanafi": "Hanafi",
+    "calculationSaveFailed": "Gagal memperbarui jadwal sholat. Akan diterapkan saat online."
 }

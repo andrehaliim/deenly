@@ -1055,4 +1055,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get calendarPrayerUnavailable =>
       'Prayer times for this date are not available yet.';
+
+  @override
+  String get settingCalculationTitle => 'Calculation Method';
+
+  @override
+  String get settingMethod => 'Method';
+
+  @override
+  String get settingSchool => 'Asr Calculation';
+
+  @override
+  String settingAutomatic(String name) {
+    return 'Automatic ($name)';
+  }
+
+  @override
+  String get settingSchoolShafi => 'Shafi\'i';
+
+  @override
+  String get settingSchoolHanafi => 'Hanafi';
+
+  @override
+  String get calculationSaveFailed =>
+      'Failed to update prayer times. It will be applied once online.';
 }
