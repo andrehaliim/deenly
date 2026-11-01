@@ -152,6 +152,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingTimeTitle => 'Time Adjustment';
 
   @override
+  String get settingNotificationInfoTitle =>
+      'The adhan plays right at prayer time';
+
+  @override
+  String get settingNotificationInfoDesc =>
+      'Tap \"I have prayed\" on the notification to log your prayer straight away.';
+
+  @override
+  String get settingTimeInfoTitle => 'Shift each time by the minute';
+
+  @override
+  String get settingTimeInfoDesc =>
+      'Use + to make a time later and - to make it earlier, so it matches your nearest mosque. Tap Save to apply.';
+
+  @override
   String get settingSaveButton => 'Save';
 
   @override
@@ -579,14 +594,32 @@ class AppLocalizationsEn extends AppLocalizations {
       'Take a few minutes for evening dhikr before Maghrib';
 
   @override
-  String get settingCalendarTitle =>
-      'Calendar reminders (the evening before, 8 PM)';
+  String get settingCalendarTitle => 'Choose reminders';
+
+  @override
+  String get settingCalendarInfoTitle => 'Sent the evening before, at 8 PM';
+
+  @override
+  String get settingCalendarInfoDesc =>
+      'You\'re reminded a day ahead, so there\'s still time to make your intention and prepare suhoor.';
 
   @override
   String get settingCalendarHoliday => 'Islamic holidays';
 
   @override
+  String get settingCalendarHolidayDesc =>
+      'Eid al-Fitr, Eid al-Adha, Mawlid, etc.';
+
+  @override
   String get settingCalendarSunnahFast => 'Sunnah fasts';
+
+  @override
+  String get settingCalendarSunnahFastDesc =>
+      'Arafah, Ashura, Ayyam al-Bidh, etc.';
+
+  @override
+  String get settingCalendarMondayThursdayDesc =>
+      'Every Sunday & Wednesday evening';
 
   @override
   String calendarReminderTitle(String names) {

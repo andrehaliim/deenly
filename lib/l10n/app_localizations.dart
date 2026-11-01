@@ -368,6 +368,30 @@ abstract class AppLocalizations {
   /// **'Time Adjustment'**
   String get settingTimeTitle;
 
+  /// No description provided for @settingNotificationInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The adhan plays right at prayer time'**
+  String get settingNotificationInfoTitle;
+
+  /// No description provided for @settingNotificationInfoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"I have prayed\" on the notification to log your prayer straight away.'**
+  String get settingNotificationInfoDesc;
+
+  /// No description provided for @settingTimeInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift each time by the minute'**
+  String get settingTimeInfoTitle;
+
+  /// No description provided for @settingTimeInfoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use + to make a time later and - to make it earlier, so it matches your nearest mosque. Tap Save to apply.'**
+  String get settingTimeInfoDesc;
+
   /// No description provided for @settingSaveButton.
   ///
   /// In en, this message translates to:
@@ -1085,8 +1109,20 @@ abstract class AppLocalizations {
   /// No description provided for @settingCalendarTitle.
   ///
   /// In en, this message translates to:
-  /// **'Calendar reminders (the evening before, 8 PM)'**
+  /// **'Choose reminders'**
   String get settingCalendarTitle;
+
+  /// No description provided for @settingCalendarInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent the evening before, at 8 PM'**
+  String get settingCalendarInfoTitle;
+
+  /// No description provided for @settingCalendarInfoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re reminded a day ahead, so there\'s still time to make your intention and prepare suhoor.'**
+  String get settingCalendarInfoDesc;
 
   /// No description provided for @settingCalendarHoliday.
   ///
@@ -1094,11 +1130,29 @@ abstract class AppLocalizations {
   /// **'Islamic holidays'**
   String get settingCalendarHoliday;
 
+  /// No description provided for @settingCalendarHolidayDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Eid al-Fitr, Eid al-Adha, Mawlid, etc.'**
+  String get settingCalendarHolidayDesc;
+
   /// No description provided for @settingCalendarSunnahFast.
   ///
   /// In en, this message translates to:
   /// **'Sunnah fasts'**
   String get settingCalendarSunnahFast;
+
+  /// No description provided for @settingCalendarSunnahFastDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Arafah, Ashura, Ayyam al-Bidh, etc.'**
+  String get settingCalendarSunnahFastDesc;
+
+  /// No description provided for @settingCalendarMondayThursdayDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Sunday & Wednesday evening'**
+  String get settingCalendarMondayThursdayDesc;
 
   /// No description provided for @calendarReminderTitle.
   ///

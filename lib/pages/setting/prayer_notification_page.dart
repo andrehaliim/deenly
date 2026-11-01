@@ -1,5 +1,6 @@
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/pages/setting/setting_info_card.dart';
 import 'package:deenly/pages/setting/setting_section.dart';
 import 'package:deenly/pages/setting/setting_subpage.dart';
 import 'package:deenly/pages/setting/setting_tile.dart';
@@ -19,6 +20,11 @@ class PrayerNotificationPage extends StatelessWidget {
     return SettingSubpage(
       title: l10n?.settingNotificationTitle ?? '',
       children: [
+        SettingInfoCard(
+          icon: Icons.volume_up_rounded,
+          title: l10n?.settingNotificationInfoTitle ?? '',
+          description: l10n?.settingNotificationInfoDesc ?? '',
+        ),
         SettingSection(
           children: [
             for (final prayer in DrawerProvider.prayers)

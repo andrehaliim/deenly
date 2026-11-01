@@ -1,6 +1,7 @@
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/pages/setting/prayer_adjustment_tile.dart';
+import 'package:deenly/pages/setting/setting_info_card.dart';
 import 'package:deenly/pages/setting/setting_section.dart';
 import 'package:deenly/pages/setting/setting_subpage.dart';
 import 'package:deenly/proxys/prayer_proxy.dart';
@@ -40,6 +41,11 @@ class _PrayerAdjustmentPageState extends State<PrayerAdjustmentPage> {
     return SettingSubpage(
       title: l10n?.settingTimeTitle ?? '',
       children: [
+        SettingInfoCard(
+          icon: Icons.schedule_rounded,
+          title: l10n?.settingTimeInfoTitle ?? '',
+          description: l10n?.settingTimeInfoDesc ?? '',
+        ),
         SettingSection(
           children: [
             for (final prayer in DrawerProvider.prayers)

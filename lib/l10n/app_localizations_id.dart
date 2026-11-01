@@ -151,6 +151,21 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingTimeTitle => 'Penyesuaian Waktu';
 
   @override
+  String get settingNotificationInfoTitle =>
+      'Azan berbunyi tepat saat waktu shalat';
+
+  @override
+  String get settingNotificationInfoDesc =>
+      'Ketuk \"Sudah shalat\" di notifikasi untuk langsung mencatat shalatmu.';
+
+  @override
+  String get settingTimeInfoTitle => 'Geser jadwal per menit';
+
+  @override
+  String get settingTimeInfoDesc =>
+      'Pakai + untuk memundurkan dan - untuk memajukan waktu, agar sesuai jadwal masjid terdekat. Tekan Simpan untuk menerapkan.';
+
+  @override
   String get settingSaveButton => 'Simpan';
 
   @override
@@ -573,14 +588,32 @@ class AppLocalizationsId extends AppLocalizations {
       'Luangkan beberapa menit untuk dzikir petang sebelum Maghrib';
 
   @override
-  String get settingCalendarTitle =>
-      'Pengingat kalender (malam sebelumnya, 20.00)';
+  String get settingCalendarTitle => 'Pilih pengingat';
+
+  @override
+  String get settingCalendarInfoTitle =>
+      'Dikirim malam sebelumnya, pukul 20.00';
+
+  @override
+  String get settingCalendarInfoDesc =>
+      'Kamu diingatkan sehari sebelumnya, jadi masih sempat berniat dan menyiapkan sahur.';
 
   @override
   String get settingCalendarHoliday => 'Hari besar Islam';
 
   @override
+  String get settingCalendarHolidayDesc =>
+      'Idul Fitri, Idul Adha, Maulid, dll.';
+
+  @override
   String get settingCalendarSunnahFast => 'Puasa sunnah';
+
+  @override
+  String get settingCalendarSunnahFastDesc =>
+      'Arafah, Asyura, Ayyamul Bidh, dll.';
+
+  @override
+  String get settingCalendarMondayThursdayDesc => 'Setiap Minggu & Rabu malam';
 
   @override
   String calendarReminderTitle(String names) {
