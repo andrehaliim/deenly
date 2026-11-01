@@ -6,7 +6,6 @@ import 'package:deenly/components/notification_helper.dart';
 import 'package:deenly/components/prayer_sync_helper.dart';
 import 'package:deenly/pages/main_page.dart';
 import 'package:deenly/pages/permission/permission_page.dart';
-import 'package:deenly/pages/splash/splash_loader_widget.dart';
 import 'package:deenly/pages/splash/splash_logo_widget.dart';
 import 'package:deenly/pages/splash/splash_text_widget.dart';
 import 'package:deenly/pages/update/update_required_page.dart';
@@ -23,10 +22,11 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin {
-  static const _introDuration = Duration(milliseconds: 1600);
-  static const _totalSteps = 8;
+class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
+  // Intro and exit together set the splash length; slow loading can only
+  // delay the exit, never cut either animation short.
+  static const _introDuration = Duration(milliseconds: 1750);
+  static const _exitDuration = Duration(milliseconds: 900);
 
   final HadithProxy _hadithProxy = HadithProxy();
   final LocationProxy _locationProxy = LocationProxy();
@@ -36,7 +36,23 @@ class _SplashPageState extends State<SplashPage>
     duration: _introDuration,
   );
 
-  int _completedSteps = 0;
+  /// Played once loading is done: the logo and text grow slightly while
+  /// fading into the teal background.
+  late final AnimationController _exitController = AnimationController(
+    vsync: this,
+    duration: _exitDuration,
+  );
+
+  late final Animation<double> _contentOpacity = _exitController.drive(
+    Tween<double>(begin: 1, end: 0).chain(CurveTween(curve: Curves.easeIn)),
+  );
+
+  late final Animation<double> _contentScale = _exitController.drive(
+    Tween<double>(
+      begin: 1,
+      end: 1.12,
+    ).chain(CurveTween(curve: Curves.easeInCubic)),
+  );
 
   @override
   void initState() {
@@ -48,6 +64,7 @@ class _SplashPageState extends State<SplashPage>
   @override
   void dispose() {
     _controller.dispose();
+    _exitController.dispose();
     super.dispose();
   }
 
@@ -57,8 +74,8 @@ class _SplashPageState extends State<SplashPage>
     final nextPage = await _loadData();
     await introDone;
 
-    // Let the progress bar finish filling up before leaving.
-    await Future<void>.delayed(SplashLoaderWidget.fillDuration);
+    if (!mounted) return;
+    await _exitController.forward();
 
     if (!mounted) return;
 
@@ -66,11 +83,6 @@ class _SplashPageState extends State<SplashPage>
       context,
       FadePageRoute(builder: (context) => nextPage),
     );
-  }
-
-  void _completeStep() {
-    if (!mounted) return;
-    setState(() => _completedSteps++);
   }
 
   Future<Widget> _loadData() async {
@@ -82,41 +94,32 @@ class _SplashPageState extends State<SplashPage>
     final configLoaded = appConfig.load();
 
     await _hadithProxy.load();
-    _completeStep();
     debugPrint('✅ [1/8] Hadith loaded');
 
     await DatabaseHelper.instance.seedSurahIfNeeded();
-    _completeStep();
     debugPrint('✅ [2/8] Surah seeded');
 
     await DatabaseHelper.instance.seedJuzIfNeeded();
-    _completeStep();
     debugPrint('✅ [3/8] Juz seeded');
 
     await DatabaseHelper.instance.seedDoaIfNeeded();
-    _completeStep();
     debugPrint('✅ [4/8] Doa seeded');
 
     await DatabaseHelper.instance.seedAsmaulHusnaIfNeeded();
-    _completeStep();
     debugPrint('✅ [5/8] Asmaul Husna seeded');
 
     await DatabaseHelper.instance.seedDzikirIfNeeded();
-    _completeStep();
     debugPrint('✅ [6/8] Dzikir seeded');
 
     await configLoaded;
-    _completeStep();
     debugPrint('✅ [7/8] App config loaded');
 
     final updateUrl = appConfig.config?.updateUrl;
     if (appConfig.requiresUpdate && updateUrl != null) {
-      _completeStep();
       return UpdateRequiredPage(updateUrl: updateUrl);
     }
 
     final nextPage = await _resolveNextPage(drawerProvider);
-    _completeStep();
     debugPrint('✅ [8/8] Permission status checked');
 
     return nextPage;
@@ -146,28 +149,30 @@ class _SplashPageState extends State<SplashPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
+    // The teal background is dark in both themes, so always use light icons.
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        backgroundColor: theme.colorScheme.surface,
+        backgroundColor: theme.colorScheme.primary,
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SplashLogoWidget(animation: _controller),
-                  const SizedBox(height: 32),
-                  SplashTextWidget(animation: _controller),
-                  const SizedBox(height: 40),
-                  SplashLoaderWidget(
-                    animation: _controller,
-                    progress: _completedSteps / _totalSteps,
+              child: FadeTransition(
+                opacity: _contentOpacity,
+                child: ScaleTransition(
+                  scale: _contentScale,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SplashLogoWidget(animation: _controller),
+                      // The logo image already has transparent padding below.
+                      const SizedBox(height: 4),
+                      SplashTextWidget(animation: _controller),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
