@@ -259,6 +259,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get couldNotOpenMaps => 'Tidak dapat membuka Google Maps.';
 
   @override
+  String get mosqueMoreOnMaps => 'Lihat lebih banyak di Google Maps';
+
+  @override
+  String get mosqueMapsQuery => 'masjid';
+
+  @override
   String get couldNotOpenLink => 'Tidak dapat membuka tautan.';
 
   @override

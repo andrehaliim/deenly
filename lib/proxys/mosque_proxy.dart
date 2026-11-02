@@ -9,9 +9,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class MosqueProxy {
-  static const String _baseUrl = 'https://nominatim.openstreetmap.org/search';
+  static const String _baseUrl = 'https://photon.komoot.io/api/';
   static const int _radiusMeters = 2000;
   static const int _maxRetries = 3;
+
+  /// Photon is a text search without a religion filter, so mosques are
+  /// found by the words their names usually contain.
+  static const List<String> _keywords = [
+    'masjid',
+    'musholla',
+    'mushola',
+    'mosque',
+  ];
 
   Future<List<MosqueModel>> fetchMosques() async {
     final currentPosition = await LocationProxy().getLocation();
@@ -20,66 +29,68 @@ class MosqueProxy {
 
     final bbox = _getBoundingBox(lat, lon, _radiusMeters);
 
-    final uri = Uri.parse(_baseUrl).replace(
-      queryParameters: {
-        'amenity': 'place_of_worship',
-        'format': 'json',
-        'limit': '20',
-        'addressdetails': '1',
-        'extratags': '1',
-        'viewbox':
-            '${bbox.minLon},${bbox.maxLat},${bbox.maxLon},${bbox.minLat}',
-        'bounded': '1',
-      },
+    final results = await Future.wait(
+      _keywords.map((keyword) {
+        final uri = Uri.parse(_baseUrl).replace(
+          queryParameters: {
+            'q': keyword,
+            'lat': '$lat',
+            'lon': '$lon',
+            'limit': '50',
+            'osm_tag': 'amenity:place_of_worship',
+            'bbox':
+                '${bbox.minLon},${bbox.minLat},${bbox.maxLon},${bbox.maxLat}',
+          },
+        );
+        log('Photon uri: $uri');
+        return _fetchWithRetry(uri);
+      }),
     );
 
-    log('Nominatim uri: $uri');
+    final Map<String, MosqueModel> mosques = {};
 
-    final data = await _fetchWithRetry(uri);
-    if (data == null) return [];
+    for (final features in results) {
+      if (features == null) continue;
 
-    List<MosqueModel> mosques = [];
+      for (var feature in features) {
+        try {
+          final properties = feature['properties'] as Map<String, dynamic>;
+          final id = '${properties['osm_type']}${properties['osm_id']}';
+          if (mosques.containsKey(id)) continue;
 
-    for (var place in data) {
-      try {
-        final extratags = place['extratags'] as Map<String, dynamic>? ?? {};
-        final religion = extratags['religion'] as String?;
-        if (religion != null && religion != 'muslim') continue;
+          final String? name = properties['name'];
+          if (name == null || name.isEmpty) continue;
+          if (name.toLowerCase() == 'mosque') continue;
 
-        final String? name = place['name'];
-        if (name == null || name.isEmpty) continue;
-        if (name.toLowerCase() == 'mosque') continue;
+          final coordinates = feature['geometry']['coordinates'] as List;
+          final double mLon = (coordinates[0] as num).toDouble();
+          final double mLat = (coordinates[1] as num).toDouble();
+          final double distance = Geolocator.distanceBetween(
+            lat,
+            lon,
+            mLat,
+            mLon,
+          );
 
-        final double mLat = double.parse(place['lat']);
-        final double mLon = double.parse(place['lon']);
-        final double distance = Geolocator.distanceBetween(
-          lat,
-          lon,
-          mLat,
-          mLon,
-        );
+          if (distance > _radiusMeters) continue;
 
-        if (distance > _radiusMeters) continue;
-
-        final address = _parseAddress(place['address']);
-
-        mosques.add(
-          MosqueModel(
+          mosques[id] = MosqueModel(
             name: name,
             lat: mLat,
             lon: mLon,
             distance: distance,
-            address: address,
-          ),
-        );
-      } catch (e) {
-        log('Skipping malformed place: $e');
-        continue;
+            address: _parseAddress(properties),
+          );
+        } catch (e) {
+          log('Skipping malformed place: $e');
+          continue;
+        }
       }
     }
 
-    mosques.sort((a, b) => a.distance.compareTo(b.distance));
-    return mosques.take(5).toList();
+    final sorted = mosques.values.toList()
+      ..sort((a, b) => a.distance.compareTo(b.distance));
+    return sorted.take(5).toList();
   }
 
   _BoundingBox _getBoundingBox(double lat, double lon, int radiusMeters) {
@@ -97,26 +108,20 @@ class MosqueProxy {
     );
   }
 
-  String _parseAddress(Map<String, dynamic>? address) {
-    if (address == null) return 'Address unavailable';
-
-    final road =
-        address['road'] ??
-        address['pedestrian'] ??
-        address['street'] ??
-        address['path'] ??
-        '';
-    final houseNumber = address['house_number'] ?? '';
-    final suburb = address['suburb'] ?? address['neighbourhood'] ?? '';
-    final city = address['city'] ?? address['town'] ?? address['village'] ?? '';
+  String _parseAddress(Map<String, dynamic> properties) {
+    final road = properties['street'] ?? '';
+    final houseNumber = properties['housenumber'] ?? '';
+    final district = properties['district'] ?? '';
+    final city = properties['city'] ?? '';
 
     final streetPart = [
-      houseNumber,
       road,
+      houseNumber,
     ].where((s) => (s as String).isNotEmpty).join(' ');
 
     final localityPart =
-        [suburb, city].where((s) => (s as String).isNotEmpty).firstOrNull ?? '';
+        [district, city].where((s) => (s as String).isNotEmpty).firstOrNull ??
+        '';
 
     return [streetPart, localityPart]
         .where((s) => s.isNotEmpty)
@@ -128,22 +133,17 @@ class MosqueProxy {
   Future<List<dynamic>?> _fetchWithRetry(Uri uri) async {
     for (int attempt = 1; attempt <= _maxRetries; attempt++) {
       try {
-        log('Nominatim fetch attempt $attempt/$_maxRetries');
+        log('Photon fetch attempt $attempt/$_maxRetries');
 
         final response = await http
-            .get(
-              uri,
-              headers: {
-                'User-Agent': AppHttp.userAgent,
-                'Accept-Language': 'en',
-              },
-            )
+            .get(uri, headers: {'User-Agent': AppHttp.userAgent})
             .timeout(const Duration(seconds: 10));
 
-        log('Nominatim status: ${response.statusCode}');
+        log('Photon status: ${response.statusCode}');
 
         if (response.statusCode == 200) {
-          return json.decode(response.body) as List<dynamic>;
+          final body = json.decode(response.body) as Map<String, dynamic>;
+          return body['features'] as List<dynamic>;
         }
 
         if (response.statusCode == 429) {

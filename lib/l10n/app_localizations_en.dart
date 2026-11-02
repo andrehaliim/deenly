@@ -259,6 +259,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get couldNotOpenMaps => 'Could not open Google Maps.';
 
   @override
+  String get mosqueMoreOnMaps => 'See more on Google Maps';
+
+  @override
+  String get mosqueMapsQuery => 'mosque';
+
+  @override
   String get couldNotOpenLink => 'Could not open the link.';
 
   @override

@@ -90,15 +90,29 @@ class _MosquePageState extends State<MosquePage>
       'destination': '$lat,$lng',
       'travelmode': 'walking',
     });
+    await _openMaps(uri);
+  }
+
+  /// Google Maps searches around the user's own location, so it can show
+  /// mosques the OpenStreetMap-based list misses.
+  Future<void> _openMapsSearch() async {
+    final query = AppLocalizations.of(context)?.mosqueMapsQuery ?? 'mosque';
+    final uri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': query,
+    });
+    await _openMaps(uri);
+  }
+
+  Future<void> _openMaps(Uri uri) async {
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (!mounted) return;
       final message = AppLocalizations.of(context)?.couldNotOpenMaps;
       if (message == null) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -130,6 +144,7 @@ class _MosquePageState extends State<MosquePage>
         icon: Icons.mosque_outlined,
         message: l10n?.noMosqueFound ?? '',
         onRetry: _fetchMosques,
+        footer: _MoreOnMapsButton(onPressed: _openMapsSearch),
       );
     }
 
@@ -147,8 +162,16 @@ class _MosquePageState extends State<MosquePage>
             child: ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.only(bottom: 16),
-              itemCount: mosques.length,
+              itemCount: mosques.length + 1,
               itemBuilder: (context, index) {
+                if (index == mosques.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Center(
+                      child: _MoreOnMapsButton(onPressed: _openMapsSearch),
+                    ),
+                  );
+                }
                 final mosque = mosques[index];
                 return StaggeredEntrance(
                   animation: _entranceController,
@@ -240,11 +263,13 @@ class _StatusMessage extends StatelessWidget {
   final IconData icon;
   final String message;
   final VoidCallback onRetry;
+  final Widget? footer;
 
   const _StatusMessage({
     required this.icon,
     required this.message,
     required this.onRetry,
+    this.footer,
   });
 
   @override
@@ -296,9 +321,30 @@ class _StatusMessage extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded, size: 18),
               label: Text(l10n?.mosqueTryAgain ?? ''),
             ),
+            if (footer case final footer?) ...[
+              const SizedBox(height: 8),
+              footer,
+            ],
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MoreOnMapsButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _MoreOnMapsButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return TextButton.icon(
+      onPressed: onPressed,
+      icon: const Icon(Icons.map_outlined, size: 18),
+      label: Text(l10n?.mosqueMoreOnMaps ?? ''),
     );
   }
 }

@@ -554,6 +554,18 @@ abstract class AppLocalizations {
   /// **'Could not open Google Maps.'**
   String get couldNotOpenMaps;
 
+  /// No description provided for @mosqueMoreOnMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'See more on Google Maps'**
+  String get mosqueMoreOnMaps;
+
+  /// No description provided for @mosqueMapsQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'mosque'**
+  String get mosqueMapsQuery;
+
   /// No description provided for @couldNotOpenLink.
   ///
   /// In en, this message translates to:

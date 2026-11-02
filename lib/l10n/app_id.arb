@@ -97,6 +97,8 @@
     "assalamuAlaikum": "Assalamu'alaikum,",
     "noMosqueFound": "Tidak ada masjid dalam radius 2 km.",
     "couldNotOpenMaps": "Tidak dapat membuka Google Maps.",
+    "mosqueMoreOnMaps": "Lihat lebih banyak di Google Maps",
+    "mosqueMapsQuery": "masjid",
     "couldNotOpenLink": "Tidak dapat membuka tautan.",
     "notificationScheduleFailed": "Gagal menjadwalkan notifikasi",
     "reminderEnableFailed": "Tidak dapat mengaktifkan pengingat",

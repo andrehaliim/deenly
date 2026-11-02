@@ -152,6 +152,8 @@
     "assalamuAlaikum": "Assalamu Alaikum,",
     "noMosqueFound": "No mosques found within 2 km.",
     "couldNotOpenMaps": "Could not open Google Maps.",
+    "mosqueMoreOnMaps": "See more on Google Maps",
+    "mosqueMapsQuery": "mosque",
     "couldNotOpenLink": "Could not open the link.",
     "notificationScheduleFailed": "Failed to schedule notification",
     "reminderEnableFailed": "Could not enable reminder",
