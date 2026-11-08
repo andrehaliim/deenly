@@ -135,6 +135,11 @@ class _PermissionPageState extends State<PermissionPage>
       }
       await drawerProvider.enableAllNotifications();
     }
+
+    /// The provider read the permission at app start, before this prompt,
+    /// and no resume reaches the main page afterwards, so it is read again
+    /// here. Done after enabling, so the reschedule it triggers sets them.
+    await drawerProvider.refreshNotificationPermission();
     await _notificationHelper.markPermissionAsked();
     _goToMain();
   }
