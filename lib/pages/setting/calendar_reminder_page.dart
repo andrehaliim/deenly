@@ -1,5 +1,7 @@
 import 'package:deenly/components/drawer_provider.dart';
+import 'package:deenly/components/notification_permission_prompt.dart';
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/pages/setting/notification_blocked_tile.dart';
 import 'package:deenly/pages/setting/setting_info_card.dart';
 import 'package:deenly/pages/setting/setting_section.dart';
 import 'package:deenly/pages/setting/setting_subpage.dart';
@@ -27,13 +29,19 @@ class CalendarReminderPage extends StatelessWidget {
         SettingSection(
           title: l10n?.settingCalendarTitle ?? '',
           children: [
+            if (!drawerProvider.isNotificationAllowed)
+              const NotificationBlockedTile(),
             SettingTile(
               icon: Icons.mosque_rounded,
               title: l10n?.settingCalendarHoliday ?? '',
               subtitle: l10n?.settingCalendarHolidayDesc,
               trailing: SettingSwitch(
                 value: drawerProvider.isHolidayReminderEnabled,
-                onChanged: drawerProvider.toggleHolidayReminder,
+                onChanged: (value) => _onToggled(
+                  context,
+                  drawerProvider.toggleHolidayReminder,
+                  value,
+                ),
               ),
             ),
             SettingTile(
@@ -42,7 +50,11 @@ class CalendarReminderPage extends StatelessWidget {
               subtitle: l10n?.settingCalendarSunnahFastDesc,
               trailing: SettingSwitch(
                 value: drawerProvider.isSunnahFastReminderEnabled,
-                onChanged: drawerProvider.toggleSunnahFastReminder,
+                onChanged: (value) => _onToggled(
+                  context,
+                  drawerProvider.toggleSunnahFastReminder,
+                  value,
+                ),
               ),
             ),
             SettingTile(
@@ -51,12 +63,26 @@ class CalendarReminderPage extends StatelessWidget {
               subtitle: l10n?.settingCalendarMondayThursdayDesc,
               trailing: SettingSwitch(
                 value: drawerProvider.isMondayThursdayReminderEnabled,
-                onChanged: drawerProvider.toggleMondayThursdayReminder,
+                onChanged: (value) => _onToggled(
+                  context,
+                  drawerProvider.toggleMondayThursdayReminder,
+                  value,
+                ),
               ),
             ),
           ],
         ),
       ],
     );
+  }
+
+  /// Turning a reminder on asks for the notification permission first.
+  Future<void> _onToggled(
+    BuildContext context,
+    Future<void> Function(bool) toggle,
+    bool value,
+  ) async {
+    if (value && !await NotificationPermissionPrompt.ensure(context)) return;
+    await toggle(value);
   }
 }

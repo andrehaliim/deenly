@@ -23,31 +23,78 @@ class DrawerProvider extends ChangeNotifier {
   final Map<String, bool> _enabled = {};
   final Map<String, int> _adjustments = {};
 
+  /// Whether the system lets the app post notifications. It can be turned
+  /// off outside the app, so it is checked again on every resume.
+  bool _isNotificationAllowed = true;
+  bool get isNotificationAllowed => _isNotificationAllowed;
+
+  /// The getters below give what actually reaches the user: off while
+  /// notifications are blocked. The saved choices stay as they are and
+  /// come back once notifications are allowed again.
   bool _isPrayerReminderEnabled = false;
-  bool get isPrayerReminderEnabled => _isPrayerReminderEnabled;
+  bool get isPrayerReminderEnabled =>
+      _isNotificationAllowed && _isPrayerReminderEnabled;
 
   bool _isDzikirReminderEnabled = false;
-  bool get isDzikirReminderEnabled => _isDzikirReminderEnabled;
+  bool get isDzikirReminderEnabled =>
+      _isNotificationAllowed && _isDzikirReminderEnabled;
 
   bool _isHolidayReminderEnabled = false;
-  bool get isHolidayReminderEnabled => _isHolidayReminderEnabled;
+  bool get isHolidayReminderEnabled =>
+      _isNotificationAllowed && _isHolidayReminderEnabled;
 
   bool _isSunnahFastReminderEnabled = false;
-  bool get isSunnahFastReminderEnabled => _isSunnahFastReminderEnabled;
+  bool get isSunnahFastReminderEnabled =>
+      _isNotificationAllowed && _isSunnahFastReminderEnabled;
 
   bool _isMondayThursdayReminderEnabled = false;
-  bool get isMondayThursdayReminderEnabled => _isMondayThursdayReminderEnabled;
+  bool get isMondayThursdayReminderEnabled =>
+      _isNotificationAllowed && _isMondayThursdayReminderEnabled;
 
   DrawerProvider(this.prefs, Map<String, int> adjustments) {
     _adjustments.addAll(adjustments);
     _loadSettings();
+    refreshNotificationPermission();
   }
 
   static int notificationIdOf(String prayer) => prayers.indexOf(prayer) + 1;
 
   static String _enabledKey(String prayer) => 'is${prayer}Enabled';
 
-  bool isPrayerEnabled(String prayer) => _enabled[prayer] ?? false;
+  bool isPrayerEnabled(String prayer) =>
+      _isNotificationAllowed && (_enabled[prayer] ?? false);
+
+  /// Re-reads the notification permission. When it was just allowed again,
+  /// every saved reminder is scheduled once more, since the ones set while
+  /// it was blocked never reached the system.
+  Future<void> refreshNotificationPermission() async {
+    final isAllowed = await NotificationHelper().isPermissionGranted();
+    if (isAllowed == _isNotificationAllowed) return;
+
+    _isNotificationAllowed = isAllowed;
+    notifyListeners();
+    await _updateWidgetNotifications();
+
+    if (!isAllowed) return;
+    try {
+      final PrayerModel? prayerModel = await PrayerProxy().getTodayPrayer();
+      if (prayerModel != null) {
+        await NotificationHelper().rescheduleAll(prayerModel);
+      }
+    } catch (e) {
+      debugPrint('Rescheduling after notification permission failed: $e');
+    }
+  }
+
+  /// The home screen widget shows the adhan state of each prayer.
+  Future<void> _updateWidgetNotifications() async {
+    for (final prayer in prayers) {
+      await WidgetHelper().updateWidgetNotification(
+        prayer.toLowerCase(),
+        isPrayerEnabled(prayer),
+      );
+    }
+  }
 
   /// Saved (already applied) adjustment of [prayer], in minutes.
   int adjustmentOf(String prayer) => _adjustments[prayer] ?? 0;

@@ -160,6 +160,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tap \"I have prayed\" on the notification to log your prayer straight away.';
 
   @override
+  String get settingExactAlarmTitle => 'On-time reminders';
+
+  @override
+  String get settingExactAlarmOn => 'On, notifications come right on time';
+
+  @override
+  String get settingExactAlarmOff => 'Off, may come a few minutes late';
+
+  @override
+  String get notificationPermissionBlocked =>
+      'Notifications are blocked. Allow them in settings.';
+
+  @override
+  String get notificationOpenSettings => 'Open settings';
+
+  @override
+  String get settingNotificationBlockedTitle => 'Notifications are blocked';
+
+  @override
+  String get settingNotificationBlockedDesc => 'Tap to allow them in settings';
+
+  @override
   String get settingTimeInfoTitle => 'Shift each time by the minute';
 
   @override

@@ -60,3 +60,6 @@ todo.md
 # Store screenshots: personal raw shots, generated frames, mockup source files
 screenshots/raw/
 screenshots/framed/
+
+# FlutterBar
+.flutterbar

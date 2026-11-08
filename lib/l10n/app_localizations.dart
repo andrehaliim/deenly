@@ -380,6 +380,48 @@ abstract class AppLocalizations {
   /// **'Tap \"I have prayed\" on the notification to log your prayer straight away.'**
   String get settingNotificationInfoDesc;
 
+  /// No description provided for @settingExactAlarmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On-time reminders'**
+  String get settingExactAlarmTitle;
+
+  /// No description provided for @settingExactAlarmOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On, notifications come right on time'**
+  String get settingExactAlarmOn;
+
+  /// No description provided for @settingExactAlarmOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off, may come a few minutes late'**
+  String get settingExactAlarmOff;
+
+  /// No description provided for @notificationPermissionBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are blocked. Allow them in settings.'**
+  String get notificationPermissionBlocked;
+
+  /// No description provided for @notificationOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get notificationOpenSettings;
+
+  /// No description provided for @settingNotificationBlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are blocked'**
+  String get settingNotificationBlockedTitle;
+
+  /// No description provided for @settingNotificationBlockedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to allow them in settings'**
+  String get settingNotificationBlockedDesc;
+
   /// No description provided for @settingTimeInfoTitle.
   ///
   /// In en, this message translates to:

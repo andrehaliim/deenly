@@ -159,6 +159,29 @@ class AppLocalizationsId extends AppLocalizations {
       'Ketuk \"Sudah shalat\" di notifikasi untuk langsung mencatat shalatmu.';
 
   @override
+  String get settingExactAlarmTitle => 'Pengingat tepat waktu';
+
+  @override
+  String get settingExactAlarmOn => 'Aktif, notifikasi datang tepat waktu';
+
+  @override
+  String get settingExactAlarmOff => 'Nonaktif, bisa telat beberapa menit';
+
+  @override
+  String get notificationPermissionBlocked =>
+      'Notifikasi diblokir. Izinkan di pengaturan.';
+
+  @override
+  String get notificationOpenSettings => 'Buka pengaturan';
+
+  @override
+  String get settingNotificationBlockedTitle => 'Notifikasi diblokir';
+
+  @override
+  String get settingNotificationBlockedDesc =>
+      'Ketuk untuk mengizinkan di pengaturan';
+
+  @override
   String get settingTimeInfoTitle => 'Geser jadwal per menit';
 
   @override

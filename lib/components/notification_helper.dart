@@ -207,6 +207,48 @@ class NotificationHelper {
     return false;
   }
 
+  /// Exact alarms need the "Alarms & reminders" access, which Android 14+
+  /// denies by default. Android 11 and below always allow them.
+  Future<bool> canScheduleExact() async {
+    if (!Platform.isAndroid) return true;
+    try {
+      final androidImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      return await androidImplementation?.canScheduleExactNotifications() ??
+          true;
+    } catch (e) {
+      debugPrint('Checking exact alarm access failed: $e');
+      return false;
+    }
+  }
+
+  /// Opens the system "Alarms & reminders" screen for this app.
+  Future<bool> requestExactAlarmPermission() async {
+    if (!Platform.isAndroid) return true;
+    try {
+      final androidImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      return await androidImplementation?.requestExactAlarmsPermission() ??
+          false;
+    } catch (e) {
+      debugPrint('Requesting exact alarm access failed: $e');
+      return false;
+    }
+  }
+
+  /// Without exact alarm access a schedule must be inexact, otherwise
+  /// zonedSchedule throws and the notification is never set. Inexact ones
+  /// may come a few minutes late while the device dozes.
+  Future<AndroidScheduleMode> _scheduleMode() async {
+    return await canScheduleExact()
+        ? AndroidScheduleMode.exactAllowWhileIdle
+        : AndroidScheduleMode.inexactAllowWhileIdle;
+  }
+
   Future<bool> schedulePrayerNotification({
     required int notifId,
     required String prayerName,
@@ -253,7 +295,7 @@ class NotificationHelper {
       notificationDetails: NotificationDetails(
         android: androidNotificationDetails,
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: await _scheduleMode(),
       scheduledDate: scheduledTime,
       payload: _adhanPayload(scheduledTime, prayerName),
     );
@@ -451,7 +493,7 @@ class NotificationHelper {
       notificationDetails: NotificationDetails(
         android: androidNotificationDetails,
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: await _scheduleMode(),
       scheduledDate: tz.TZDateTime.from(time, tz.local),
       payload: asks == null ? null : _adhanPayload(askedDay, asks),
     );
@@ -515,7 +557,7 @@ class NotificationHelper {
       notificationDetails: const NotificationDetails(
         android: androidNotificationDetails,
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: await _scheduleMode(),
       scheduledDate: scheduledTime,
     );
   }
@@ -625,7 +667,7 @@ class NotificationHelper {
       notificationDetails: NotificationDetails(
         android: androidNotificationDetails,
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: await _scheduleMode(),
       scheduledDate: tz.TZDateTime.from(time, tz.local),
     );
   }

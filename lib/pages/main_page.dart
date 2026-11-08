@@ -1,3 +1,4 @@
+import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/pages/home/home_page.dart';
 import 'package:deenly/components/custom_navigation_bar.dart';
 import 'package:deenly/pages/prayers_page.dart';
@@ -5,6 +6,7 @@ import 'package:deenly/pages/quran/quran_page.dart';
 import 'package:deenly/pages/setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:deenly/components/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -36,12 +38,14 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   }
 
   /// Prayers can be marked from the adhan notification while the app is
-  /// in the background, so both tabs re-read them when it comes back.
+  /// in the background, so both tabs re-read them when it comes back. The
+  /// notification permission may also have changed in the system settings.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
     _homeKey.currentState?.loadProgress();
     _prayersKey.currentState?.reload();
+    context.read<DrawerProvider>().refreshNotificationPermission();
   }
 
   void _select(int index) {

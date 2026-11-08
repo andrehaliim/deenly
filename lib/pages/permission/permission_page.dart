@@ -127,7 +127,14 @@ class _PermissionPageState extends State<PermissionPage>
     final drawerProvider = context.read<DrawerProvider>();
     setState(() => _isBusy = true);
     final granted = await _notificationHelper.requestPermission();
-    if (granted) await drawerProvider.enableAllNotifications();
+    if (granted) {
+      /// Asked before scheduling, so the reminders are set exact when the
+      /// access is given. Without it they are scheduled inexact.
+      if (!await _notificationHelper.canScheduleExact()) {
+        await _notificationHelper.requestExactAlarmPermission();
+      }
+      await drawerProvider.enableAllNotifications();
+    }
     await _notificationHelper.markPermissionAsked();
     _goToMain();
   }

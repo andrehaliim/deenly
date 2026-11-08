@@ -4,6 +4,7 @@ import 'package:deenly/components/database_helper.dart';
 import 'package:deenly/components/drawer_provider.dart';
 import 'package:deenly/components/locale_provider.dart';
 import 'package:deenly/components/notification_helper.dart';
+import 'package:deenly/components/notification_permission_prompt.dart';
 import 'package:deenly/components/prayer_method_helper.dart';
 import 'package:deenly/components/quran_settings_provider.dart';
 import 'package:deenly/components/theme_provider.dart';
@@ -11,6 +12,7 @@ import 'package:deenly/l10n/app_localizations.dart';
 import 'package:deenly/pages/quran/reading_settings_sheet.dart';
 import 'package:deenly/pages/quran/staggered_entrance_widget.dart';
 import 'package:deenly/pages/setting/calendar_reminder_page.dart';
+import 'package:deenly/pages/setting/notification_blocked_tile.dart';
 import 'package:deenly/pages/setting/prayer_adjustment_page.dart';
 import 'package:deenly/pages/setting/prayer_notification_page.dart';
 import 'package:deenly/pages/setting/setting_list_view.dart';
@@ -160,6 +162,8 @@ class _SettingPageState extends State<SettingPage>
       SettingSection(
         title: l10n?.settingNotificationsTitle ?? '',
         children: [
+          if (!drawerProvider.isNotificationAllowed)
+            const NotificationBlockedTile(),
           SettingTile(
             icon: Icons.notifications_active_rounded,
             title: l10n?.settingNotificationTitle ?? '',
@@ -383,6 +387,7 @@ class _SettingPageState extends State<SettingPage>
     Future<bool> Function(bool) toggle,
     bool value,
   ) async {
+    if (value && !await NotificationPermissionPrompt.ensure(context)) return;
     final success = await toggle(value);
     if (!success && mounted) {
       _showSnackBar(AppLocalizations.of(context)?.reminderEnableFailed ?? '');
@@ -406,9 +411,8 @@ class _SettingPageState extends State<SettingPage>
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _openPrivacyPolicy() async {

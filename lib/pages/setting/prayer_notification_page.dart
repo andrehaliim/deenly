@@ -1,5 +1,8 @@
 import 'package:deenly/components/drawer_provider.dart';
+import 'package:deenly/components/notification_permission_prompt.dart';
 import 'package:deenly/l10n/app_localizations.dart';
+import 'package:deenly/pages/setting/exact_alarm_tile.dart';
+import 'package:deenly/pages/setting/notification_blocked_tile.dart';
 import 'package:deenly/pages/setting/setting_info_card.dart';
 import 'package:deenly/pages/setting/setting_section.dart';
 import 'package:deenly/pages/setting/setting_subpage.dart';
@@ -25,20 +28,31 @@ class PrayerNotificationPage extends StatelessWidget {
           title: l10n?.settingNotificationInfoTitle ?? '',
           description: l10n?.settingNotificationInfoDesc ?? '',
         ),
-        SettingSection(
+        Column(
           children: [
-            for (final prayer in DrawerProvider.prayers)
-              SettingTile(
-                icon: drawerProvider.isPrayerEnabled(prayer)
-                    ? Icons.notifications_active_rounded
-                    : Icons.notifications_off_rounded,
-                title: PrayerProxy().getPrayerLabel(context, prayer),
-                trailing: SettingSwitch(
-                  value: drawerProvider.isPrayerEnabled(prayer),
-                  onChanged: (value) =>
-                      _onPrayerToggled(context, drawerProvider, prayer, value),
-                ),
-              ),
+            const ExactAlarmTile(),
+            SettingSection(
+              children: [
+                if (!drawerProvider.isNotificationAllowed)
+                  const NotificationBlockedTile(),
+                for (final prayer in DrawerProvider.prayers)
+                  SettingTile(
+                    icon: drawerProvider.isPrayerEnabled(prayer)
+                        ? Icons.notifications_active_rounded
+                        : Icons.notifications_off_rounded,
+                    title: PrayerProxy().getPrayerLabel(context, prayer),
+                    trailing: SettingSwitch(
+                      value: drawerProvider.isPrayerEnabled(prayer),
+                      onChanged: (value) => _onPrayerToggled(
+                        context,
+                        drawerProvider,
+                        prayer,
+                        value,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
       ],
@@ -54,6 +68,8 @@ class PrayerNotificationPage extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final message =
         AppLocalizations.of(context)?.notificationScheduleFailed ?? '';
+    if (value && !await NotificationPermissionPrompt.ensure(context)) return;
+
     final success = await drawerProvider.setPrayerNotification(prayer, value);
     if (!success) {
       messenger.showSnackBar(SnackBar(content: Text(message)));
