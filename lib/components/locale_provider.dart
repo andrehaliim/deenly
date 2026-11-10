@@ -1,11 +1,18 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocaleProvider extends ChangeNotifier {
   static const localeKey = 'selected_locale';
 
-  /// Fresh installs start in Indonesian regardless of the device language.
-  static const defaultLocale = Locale('id');
+  /// Fresh installs follow the device language: Indonesian on Indonesian
+  /// devices, English on every other one. Read from the platform rather
+  /// than a BuildContext, so the background isolate gets the same answer.
+  static Locale get defaultLocale {
+    final deviceCode = PlatformDispatcher.instance.locale.languageCode;
+    return Locale(deviceCode == 'id' ? 'id' : 'en');
+  }
 
   Locale? _locale = defaultLocale;
   Locale? get locale => _locale;
