@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfigProxy {
   static const String _remoteUrl =
-      'https://andrehaliim.vercel.app/projects/deenly/config.json';
+      'https://www.andrehaliim.com/projects/deenly/config.json';
   static const String _assetPath = 'assets/jsons/app_config.json';
   static const String _cacheKey = 'appConfig';
   static const Duration _timeout = Duration(seconds: 5);

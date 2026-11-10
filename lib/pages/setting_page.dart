@@ -27,7 +27,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const String _privacyPolicyUrl =
-    'https://andrehaliim.vercel.app/projects/deenly/privacy';
+    'https://www.andrehaliim.com/projects/deenly/privacy';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key, this.onSaved, this.showAppBar = true});
